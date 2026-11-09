@@ -15,6 +15,7 @@
 simulacion:
   horizonte_dias: 120          # días simulados (el plan sugiere 90–180)    [supuesto]
   dia_semana_inicial: 0        # día de la semana del día 0: 0 = lunes ... 6 = domingo
+  factor_demanda: 1.0          # multiplica la demanda media; 1.2 = escenario de sensibilidad +20%
 
 datos:
   tiendas: data/synthetic/tiendas.csv   # id_tienda, latitud, longitud
@@ -75,3 +76,4 @@ reposicion:
 pronostico:
   metodo: promedio_movil_dia_semana   # después, si alcanza: holt_winters
   ventana_semanas: 4                  # semanas de historia que promedia     [supuesto]
+  horizonte_dias: 14                  # días hacia adelante que se pronostican para la política [supuesto]
