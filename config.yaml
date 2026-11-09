@@ -39,9 +39,10 @@ costos:
   viaje_por_km_q: 4.0          # Q/km                                       [estimado]
 
 transporte:                    # lo usa el módulo de traspasos (Persona 2)
-  num_vehiculos: 2             # vehículos disponibles por día              [supuesto]
+  num_vehiculos: 2             # un viaje directo por vehículo y día        [supuesto]
   capacidad_unidades: 150      # unidades por vehículo                      [supuesto]
   velocidad_kmh: 30.0          # km/h sin tráfico                           [estimado]
+  factor_ruta: 1.3             # Haversine × factor vial; viaje sin retorno  [estimado]
   hora_despacho: 10            # hora de salida de los traspasos (0–23); es gen del genético
   trafico:                     # factor sobre el tiempo de viaje: 1.0 normal, 1.5–2.0 hora pico [estimado]
     - {desde: 0,  hasta: 6,  factor: 1.0}
@@ -77,3 +78,10 @@ pronostico:
   metodo: promedio_movil_dia_semana   # después, si alcanza: holt_winters
   ventana_semanas: 4                  # semanas de historia que promedia     [supuesto]
   horizonte_dias: 14                  # días hacia adelante que se pronostican para la política [supuesto]
+
+traspasos:                            # valores fijos; params_politica puede reemplazarlos
+  horizonte_dias: 3                   # H, días de planeación                 [supuesto]
+  seguridad_dias: 2                   # SS, reserva adicional del donante     [supuesto]
+  descuento_diario: 0.98              # delta, valor de ventas futuras        [supuesto]
+  umbral_valor_q: 0.0                 # V mínimo por viaje consolidado, Q     [supuesto]
+  peso_trafico: 0.0                   # penalización extra: peso × (factor−1) × costo [supuesto]

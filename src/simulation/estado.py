@@ -12,6 +12,8 @@ class Traspaso:
     dia_llegada: int     # debe ser posterior al día actual
     costo: float = 0.0   # Q
     km: float = 0.0
+    # Líneas del mismo viaje consolidado comparten id; costo/km se asignan a una sola.
+    viaje_id: str | None = None
 
 
 @dataclass

@@ -73,7 +73,8 @@ def simular_con_datos(
     pron = config["pronostico"]
     ventana_semanas = int(pron["ventana_semanas"])
     horizonte_pronostico = int(pron.get("horizonte_dias", 14))
-    config_politica = {**config, "politica": params_politica}
+    config_politica = {**config, "politica": params_politica,
+                       "ubicaciones_tiendas": datos["ubicaciones"]}
 
     demanda = generar_demanda(
         media, datos["dispersion"], horizonte, dia_semana_inicial, semilla, factor_demanda
@@ -178,7 +179,10 @@ def simular_con_datos(
         "costo_ventas_perdidas": costo_ventas_perdidas,
         "nivel_servicio": unidades_vendidas / unidades_demandadas if unidades_demandadas else 1.0,
         "unidades_perdidas": int(perdidas.sum()),
-        "num_traspasos": len(traspasos_hechos),
+        "num_traspasos": (
+            len({tr.viaje_id for tr in traspasos_hechos if tr.viaje_id is not None})
+            + sum(tr.viaje_id is None for tr in traspasos_hechos)
+        ),
         "km_recorridos": float(sum(tr.km for tr in traspasos_hechos)),
     }
     if detalle:
