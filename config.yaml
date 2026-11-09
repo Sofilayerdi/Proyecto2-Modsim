@@ -1,0 +1,77 @@
+# =============================================================================
+# Configuración del modelo de inventario con traspasos entre tiendas
+#
+# Origen de cada valor (el enunciado exige distinguirlos):
+#   [real]      dato observado (referencia de la Persona 5)
+#   [publico]   dato público con fuente citada en el informe
+#   [estimado]  estimación del grupo, justificada en el informe
+#   [supuesto]  valor elegido para simplificar el modelo
+#
+# Por ahora casi todo es [estimado] o [supuesto]; al reemplazar un valor por un
+# dato real o público, cambiar la etiqueta y citar la fuente en el informe.
+# Las rutas de "datos" son relativas a la carpeta de este archivo.
+# =============================================================================
+
+simulacion:
+  horizonte_dias: 120          # días simulados (el plan sugiere 90–180)    [supuesto]
+  dia_semana_inicial: 0        # día de la semana del día 0: 0 = lunes ... 6 = domingo
+
+datos:
+  tiendas: data/synthetic/tiendas.csv   # id_tienda, latitud, longitud
+  demanda: data/synthetic/demanda.csv   # id_tienda, id_producto, dia_semana, media, dispersion
+
+bodega:
+  latitud: 14.5900             # grados, ubicación de la bodega central     [estimado]
+  longitud: -90.5400           # grados                                     [estimado]
+
+productos:                     # el ORDEN define el índice k = 0..K-1 en toda la simulación
+  - id: P01                    # debe coincidir con id_producto de demanda.csv
+    margen_q: 12.0             # m[k], Q/unidad: lo que se pierde por cada venta perdida [estimado]
+  - id: P02
+    margen_q: 35.0             # Q/unidad                                   [estimado]
+  - id: P03
+    margen_q: 90.0             # Q/unidad                                   [estimado]
+
+costos:
+  mantener_q_unidad_dia: 0.08  # h, Q/(unidad·día), sobre el inventario al cierre del día [estimado]
+  viaje_fijo_q: 60.0           # Q/viaje                                    [estimado]
+  viaje_por_km_q: 4.0          # Q/km                                       [estimado]
+
+transporte:                    # lo usa el módulo de traspasos (Persona 2)
+  num_vehiculos: 2             # vehículos disponibles por día              [supuesto]
+  capacidad_unidades: 150      # unidades por vehículo                      [supuesto]
+  velocidad_kmh: 30.0          # km/h sin tráfico                           [estimado]
+  hora_despacho: 10            # hora de salida de los traspasos (0–23); es gen del genético
+  trafico:                     # factor sobre el tiempo de viaje: 1.0 normal, 1.5–2.0 hora pico [estimado]
+    - {desde: 0,  hasta: 6,  factor: 1.0}
+    - {desde: 6,  hasta: 9,  factor: 1.8}
+    - {desde: 9,  hasta: 12, factor: 1.2}
+    - {desde: 12, hasta: 14, factor: 1.5}
+    - {desde: 14, hasta: 17, factor: 1.2}
+    - {desde: 17, hasta: 20, factor: 1.9}
+    - {desde: 20, hasta: 24, factor: 1.0}
+
+inventario:
+  minimo_exhibicion_unidades: 2  # unidades que la tienda donante siempre conserva por producto [supuesto]
+  inicial:
+    dias_cobertura_tienda: 7     # inventario inicial = 7 días de demanda media de la tienda    [supuesto]
+    dias_cobertura_bodega: 21    # inventario inicial = 21 días de demanda media de la cadena   [supuesto]
+
+reposicion:
+  tiendas:
+    # PENDIENTE (decisión del grupo): regla (s, S) de las tiendas.
+    # Propuesta: s = μ̄·(tiempo_entrega + dias_seguridad), S = μ̄·dias_objetivo,
+    # con μ̄ = demanda media diaria de la tienda y producto.
+    tiempo_entrega_dias: 2       # días de bodega a tienda                  [estimado]
+    dias_seguridad: 3            # días                                      [supuesto]
+    dias_objetivo: 12            # días                                      [supuesto]
+  bodega:
+    # s y S de bodega en días de demanda media de toda la cadena.
+    # Son genes: si params_politica los trae, se usan esos; si no (escenario base), estos.
+    tiempo_entrega_dias: 7       # L, días de proveedor a bodega             [estimado]
+    s_dias: 10                   # días                                      [supuesto]
+    S_dias: 30                   # días                                      [supuesto]
+
+pronostico:
+  metodo: promedio_movil_dia_semana   # después, si alcanza: holt_winters
+  ventana_semanas: 4                  # semanas de historia que promedia     [supuesto]

@@ -1,0 +1,14 @@
+# Datos reales de referencia (Persona 5): NUNCA se suben al repositorio
+data/reference/
+
+# Entorno y caches de Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Editores y sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
