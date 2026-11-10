@@ -59,9 +59,10 @@ tests/                  pruebas automáticas
 docs/informe/           informe técnico integrado del proyecto
 ```
 
-La comparación sintética, estadística y sensibilidad están ejecutadas. La
-validación real de la persona 5 sigue pendiente. Los datos reales están
-excluidos de Git mediante `data/reference/`.
+La comparación sintética, estadística y sensibilidad están ejecutadas. Existe
+un contraste parcial con ventas públicas M5 en `results/validacion/m5/`; no
+valida inventarios, costos ni la operación de la cadena de referencia del equipo.
+Los datos privados están excluidos de Git mediante `data/reference/`.
 
 ## Informe técnico
 

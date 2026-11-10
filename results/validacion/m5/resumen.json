@@ -1,0 +1,22 @@
+{
+  "base": {
+    "mae": 5.56388888888889,
+    "error_relativo_pct": 31.345852895148674
+  },
+  "mejorada": {
+    "mae": 5.613888888888888,
+    "error_relativo_pct": 31.62754303599374
+  },
+  "observaciones": 24,
+  "total_real": 426,
+  "advertencia": "Ventas observadas; inventarios, rutas, costos y operación de Walmart no disponibles. No es validación integral.",
+  "sha256_zip": "cc704ba15d6802f8262e6ec7d4c6041e4ad6366a94365e8c84f721e450eed774",
+  "calibracion": [
+    "2015-10-28",
+    "2016-02-28"
+  ],
+  "validacion": [
+    "2016-02-29",
+    "2016-04-24"
+  ]
+}

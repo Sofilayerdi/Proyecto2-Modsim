@@ -9,8 +9,9 @@
 
 **Estado del documento:** borrador integrado. Contiene el problema, la
 investigación, la formulación, la implementación, la optimización y el estudio
-experimental sintético con comparación, atribución y sensibilidad. La validación
-real sigue pendiente. Este archivo es el documento maestro del informe.
+experimental sintético con comparación, atribución y sensibilidad. Incluye un
+contraste parcial con ventas públicas M5; la validación integral de la cadena
+de referencia sigue pendiente. Este archivo es el documento maestro del informe.
 
 ## Resumen
 
@@ -36,8 +37,8 @@ reducción de costo; los controles mostraron que el ahorro proviene principalmen
 del ajuste de bodega, sin evidencia estadística suficiente de ahorro incremental
 por los traspasos. Con demanda +20% y existencias de referencia constantes,
 el costo aumentó 19.54% respecto a la mejorada nominal. Estos hallazgos
-corresponden al sistema sintético; la validación frente a una cadena real
-todavía requiere datos y análisis adicionales.
+corresponden al sistema sintético; el contraste parcial M5 y sus limitaciones
+se presentan en la sección 6. Validar una cadena concreta requiere más datos.
 
 **Palabras clave:** inventario, traspasos laterales, simulación, algoritmo
 genético, restricciones, flujo de costo mínimo.
@@ -104,7 +105,8 @@ total y el nivel de servicio de una cadena con bodega central.
    como una recomendación operativa.
 
 El objetivo 5 se evaluó en el contrato sintético. El objetivo 6 permanece
-pendiente de la referencia real y su validación.
+parcialmente abordado con datos públicos M5; falta validar inventarios y la
+operación de la cadena concreta.
 
 ### 1.5 Alcance
 
@@ -637,29 +639,63 @@ media de referencia; los cambios de servicio se presentan en puntos porcentuales
 
 ## 6. Comparación con la vida real
 
-**Pendiente de datos y validación por la persona 5.**
+Se realizó un contraste parcial con ventas diarias públicas de Walmart de la
+[competición M5](https://www.kaggle.com/competitions/m5-forecasting-accuracy/data),
+usando la [copia de Nixtla](https://github.com/Nixtla/m5-forecasts/tree/main/datasets).
+Se seleccionaron tres tiendas de California (CA_1, CA_2 y CA_3) y tres productos
+FOODS_1_001–003. Se calibraron las medias y dispersiones con los 124 días del
+28/10/2015 al 28/02/2016; los 56 días siguientes, del 29/02 al 24/04/2016,
+quedaron reservados para el contraste. La unidad es tienda-semana, sumando los
+productos: 24 observaciones. La base y la mejorada tienen 30 réplicas cada una.
+El ganador procede del experimento sintético y no fue reentrenado en M5.
 
-Se requieren ventas diarias por tienda/producto, ubicaciones y, si existen,
-inventarios, reposiciones, traspasos y costos o márgenes. Los datos privados
-no se incorporarán al repositorio público; deben proporcionarse instrucciones
-de acceso o una referencia anonimizada conforme al acuerdo del equipo.
-
-La validación prevista consiste en separar calibración y validación, ajustar
-los parámetros de demanda con el primer período y simular la base sobre el
-segundo con 30 réplicas. Se compararán ventas por tienda y semana mediante:
+Se compara cada venta real semanal con la media de las réplicas mediante:
 
 $$
 MAE=\frac{1}{n}\sum_{a=1}^{n}|\widehat y_a-y_a|.
 $$
 
-También se reportará error relativo, explicitando su denominador y el
-tratamiento de valores reales cero. Si existen datos de faltantes o inventario,
-se contrastarán sus tasas o trayectorias. Las ventas observadas pueden estar
-censuradas por agotamiento y no equivaler a demanda total.
+El error relativo agregado es la suma de errores absolutos dividida por la suma
+de ventas reales, multiplicada por 100; así se incluyen observaciones reales
+cero sin dividir por cero individual. Si el total real es cero no se informa.
 
-La tabla final de referencia real, base y mejorada deberá incluir diferencias
-absolutas y porcentuales. Actualmente no hay valores reales que permitan
-completarla ni cuantificar la correspondencia del modelo.
+| Métrica | Real | Base simulada | Mejorada simulada |
+| --- | ---: | ---: | ---: |
+| Ventas totales, unidades | 426 | 337.67 | 334.67 |
+| MAE, unidades por tienda-semana | — | 5.56 | 5.61 |
+| Error absoluto agregado relativo | — | 31.35 % | 31.63 % |
+
+La correspondencia de ventas es limitada: el total simulado base está 88.33
+unidades por debajo del observado (−20.74 % del total real). Este error neto
+difiere del 31.35 % de error absoluto agregado, que no permite cancelaciones.
+La mejorada vende 3 unidades menos que la
+base (−0.89 %). Su costo hipotético baja Q88.87 (7.69 %), pero no hay costos
+reales comparables y no se registraron viajes; por tanto no se demuestra una
+mejora por traspasos ni un cambio en Walmart.
+
+El costo supuesto varía entre réplicas: desviación estándar Q365.57 para la
+base y Q453.82 para la mejorada. El servicio promedio es 95.32 % y 94.51 %, con
+desviaciones de 2.98 y 3.22 puntos porcentuales. Estas dispersiones describen
+el modelo, no incertidumbre sobre el desempeño real. La selección de tres
+tiendas y tres artículos no justifica extrapolar a la cadena completa.
+
+![Ventas reales y simuladas por tienda](../../results/validacion/m5/graficas/ventas_reales_simuladas.png)
+
+**Ventas semanales por tienda.** Las curvas simuladas muestran la media de 30
+réplicas; la curva observada procede de M5. Las diferencias entre las curvas
+ilustran que la calibración no reproduce exactamente las ventas observadas.
+
+![MAE de ventas por tienda](../../results/validacion/m5/graficas/mae_por_tienda.png)
+
+**Error de la base por tienda.** El MAE es 5.19 unidades/semana para CA_1,
+5.75 para CA_2 y 5.75 para CA_3. Son errores descriptivos sobre ocho semanas,
+no garantías de error futuro ni evidencia de validez del resto del sistema.
+
+La ubicación, inventarios, costos y reposición del modelo son supuestos, no la
+operación de Walmart. Las ventas pueden estar censuradas por agotamiento y no
+equivalen necesariamente a demanda. No se validaron inventarios, traspasos ni
+costos con datos reales; falta contrastar la cadena concreta del equipo. Los
+archivos, receta y advertencias están en [results/validacion/m5](../../results/validacion/m5/README.md).
 
 ## 7. Resultados experimentales
 
@@ -950,7 +986,7 @@ es informativo y no debe reemplazarse por una afirmación general de mejora.
   exploratoria, sin una declaración independiente de significancia ajustada.
 - Se evalúan tres sensibilidades puntuales, no un barrido completo ni escenarios
   extremos. La operación sintética tiene pocos viajes y servicio de base alto.
-- Quedan pendientes la validación real, las fuentes empresariales, la revisión
+- Quedan pendientes la validación integral de la cadena, las fuentes empresariales, la revisión
   final del equipo y el formato de entrega. Las conclusiones aquí son válidas
   como resultados del sistema sintético, no como una recomendación empresarial.
 
@@ -970,9 +1006,12 @@ es informativo y no debe reemplazarse por una afirmación general de mejora.
    https://www.jstor.org/stable/4615733
 5. SciPy Community. (s. f.). *scipy.stats.ttest_1samp*. Documentación de SciPy.
    https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_1samp.html
+6. M5 Forecasting Accuracy. *Datos de ventas de Walmart*. Kaggle.
+   https://www.kaggle.com/competitions/m5-forecasting-accuracy/data
+   Copia del conjunto consultada en https://github.com/Nixtla/m5-forecasts/tree/main/datasets
 
-**Pendiente bibliográfico:** incorporar la referencia empresarial o pública
-real y las fuentes que sustenten costos, márgenes, distancias y parámetros
+**Pendiente bibliográfico:** incorporar la referencia empresarial concreta
+y las fuentes que sustenten costos, márgenes, distancias y parámetros
 cuando se reemplacen los supuestos. Las fichas editoriales anteriores se
 consultaron para la investigación; no se atribuyen a sus autores los datos,
 resultados ni valores calibrados de esta implementación.
@@ -1018,9 +1057,9 @@ garantizan igualdad entre versiones distintas de las dependencias.
 | Persona 2 | Revisar costos, transporte, indicador y traspasos; integrar formato y PDF final |
 | Persona 3 | Revisar técnica, genético, reproducibilidad y evidencia de optimización |
 | Persona 4 | Diseño, comparación, estadística y sensibilidad ejecutados e integrados; revisar el análisis final |
-| Persona 5 | Completar referencia real, validación, fuentes y conclusiones definitivas |
+| Persona 5 | Revisar contraste parcial M5, buscar datos de la cadena concreta y cerrar conclusiones |
 
 La distribución identifica responsabilidades del plan, no certifica autoría
 individual ni aprobación humana de este borrador. Los nombres, carnés y
 registro de contribuciones deben ser completados por el equipo. La revisión
-humana cruzada del estudio y la validación real siguen pendientes del equipo.
+humana cruzada y la validación integral de la cadena concreta siguen pendientes.

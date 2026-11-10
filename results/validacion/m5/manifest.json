@@ -1,0 +1,97 @@
+{
+  "fuente": "https://github.com/Nixtla/m5-forecasts/blob/main/datasets/m5.zip",
+  "sha256_zip": "cc704ba15d6802f8262e6ec7d4c6041e4ad6366a94365e8c84f721e450eed774",
+  "config_sha256": "bfa7c61928d493b9d091eaae9728b645a2b4cd04245bffdca442490908ab1fb3",
+  "ganador_sha256": "8f0edd0896594c4135a8bab8aea05913f96f6ce0b771593796db9f582a725378",
+  "codigo_sha256": {
+    "src/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/model/__init__.py": "f474f615dcc99fc182db1e8e25b76601597a1e3a87d47f3eeafa9c3298ea3b7e",
+    "src/model/costos.py": "56a169308d896656af254ae6c61c81eab5e213f90c22a32ee84abd9f66d8f05a",
+    "src/model/indicador.py": "2941c4f79b7cfb4dc56b54c12286709bb29ae8f11613d41fd080f443cfcb4dbb",
+    "src/model/tipos.py": "990a465b7a493833e2dafeccbe13a2a829eb0675a2c38a6e3eddb6fa2dfdf8a2",
+    "src/model/transporte.py": "e0b0d4fe2196a13bd814b734c2823ec1342b4466702ac7201ac9439e67005bfd",
+    "src/model/traspasos.py": "6936683d39c5daf1d62400bc6ef8c19af8b3f17ee260951d85c0e6f74ab7660b",
+    "src/optimization/adaptador.py": "867afd918b0e70b3890e21d4e3a63911eab924f4fa52b43373e8b7699a65efe1",
+    "src/optimization/algoritmo_genetico.py": "915ad630353cfef620b61d6a6f84b9ee9d1ddc54250b924f2a8dff0e674aabb1",
+    "src/optimization/cromosoma.py": "d46147df65816e409d4cf70a6db3fe83c4d98776d13c45a3d870617f31c942fc",
+    "src/optimization/fitness.py": "58e71b39335c4d2b319f48d0fe8f5758653a7c47fbfe63e336be7a505828f625",
+    "src/optimization/graficas.py": "d8b1d00bc09a0269eeb999c6776fe3dd778b6b7f6c9463d48f94deebe3797cb9",
+    "src/optimization/operadores.py": "e9cdaa4fb34e188bae92a3b19831b68f4a0789eaecde4b051267b3d7a0401bd4",
+    "src/optimization/optimizador.py": "c6c18e9a5fd703b703be216b9bd96e57ea6f951f1a2d5aca741243342bec06e9",
+    "src/optimization/reevaluacion.py": "9d226d3fa0be112e3b75645743bc71917fcc9eeeece453b82acc989bd8da5d4d",
+    "src/simulation/__init__.py": "af544760e6ef64602d89fa4faf9246291c9f7afa6e97c0849a5331c0ccf759d3",
+    "src/simulation/carga.py": "f44e4e3d455137202eb0d3db58eb94fa688a6d73f42c0738f24456559cbfe274",
+    "src/simulation/demanda.py": "d45b630452ade4182187c6e2a0dfe756b0177ff312aa8d17455025ad5c9efecd",
+    "src/simulation/estado.py": "493b7c64a3f87db28a8ac08c8a46158a8b4ca93dddda936e103f3f73b8634c03",
+    "src/simulation/motor.py": "48770e9911ef3b5300a4625c5142f1991923030ff30ad46137dddfc09a8437ef",
+    "src/simulation/pronostico.py": "33743a294fd1da4b39bcac6e0e98fc5bc6a945a61367b0e81abb8a154eeda321",
+    "src/simulation/sinteticos.py": "c64bb5c83757aff7f427a36c2106760f8b448952d443fb541d8629fc36378420",
+    "src/validation/__init__.py": "61b7a7d31a2a7349c572e0b5c84c9321ba06d521f2a3773e79de005caa6e3f38",
+    "src/validation/m5.py": "5ada954290b04be4c0aea1988b3201975fa617132bb92570748baff049965286",
+    "src/viz/__init__.py": "eb2c9459e5f1831c5055f6a8174fd14bfc90dad53518f913778d5a9ca36f1027",
+    "src/viz/escenarios.py": "f1d54ffaefe83b47b5e7cf0d9a12ac0c573fdb974864f01e91c7d1c173063799"
+  },
+  "resultados_sha256": {
+    "ventas_semanales.csv": "81ab4b092ed55134ecc30ed2863060bc435207146105fac241967b1e4bef74d3",
+    "ventas_semanales_replicas.csv": "01699233c3b639ca39824a39ca2f38278b62c9782e6a813c7e78f11ec9d0c6ed",
+    "metricas_replicas.csv": "34e876ef662572f6b7b90ed004e292514bd34f15be28abba4411f0933930eeaa",
+    "resumen.json": "44b32eef11db7cb92007e263b652e3c7ddc1912d3d92d85235d3df530a3ddc4d"
+  },
+  "python": "3.14.7",
+  "dependencias": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "networkx": "3.7",
+    "pyyaml": "6.0.3"
+  },
+  "semillas": [
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009,
+    1010,
+    1011,
+    1012,
+    1013,
+    1014,
+    1015,
+    1016,
+    1017,
+    1018,
+    1019,
+    1020,
+    1021,
+    1022,
+    1023,
+    1024,
+    1025,
+    1026,
+    1027,
+    1028,
+    1029,
+    1030
+  ],
+  "tiendas": [
+    "CA_1",
+    "CA_2",
+    "CA_3"
+  ],
+  "productos": [
+    "FOODS_1_001",
+    "FOODS_1_002",
+    "FOODS_1_003"
+  ],
+  "calibracion": [
+    "2015-10-28",
+    "2016-02-28"
+  ],
+  "validacion": [
+    "2016-02-29",
+    "2016-04-24"
+  ]
+}
