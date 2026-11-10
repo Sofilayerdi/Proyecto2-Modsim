@@ -1,0 +1,67 @@
+{
+  "12": {
+    "bodega_s_dias": 10,
+    "bodega_S_dias": 30,
+    "horizonte_dias_alta": 1,
+    "seguridad_dias_alta": 6,
+    "horizonte_dias_media": 3,
+    "seguridad_dias_media": 0,
+    "horizonte_dias_baja": 2,
+    "seguridad_dias_baja": 5,
+    "umbral_valor_q": 62.497394507857116,
+    "peso_trafico": 0.2221752765295586,
+    "hora_despacho": 4
+  },
+  "9": {
+    "bodega_s_dias": 10,
+    "bodega_S_dias": 30,
+    "horizonte_dias_alta": 1,
+    "seguridad_dias_alta": 7,
+    "horizonte_dias_media": 3,
+    "seguridad_dias_media": 6,
+    "horizonte_dias_baja": 1,
+    "seguridad_dias_baja": 7,
+    "umbral_valor_q": 62.497394507857116,
+    "peso_trafico": 1.988669041062174,
+    "hora_despacho": 6
+  },
+  "6": {
+    "bodega_s_dias": 10,
+    "bodega_S_dias": 30,
+    "horizonte_dias_alta": 1,
+    "seguridad_dias_alta": 5,
+    "horizonte_dias_media": 3,
+    "seguridad_dias_media": 5,
+    "horizonte_dias_baja": 1,
+    "seguridad_dias_baja": 6,
+    "umbral_valor_q": 62.497394507857116,
+    "peso_trafico": 0.36408760881659785,
+    "hora_despacho": 6
+  },
+  "5": {
+    "bodega_s_dias": 10,
+    "bodega_S_dias": 30,
+    "horizonte_dias_alta": 3,
+    "seguridad_dias_alta": 4,
+    "horizonte_dias_media": 1,
+    "seguridad_dias_media": 3,
+    "horizonte_dias_baja": 7,
+    "seguridad_dias_baja": 0,
+    "umbral_valor_q": 92.20974466207481,
+    "peso_trafico": 1.497467745095312,
+    "hora_despacho": 6
+  },
+  "4": {
+    "bodega_s_dias": 10,
+    "bodega_S_dias": 30,
+    "horizonte_dias_alta": 2,
+    "seguridad_dias_alta": 0,
+    "horizonte_dias_media": 3,
+    "seguridad_dias_media": 6,
+    "horizonte_dias_baja": 2,
+    "seguridad_dias_baja": 5,
+    "umbral_valor_q": 107.91245299823251,
+    "peso_trafico": 0.36408760881659785,
+    "hora_despacho": 4
+  }
+}

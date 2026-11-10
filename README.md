@@ -28,6 +28,8 @@ python -m pip install -r requirements.txt
 python -m pytest -q
 python -m experiments.optimizar --config config.yaml --salida results/optimizacion/nueva_ejecucion --trabajadores 6
 python -m experiments.comparar --config config.yaml --diseno experiments/diseno.yaml --salida results/experimentos/nueva_ejecucion --trabajadores 6
+python -m experiments.reserva --factor reserva --salida results/reserva/nueva_reserva --trabajadores 6
+python -m experiments.reserva --factor entrega --salida results/reserva/nueva_entrega --trabajadores 6
 ```
 
 La carpeta de salida debe estar vacía. Se puede usar `--trabajadores 1` para
@@ -68,8 +70,10 @@ src/viz/                 inventario, comparación, desglose y sensibilidad
 experiments/optimizar.py ejecución reproducible de la optimización (persona 3)
 experiments/comparar.py  comparación pareada y estadística (persona 4)
 experiments/diseno.yaml  semillas, sensibilidades y comparaciones predefinidas
+experiments/reserva.py   análisis adicional: cuándo convienen los traspasos
 results/optimizacion/    ganador, semillas, métricas por réplica e historial
 results/experimentos/    CSV comparativos, estadística, auditoría y gráficas
+results/reserva/         condiciones de reserva y entrega, con y sin traspasos
 results/validacion/      contraste M5 y diferencias real/base/mejorada
 tests/                  pruebas automáticas
 docs/informe/           informe técnico integrado del proyecto
@@ -92,8 +96,9 @@ del equipo. Los datos institucionales e integrantes están en `docs/proyecto.jso
 
 - [Informe PDF](docs/informe/informe.pdf).
 - [Informe HTML](docs/informe/informe.html), con fórmulas MathML y enlaces locales.
-- [Presentación general](docs/presentacion/presentacion.html): 24 diapositivas
-  en colores claros, los 14 apartados del informe, siete gráficas, diagrama,
+- [Presentación general](docs/presentacion/presentacion.html): 29 diapositivas
+  en colores claros, los 14 apartados del informe, entradas, pasos y salidas
+  del modelo, ocho gráficas, diagrama,
   cinco bloques de tres minutos, notas, índice y temporizador.
 - [Presentación PDF](docs/presentacion/presentacion.pdf).
 
@@ -125,6 +130,13 @@ generaciones por estancamiento. La evaluación final tiene 30 réplicas.
 y traspasos. La mejorada reduce costo 25.68% frente a base, pero aumenta
 unidades perdidas 6.03%; el ahorro se asocia principalmente a la bodega.
 Se incluyen IC del 95%, pruebas pareadas con ajuste de Holm y cuatro gráficas.
+
+[Condiciones en que convienen los traspasos](results/reserva/): análisis
+exploratorio posterior. Con la bodega fija, el genético se reentrena solo sobre
+los genes de traspasos en cada nivel y se compara con y sin traspasos en las
+semillas 1001–1030. Reducir la reserva de las tiendas (12 → 4 días) no vuelve
+rentables los traspasos; una entrega bodega → tienda de 5 o 7 días sí
+(ahorro de 1.88% y 3.12%, significativo con Holm). Véase el apartado 10.9 del informe.
 
 El manifiesto incluye configuración, rangos, semillas, versiones y SHA-256
 de entradas y código. `git_commit_base` identifica el commit previo a estos

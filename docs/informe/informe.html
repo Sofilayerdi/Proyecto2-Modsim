@@ -63,7 +63,11 @@ promedio en 25.68%, pero aumentó las unidades perdidas en 6.03% y disminuyó
 el servicio en 0.0816 puntos porcentuales. La prueba pareada confirmó la
 reducción de costo; los controles mostraron que el ahorro proviene principalmente
 del ajuste de bodega, sin evidencia estadística suficiente de ahorro incremental
-por los traspasos. Con demanda +20% y existencias de referencia constantes,
+por los traspasos. Un análisis adicional, con el genético reentrenado solo
+sobre los genes de traspasos, identificó cuándo sí convienen: reducir la reserva
+de las tiendas no los vuelve rentables, pero cuando la reposición de bodega a
+tienda tarda 5 o 7 días ahorran 1.88% y 3.12% del costo y mejoran el servicio
+de forma significativa. Con demanda +20% y existencias de referencia constantes,
 el costo aumentó 19.54% respecto a la mejorada nominal. Estos hallazgos
 corresponden al sistema sintético; el contraste parcial M5 y sus limitaciones
 se presentan en los apartados de validación y comparación real. La fuente M5
@@ -140,6 +144,10 @@ con ventas observadas.</p>
 <tr>
 <td>Comparar políticas y sensibilidad</td>
 <td>240 réplicas, controles, IC y pruebas pareadas</td>
+</tr>
+<tr>
+<td>Identificar cuándo convienen los traspasos</td>
+<td>Análisis adicional: 8 condiciones nuevas × 30 réplicas pareadas, genético reentrenado por nivel</td>
 </tr>
 <tr>
 <td>Contrastar ventas contra una referencia real pública</td>
@@ -753,6 +761,8 @@ del algoritmo: no guarda el estado completo de su generador.</p>
 <pre><code class="language-bash">python -m pytest -q
 python -m experiments.optimizar --config config.yaml --salida results/optimizacion/nueva --trabajadores 6
 python -m experiments.comparar --config config.yaml --diseno experiments/diseno.yaml --salida results/experimentos/nueva --trabajadores 6
+python -m experiments.reserva --factor reserva --salida results/reserva/nueva_reserva --trabajadores 6
+python -m experiments.reserva --factor entrega --salida results/reserva/nueva_entrega --trabajadores 6
 python -m src.validation.m5 --m5 /ruta/m5.zip --salida results/validacion/nueva
 python -m src.validation.comparacion --origen results/validacion/nueva --salida results/validacion/nuevo_cierre --zip-fuente /ruta/m5.zip
 </code></pre>
@@ -875,13 +885,59 @@ sensibilidad. Las trayectorias corresponden a la semilla 1001 y al producto P03
 en la primera tienda de cada clase, elegidos antes de examinar resultados.
 Los porcentajes de cambio se calculan como cambio de medias dividido por la
 media de referencia; los cambios de servicio se presentan en puntos porcentuales.</p>
+<h3 id="74-análisis-adicional-condiciones-en-que-convienen-los-traspasos">7.4 Análisis adicional: condiciones en que convienen los traspasos</h3>
+<p>Este análisis se diseñó <strong>después</strong> de observar que los traspasos no aportaban
+ahorro demostrable en el escenario base, por lo que es exploratorio y no
+reemplaza el diseño de 7.1. Su propósito es responder bajo qué condiciones de
+la cadena los traspasos sí reducen el costo. Se implementa en
+<a href="../../experiments/reserva.py"><code>experiments/reserva.py</code></a>.</p>
+<p>Se variaron dos factores, uno a la vez, dejando todo lo demás en su valor base:</p>
+<table>
+<thead>
+<tr>
+<th>Factor</th>
+<th>Niveles</th>
+<th>Regla de construcción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reserva de las tiendas (S)</td>
+<td>12, 9, 6, 5 y 4 días</td>
+<td>La seguridad se escala en la misma proporción (S/4) para mantener s ≤ S; el inventario inicial de tiendas no supera S</td>
+</tr>
+<tr>
+<td>Entrega bodega → tienda (L)</td>
+<td>2, 3, 5 y 7 días</td>
+<td>Seguridad (3 días) y tamaño de pedido (S − s = 7 días) constantes; S = L + 10</td>
+</tr>
+</tbody>
+</table>
+<p>S = 12 y L = 2 corresponden al escenario base. La primera propuesta del equipo
+fue reducir la reserva; la entrega se agregó porque un traspaso solo puede
+ganar ventas si llega antes que la reposición normal desde bodega.</p>
+<p>En cada nivel la bodega queda fija en sus valores originales (s = 10, S = 30
+días) y el genético se reentrena con la misma configuración del estudio
+principal (población 30, hasta 50 generaciones, paciencia 10, semilla
+20261109, semillas 1–10 de entrenamiento y 11–40 de reevaluación). El simulador
+descarta los dos genes de bodega del cromosoma, de modo que solo se optimizan
+los nueve genes de traspasos. El ganador de cada nivel se compara con la misma
+cadena sin traspasos usando las semillas finales 1001–1030 (números aleatorios
+comunes, 30 réplicas pareadas).</p>
+<p>Se aplicó la t pareada bilateral de 7.3 a costo y servicio, con Holm dentro de
+cada factor (10 pruebas para reserva y 8 para entrega). Además de las métricas
+del motor se registró la fracción de días tienda-producto con inventario cero
+al cierre, comparable de forma aproximada con el 8.3% de productos agotados en
+anaquel que reportan Gruen, Corsten y Bharadwaj (2002).</p>
 <h2 id="8-validación">8. Validación</h2>
 <h3 id="81-verificación-interna-y-reproducibilidad">8.1 Verificación interna y reproducibilidad</h3>
-<p>La suite completa obtuvo <strong>141 pruebas aprobadas</strong>. Cubre conservación,
+<p>La suite completa obtuvo <strong>155 pruebas aprobadas</strong>. Cubre conservación,
 inventario no negativo, demanda cero, inventario abundante, exhibición, exceso,
 capacidad, tránsito, costos, consolidación y carga óptima en casos pequeños.
 También comprueba reparación, parámetros por tipo, semillas locales, igualdad
-secuencial/paralela, emparejamiento, intervalos y ajuste de Holm.</p>
+secuencial/paralela, emparejamiento, intervalos y ajuste de Holm, así como la
+construcción de los niveles del análisis adicional (s ≤ S, bodega intacta y
+genes de bodega ignorados).</p>
 <p>Las 240 réplicas sintéticas pasaron balances y auditorías. El ajuste de Holm
 se contrastó con <code>statsmodels</code>; la t principal y su IC, con <code>scipy.stats.ttest_rel</code>.
 La mejorada coincide con la evaluación independiente previa del ganador.</p>
@@ -1544,14 +1600,165 @@ los vehículos ni otras condiciones de demanda.</p>
 <p>Todas las réplicas del estudio mantuvieron servicio agregado sobre 95%; la
 menor observación fue 97.36% en demanda +20%. Es evidencia de estas condiciones
 sintéticas, no una garantía para una empresa real o por tienda/producto.</p>
-<h3 id="109-alcance-de-la-respuesta-a-la-pregunta-de-investigación">10.9 Alcance de la respuesta a la pregunta de investigación</h3>
+<h3 id="109-condiciones-en-que-convienen-los-traspasos">10.9 Condiciones en que convienen los traspasos</h3>
+<p>Resultados del análisis adicional de 7.4. Cada fila compara 30 réplicas sin
+traspasos contra 30 con el ganador reentrenado del nivel; el ahorro es la
+diferencia de costo medio dividida por el costo sin traspasos.</p>
+<p><strong>Menos reserva en las tiendas.</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">S (días)</th>
+<th style="text-align:right">Servicio sin traspasos</th>
+<th style="text-align:right">Días agotados</th>
+<th style="text-align:right">Ahorro de traspasos</th>
+<th>IC del 95%</th>
+<th style="text-align:right">p-Holm</th>
+<th style="text-align:right">Viajes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">12 (base)</td>
+<td style="text-align:right">98.64%</td>
+<td style="text-align:right">1.7%</td>
+<td style="text-align:right">+0.25% (Q77)</td>
+<td>[−0.35%; +0.84%]</td>
+<td style="text-align:right">1.00</td>
+<td style="text-align:right">3.7</td>
+</tr>
+<tr>
+<td style="text-align:right">9</td>
+<td style="text-align:right">97.60%</td>
+<td style="text-align:right">3.1%</td>
+<td style="text-align:right">−0.07% (−Q26)</td>
+<td>[−0.22%; +0.07%]</td>
+<td style="text-align:right">1.00</td>
+<td style="text-align:right">0.3</td>
+</tr>
+<tr>
+<td style="text-align:right">6</td>
+<td style="text-align:right">95.16%</td>
+<td style="text-align:right">6.1%</td>
+<td style="text-align:right">−0.01% (−Q5)</td>
+<td>[−0.22%; +0.20%]</td>
+<td style="text-align:right">1.00</td>
+<td style="text-align:right">1.3</td>
+</tr>
+<tr>
+<td style="text-align:right">5</td>
+<td style="text-align:right">93.56%</td>
+<td style="text-align:right">8.3%</td>
+<td style="text-align:right">−0.35% (−Q194)</td>
+<td>[−0.65%; −0.06%]</td>
+<td style="text-align:right">0.13</td>
+<td style="text-align:right">6.0</td>
+</tr>
+<tr>
+<td style="text-align:right">4</td>
+<td style="text-align:right">90.94%</td>
+<td style="text-align:right">11.5%</td>
+<td style="text-align:right">+0.24% (Q158)</td>
+<td>[+0.05%; +0.43%]</td>
+<td style="text-align:right">0.11</td>
+<td style="text-align:right">3.6</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Entrega más lenta desde bodega.</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">L (días)</th>
+<th style="text-align:right">Servicio sin traspasos</th>
+<th style="text-align:right">Días agotados</th>
+<th style="text-align:right">Ahorro de traspasos</th>
+<th>IC del 95%</th>
+<th style="text-align:right">p-Holm</th>
+<th style="text-align:right">Servicio (puntos)</th>
+<th style="text-align:right">Viajes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">2 (base)</td>
+<td style="text-align:right">98.64%</td>
+<td style="text-align:right">1.7%</td>
+<td style="text-align:right">+0.25% (Q77)</td>
+<td>[−0.35%; +0.84%]</td>
+<td style="text-align:right">0.40</td>
+<td style="text-align:right">+0.03</td>
+<td style="text-align:right">3.7</td>
+</tr>
+<tr>
+<td style="text-align:right">3</td>
+<td style="text-align:right">98.23%</td>
+<td style="text-align:right">2.5%</td>
+<td style="text-align:right">+0.57% (Q191)</td>
+<td>[−0.32%; +1.46%]</td>
+<td style="text-align:right">0.40</td>
+<td style="text-align:right">+0.08</td>
+<td style="text-align:right">7.6</td>
+</tr>
+<tr>
+<td style="text-align:right">5</td>
+<td style="text-align:right">97.56%</td>
+<td style="text-align:right">3.8%</td>
+<td style="text-align:right"><strong>+1.88% (Q691)</strong></td>
+<td>[+0.86%; +2.89%]</td>
+<td style="text-align:right">0.003</td>
+<td style="text-align:right">+0.35</td>
+<td style="text-align:right">22.9</td>
+</tr>
+<tr>
+<td style="text-align:right">7</td>
+<td style="text-align:right">96.54%</td>
+<td style="text-align:right">5.1%</td>
+<td style="text-align:right"><strong>+3.12% (Q1,310)</strong></td>
+<td>[+2.08%; +4.16%]</td>
+<td style="text-align:right">&lt; 0.001</td>
+<td style="text-align:right">+0.43</td>
+<td style="text-align:right">23.9</td>
+</tr>
+</tbody>
+</table>
+<p><img src="../../results/reserva/condiciones_traspasos.png" alt="Ahorro de los traspasos según reserva y tiempo de entrega" /></p>
+<p><strong>Figura 8. Ahorro de los traspasos según la condición de la cadena.</strong> Eje
+horizontal: días tienda-producto agotados sin traspasos; eje vertical: ahorro
+medio de los traspasos con IC del 95%. Los asteriscos marcan ahorro
+significativo después de Holm. Con menos reserva los faltantes llegan a 11.5%
+y el ahorro sigue cerca de cero; con entrega lenta el ahorro crece aun con
+menos faltantes.</p>
+<p>Reducir la reserva aumenta los faltantes, pero no hace rentables los traspasos.
+En el nivel de 5 días, que reproduce el ~8% de agotados de la literatura, el
+ganador gasta Q430.50 en traslados y recupera Q236.20 de margen; ningún nivel
+muestra ahorro significativo y el genético elige entre 0.3 y 6 viajes por
+período. La bodega sigue abastecida y repone en 2 días, mientras que un
+traspaso tarda al menos uno: solo adelanta un día una reposición que llega de
+todos modos. Cuando todas las tiendas tienen poca reserva, además, hay pocos
+donantes con exceso.</p>
+<p>Alargar la entrega cambia esa relación. Con L = 7 días los traslados cuestan
+Q1,862.85 y recuperan Q3,105.87 de margen; el genético responde con unos 23
+viajes por período. El ahorro crece en cada nivel, es significativo desde
+L = 5 días y va acompañado de una mejora de servicio también significativa.
+Con las 18 pruebas de ambos factores en una sola familia de Holm, el ahorro
+con L = 5 y L = 7 sigue siendo significativo (p-Holm 0.009 y &lt; 0.001).</p>
+<h3 id="1010-alcance-de-la-respuesta-a-la-pregunta-de-investigación">10.10 Alcance de la respuesta a la pregunta de investigación</h3>
 <p>En el sistema sintético, la política ajustada reduce el costo total en 25.68%
 respecto a la base, a costa de un incremento de 6.03% de unidades perdidas.
 La atribución controlada muestra que el ajuste de bodega domina el ahorro;
 no se demuestra ahorro significativo por los traspasos por sí solos. Por tanto,
 la hipótesis de reducir simultáneamente costo y ventas perdidas mediante
-traspasos optimizados <strong>no queda respaldada por esta corrida</strong>. Este resultado
-es informativo y no debe reemplazarse por una afirmación general de mejora.</p>
+traspasos optimizados <strong>no queda respaldada en el escenario base</strong>.</p>
+<p>El análisis adicional de 10.9 completa la respuesta: el efecto de los
+traspasos depende de la cadena. No se debe a que haya faltantes, sino a que
+el traspaso llegue bastante antes que la reposición normal. Con entregas de
+bodega de 5 a 7 días, los traspasos optimizados sí reducen el costo
+(1.88%–3.12%) y las ventas perdidas (12%–14%), lo que respalda la hipótesis
+bajo esas condiciones. Con entregas rápidas y bodega abastecida, como en el
+escenario base, no conviene invertir en traspasos aunque la cadena opere con
+8–11% de días agotados. Es una respuesta condicional y sintética, no una
+afirmación general de mejora.</p>
 <h2 id="11-limitaciones">11. Limitaciones</h2>
 <ul>
 <li>El genético y la selección voraz de rutas no garantizan el óptimo global.
@@ -1578,6 +1785,14 @@ hipotéticas, no una calibración operativa de Walmart.</li>
 de una política, no la mejor política posible para ese conjunto público.</li>
 <li>No hubo traspasos en M5, por lo que ese caso no identifica su efecto. El
 servicio de 94.51% muestra que el objetivo de 95% no se conserva externamente.</li>
+<li>El análisis de condiciones (7.4 y 10.9) se diseñó después de ver los
+resultados principales y es exploratorio. Varía un factor a la vez, no
+estudia interacciones (poca reserva y entrega lenta a la vez) ni otros
+factores posibles, como bodega restringida o costos de viaje distintos.</li>
+<li>En ese análisis los genes de bodega permanecen en el cromosoma sin efecto,
+lo que diluye la mutación sin sesgar la comparación. Se usó una sola semilla
+del genético por nivel. La equivalencia entre días agotados y el 8.3% de
+la literatura es aproximada: el estudio citado mide anaqueles vacíos.</li>
 <li>El diseño inicial de una referencia empresarial propia se sustituyó por M5.
 Validar una cadena concreta requeriría datos que no forman parte de este
 estudio. Los resultados no constituyen una recomendación de despliegue.</li>
@@ -1594,6 +1809,11 @@ Holm, pero con aumento de unidades perdidas de 6.03% y caída de servicio de
 <li>Los controles atribuyen la mayor parte del ahorro al ajuste de bodega. El
 ahorro incremental medio por traspasos no es estadísticamente concluyente
 con reposición constante; no debe confundirse con el ahorro conjunto.</li>
+<li>Los traspasos convienen cuando llegan bastante antes que la reposición
+normal, no simplemente cuando hay faltantes. Con entregas de bodega a
+tienda de 5 y 7 días ahorran 1.88% y 3.12% del costo y mejoran el servicio;
+reducir la reserva de las tiendas hasta 11.5% de días agotados no los vuelve
+rentables. El resultado es exploratorio y sintético.</li>
 <li>La regla simple reduce pérdidas, pero aumenta costo. La sensibilidad a
 demanda +20% es la más importante entre las estudiadas; los cambios de
 tráfico y flota no son significativos después del ajuste, sin demostrar
@@ -1627,6 +1847,9 @@ https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_1samp.htm
 <li>M5 Forecasting Accuracy. <em>Datos de ventas de Walmart</em>. Kaggle.
 https://www.kaggle.com/competitions/m5-forecasting-accuracy/data
 Copia del conjunto consultada en https://github.com/Nixtla/m5-forecasts/tree/main/datasets</li>
+<li>Gruen, T. W., Corsten, D. S., &amp; Bharadwaj, S. (2002). <em>Retail Out-of-Stocks:
+A Worldwide Examination of Extent, Causes and Consumer Responses</em>. Grocery
+Manufacturers of America.</li>
 </ol>
 <p>Las fuentes metodológicas y públicas están identificadas. Los parámetros
 etiquetados como supuestos no tienen una fuente empresarial observada y no
@@ -1697,16 +1920,19 @@ no se deduce de nombres de usuario del repositorio.</p>
 <td>Contraste externo</td>
 <td>Calibración M5, comparación real/base/mejorada y análisis de límites</td>
 </tr>
+<tr>
+<td>Análisis de condiciones</td>
+<td>Propuesta de variar la reserva (equipo), dos factores, 8 condiciones nuevas, genético reentrenado y gráficas</td>
+</tr>
 </tbody>
 </table>
-<p>La implementación, integración y preparación de materiales contaron con
-asistencia de programación. La explicación, revisión y defensa académica de
-los resultados corresponden al equipo.</p>
+<p>La explicación, revisión y defensa académica de los resultados corresponden
+al equipo. El uso de inteligencia artificial se declara en 14.4.</p>
 <h3 id="142-estado-de-cierre-de-los-cinco-roles">14.2 Estado de cierre de los cinco roles</h3>
 <p>Los módulos y resultados de los cinco roles están integrados para el alcance
 de estudio sintético y contraste público parcial. El informe, la comparación
 real y la presentación describen ese alcance, sin afirmar validación de una
-cadena empresarial. La revisión automatizada comprende 141 pruebas, controles
+cadena empresarial. La revisión automatizada comprende 155 pruebas, controles
 de datos y reproducción desde la fuente M5. La revisión y defensa por el equipo
 son responsabilidad de sus integrantes y no se certifican automáticamente.</p>
 <p>Los datos institucionales y de integrantes están incorporados en la portada,
@@ -1733,6 +1959,10 @@ el informe y la presentación general con la fecha de entrega indicada por el eq
 <td><a href="../../results/experimentos/semillas_1001_1030/README.md"><code>results/experimentos/</code></a></td>
 </tr>
 <tr>
+<td>Condiciones en que convienen los traspasos</td>
+<td><a href="../../results/reserva/por_entrega/resumen_niveles.csv"><code>results/reserva/</code></a></td>
+</tr>
+<tr>
 <td>Ventas M5 y receta</td>
 <td><a href="../../results/validacion/m5/README.md"><code>results/validacion/m5/</code></a></td>
 </tr>
@@ -1750,4 +1980,35 @@ el informe y la presentación general con la fecha de entrega indicada por el eq
 </tr>
 </tbody>
 </table>
+<h3 id="144-uso-de-inteligencia-artificial">14.4 Uso de inteligencia artificial</h3>
+<p>Conforme a las instrucciones del curso, se declara el uso de herramientas de
+inteligencia artificial. El código y los materiales generados con estas
+herramientas no se atribuyen como autoría propia de los integrantes.</p>
+<table>
+<thead>
+<tr>
+<th>Uso</th>
+<th>Alcance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Generación e implementación de código</td>
+<td>Código del proyecto: motor de simulación, modelo de costos y traspasos, algoritmo genético, experimentos, estadística, contraste M5 y gráficas; incluye la demostración rápida (<a href="../../experiments/demo.py"><code>experiments/demo.py</code></a>) y el análisis de condiciones (<a href="../../experiments/reserva.py"><code>experiments/reserva.py</code></a>, <a href="../../src/viz/reserva.py"><code>src/viz/reserva.py</code></a>) con sus pruebas</td>
+</tr>
+<tr>
+<td>Presentación</td>
+<td>Diseño y contenido de las diapositivas, figuras de la presentación y guion de exposición</td>
+</tr>
+<tr>
+<td>Redacción del análisis de condiciones</td>
+<td>Borrador de los apartados 7.4, 10.9 y 10.10, de la conclusión 4, de las limitaciones asociadas y de la Figura 8, elaborado con Claude (Anthropic) mediante Claude Code</td>
+</tr>
+</tbody>
+</table>
+<p>La propuesta de estudiar cadenas con menos inventario de reserva provino del
+equipo. Las cifras reportadas provienen de los resultados guardados en el
+repositorio y pueden regenerarse con los comandos de 6.5; las 155 pruebas
+automatizadas verifican el comportamiento del código. La revisión,
+interpretación y defensa de los resultados corresponden a los integrantes.</p>
 </main></body></html>

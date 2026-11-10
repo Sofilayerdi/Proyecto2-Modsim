@@ -126,7 +126,7 @@ def generar():
         apartados = ["Problema", "Objetivos", "Fuentes", "Técnica investigada", "Modelo", "Implementación",
                      "Diseño experimental", "Validación", "Comparación real", "Resultados", "Limitaciones",
                      "Conclusiones", "Referencias", "Contribuciones"]
-        if datos["diapositivas"] != 24 or datos["segundos"] != 900 or set(datos["apartados"]) != set(apartados):
+        if datos["diapositivas"] != 29 or datos["segundos"] != 900 or set(datos["apartados"]) != set(apartados):
             raise RuntimeError(f"Estructura de presentación inesperada: {datos}")
         if pagina.locator("img").evaluate_all("xs=>xs.some(x=>!x.complete||!x.naturalWidth)"):
             raise RuntimeError("La presentación tiene imágenes rotas")

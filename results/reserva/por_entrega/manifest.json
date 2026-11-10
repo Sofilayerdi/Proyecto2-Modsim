@@ -1,0 +1,23 @@
+{
+  "estado": "completado",
+  "inicio_utc": "2026-11-10T20:48:25.962655+00:00",
+  "tipo": "analisis_exploratorio_posterior",
+  "factor": "entrega",
+  "niveles": [
+    2,
+    3,
+    5,
+    7
+  ],
+  "bodega_fija": {
+    "s_dias": 10,
+    "S_dias": 30
+  },
+  "config_sha256": "bfa7c61928d493b9d091eaae9728b645a2b4cd04245bffdca442490908ab1fb3",
+  "git_commit_base": "9a80e0e766079b9584eda7a6d90ad462594abc6e",
+  "git_con_cambios": true,
+  "python": "3.12.16",
+  "trabajadores": 12,
+  "duracion_segundos": 85.91319637501147,
+  "fin_utc": "2026-11-10T20:49:51.901827+00:00"
+}

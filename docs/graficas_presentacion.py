@@ -137,4 +137,10 @@ def generar_figuras(raiz):
     ax.grid(axis="y", alpha=.18)
     ax.set_axisbelow(True)
     guardar(fig, "mae_m5_presentacion")
+
+    # Análisis adicional: ahorro de los traspasos por reserva y por tiempo de entrega.
+    import sys
+    sys.path.insert(0, str(raiz))
+    from src.viz.reserva import graficar_factores
+    graficar_factores(raiz / "results/reserva", destino / "condiciones_presentacion.svg", figsize=(13.5, 4.3))
     return sorted(destino.glob("*_presentacion.svg"))
