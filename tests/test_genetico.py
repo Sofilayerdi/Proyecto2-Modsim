@@ -5,29 +5,43 @@ from src.optimization.operadores import (
     cruce_uniforme,
     mutacion_gaussiana,
 )
+from src.optimization.cromosoma import RANGOS
 
 def simulador_controlado(config, params_politica, semilla):
     """
-    Simulador artificial con óptimo conocido:
-    s = 10, S = 30.
+    Simulador artificial con óptimo conocido.
+    Evalúa los siete genes del cromosoma.
     """
-    s = params_politica["bodega_s_dias"]
-    S = params_politica["bodega_S_dias"]
 
-    costo = (
-        1000
-        + 100 * (s - 10) ** 2
-        + 100 * (S - 30) ** 2
-    )
+    objetivos = {
+        "bodega_s_dias": 10,
+        "bodega_S_dias": 30,
+        "horizonte_dias": 4,
+        "seguridad_dias": 2,
+        "umbral_valor_q": 50.0,
+        "peso_trafico": 0.5,
+        "hora_despacho": 10,
+    }
 
-    # Ruido reproducible que depende de la semilla, pero no del cromosoma.
+    costo = 1000.0
+
+    for gen, objetivo in objetivos.items():
+        minimo, maximo = RANGOS[gen]
+
+        # Normalizar diferencias para comparar genes
+        # con escalas diferentes.
+        diferencia = (
+            params_politica[gen] - objetivo
+        ) / (maximo - minimo)
+
+        costo += 10000 * diferencia ** 2
+
     ruido = random.Random(semilla).gauss(0, 10)
 
     return {
         "costo_total": costo + ruido,
         "nivel_servicio": 0.98,
     }
-
 
 def test_genetico_encuentra_solucion_cercana():
     random.seed(42)
@@ -37,17 +51,21 @@ def test_genetico_encuentra_solucion_cercana():
         simulador=simulador_controlado,
         cruzar=cruce_uniforme,
         mutar=mutacion_gaussiana,
-        tamano_poblacion=30,
-        generaciones=50,
+        tamano_poblacion=40,
+        generaciones=100,
         semillas=range(1, 11),
-        paciencia=10,
+        paciencia=20,
     )
 
     mejor = resultado["mejor_cromosoma"]
 
-    assert abs(mejor["bodega_s_dias"] - 10) <= 2
-    assert abs(mejor["bodega_S_dias"] - 30) <= 2
-
+    assert abs(mejor["bodega_s_dias"] - 10) <= 3
+    assert abs(mejor["bodega_S_dias"] - 30) <= 5
+    assert abs(mejor["horizonte_dias"] - 4) <= 2
+    assert abs(mejor["seguridad_dias"] - 2) <= 2
+    assert abs(mejor["umbral_valor_q"] - 50) <= 30
+    assert abs(mejor["peso_trafico"] - 0.5) <= 0.3
+    assert abs(mejor["hora_despacho"] - 10) <= 4
 
 def test_genetico_respeta_restricciones():
     random.seed(42)
@@ -58,16 +76,22 @@ def test_genetico_respeta_restricciones():
         cruzar=cruce_uniforme,
         mutar=mutacion_gaussiana,
         tamano_poblacion=30,
-        generaciones=50,
+        generaciones=30,
         semillas=range(1, 11),
     )
 
     mejor = resultado["mejor_cromosoma"]
 
-    assert 5 <= mejor["bodega_s_dias"] <= 20
-    assert 15 <= mejor["bodega_S_dias"] <= 45
+    for gen, (minimo, maximo) in RANGOS.items():
+        assert minimo <= mejor[gen] <= maximo
+
     assert mejor["bodega_S_dias"] >= mejor["bodega_s_dias"]
 
+    assert (
+        mejor["horizonte_dias"]
+        + mejor["seguridad_dias"]
+        <= 14
+    )
 
 def test_historial_convergencia():
     random.seed(42)

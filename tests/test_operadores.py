@@ -1,5 +1,15 @@
 import pytest
-from src.optimization.operadores import seleccion_torneo
+from src.optimization.operadores import (
+    seleccion_torneo,
+    cruce_uniforme,
+    mutacion_gaussiana,
+)
+from unittest.mock import patch
+from src.optimization.cromosoma import (
+    crear_cromosoma,
+    reparar_cromosoma,
+    RANGOS,
+)
 
 def test_torneo_selecciona_menor_costo():
     poblacion = [
@@ -54,3 +64,75 @@ def test_torneo_k_cero():
 
     with pytest.raises(ValueError):
         seleccion_torneo(poblacion, fitness, k=0)
+
+from src.optimization.cromosoma import (
+    crear_cromosoma,
+    RANGOS,
+    reparar_cromosoma,
+)
+
+
+def test_mutacion_siete_genes():
+    cromosoma = crear_cromosoma()
+
+    mutado = mutacion_gaussiana(cromosoma)
+
+    assert set(mutado) == set(RANGOS)
+
+    for gen, (minimo, maximo) in RANGOS.items():
+        assert minimo <= mutado[gen] <= maximo
+
+    assert mutado["bodega_S_dias"] >= mutado["bodega_s_dias"]
+
+    assert (
+        mutado["horizonte_dias"]
+        + mutado["seguridad_dias"]
+        <= 14
+    )
+
+
+def test_mutacion_gen_decimal():
+    cromosoma = {
+        "bodega_s_dias": 10,
+        "bodega_S_dias": 30,
+        "horizonte_dias": 4,
+        "seguridad_dias": 2,
+        "umbral_valor_q": 50.0,
+        "peso_trafico": 0.5,
+        "hora_despacho": 10,
+    }
+
+    with patch(
+        "src.optimization.operadores.random.choice",
+        return_value="peso_trafico",
+    ), patch(
+        "src.optimization.operadores.random.gauss",
+        return_value=0.15,
+    ):
+        mutado = mutacion_gaussiana(cromosoma)
+
+    assert mutado["peso_trafico"] == pytest.approx(0.65)
+    assert isinstance(mutado["peso_trafico"], float)
+
+
+def test_mutacion_sigma_invalido():
+    cromosoma = crear_cromosoma()
+
+    with pytest.raises(ValueError):
+        mutacion_gaussiana(cromosoma, sigma=-0.1)
+
+
+def test_cruce_siete_genes():
+    padre1 = crear_cromosoma()
+    padre2 = crear_cromosoma()
+
+    hijo1, hijo2 = cruce_uniforme(padre1, padre2)
+
+    for hijo in (hijo1, hijo2):
+        assert set(hijo) == set(RANGOS)
+        assert hijo["bodega_S_dias"] >= hijo["bodega_s_dias"]
+        assert (
+            hijo["horizonte_dias"]
+            + hijo["seguridad_dias"]
+            <= 14
+        )

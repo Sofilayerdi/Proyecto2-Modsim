@@ -69,29 +69,29 @@ def cruce_uniforme(padre1, padre2):
     return hijo1, hijo2
 
 
-def mutacion_gaussiana(cromosoma, sigma=2.0):
+def mutacion_gaussiana(cromosoma, sigma=0.10):
     """
-    Aplica una mutación gaussiana a un gen
-    seleccionado aleatoriamente.
+    Muta un gen aleatorio mediante una perturbación
+    gaussiana proporcional al rango del gen.
 
-    sigma controla la magnitud de la mutación.
+    sigma representa una fracción del rango total.
     """
 
-    if sigma < 0:
-        raise ValueError(
-            "Sigma no puede ser negativo"
-        )
+    if not 0 <= sigma:
+        raise ValueError("Sigma no puede ser negativo")
 
-    # Crear copia para no modificar el original
     mutado = cromosoma.copy()
 
     # Seleccionar un gen aleatoriamente
     gen = random.choice(list(RANGOS.keys()))
 
-    # Generar perturbación gaussiana
-    perturbacion = round(
-        random.gauss(0, sigma)
-    )
+    minimo, maximo = RANGOS[gen]
+
+    # Calcular desviación según el rango del gen
+    amplitud = maximo - minimo
+    desviacion = sigma * amplitud
+
+    perturbacion = random.gauss(0, desviacion)
 
     # Modificar el gen seleccionado
     mutado[gen] += perturbacion
