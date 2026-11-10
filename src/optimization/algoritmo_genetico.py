@@ -19,6 +19,7 @@ def algoritmo_genetico(
     prob_mutacion=0.10,
     elitismo=2,
     paciencia=10,
+    cantidad_candidatos=5
 ):
     """
     Optimiza los parámetros de la política mediante
@@ -43,6 +44,11 @@ def algoritmo_genetico(
     if not 0 <= elitismo < tamano_poblacion:
         raise ValueError("El elitismo debe ser menor que la población")
 
+    if not isinstance(cantidad_candidatos, int) or cantidad_candidatos < 1:
+        raise ValueError(
+            "La cantidad de candidatos debe ser un entero positivo"
+        )
+
     if paciencia < 1:
         raise ValueError("La paciencia debe ser positiva")
 
@@ -57,6 +63,7 @@ def algoritmo_genetico(
     mejor_fitness = float("inf")
     sin_mejora = 0
     historial = []
+    candidatos = {}
 
     for generacion in range(generaciones):
 
@@ -69,6 +76,26 @@ def algoritmo_genetico(
             )
             for cromosoma in poblacion
         ]
+
+        for cromosoma, costo in zip(poblacion, fitness):
+            clave = tuple(sorted(cromosoma.items()))
+
+            if (
+                clave not in candidatos
+                or costo < candidatos[clave]["fitness_entrenamiento"]
+            ):
+                candidatos[clave] = {
+                    "cromosoma": cromosoma.copy(),
+                    "fitness_entrenamiento": costo,
+                }
+
+        # Mantener los mejores candidatos distintos
+        mejores = sorted(
+            candidatos.items(),
+            key=lambda item: item[1]["fitness_entrenamiento"]
+        )[:cantidad_candidatos]
+
+        candidatos = dict(mejores)
 
         indices_ordenados = sorted(
             range(len(poblacion)),
@@ -125,4 +152,8 @@ def algoritmo_genetico(
         "mejor_fitness": mejor_fitness,
         "historial": historial,
         "generaciones_ejecutadas": len(historial),
+        "candidatos": [
+            item["cromosoma"].copy()
+            for item in candidatos.values()
+        ],
     }

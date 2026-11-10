@@ -1,5 +1,5 @@
 import random
-
+import pytest
 from src.optimization.algoritmo_genetico import algoritmo_genetico
 from src.optimization.operadores import (
     cruce_uniforme,
@@ -117,3 +117,55 @@ def test_historial_convergencia():
     )
 
     assert resultado["generaciones_ejecutadas"] == len(historial)
+
+
+def test_genetico_guarda_candidatos():
+    random.seed(42)
+
+    resultado = algoritmo_genetico(
+        config={},
+        simulador=simulador_controlado,
+        cruzar=cruce_uniforme,
+        mutar=mutacion_gaussiana,
+        tamano_poblacion=30,
+        generaciones=20,
+        semillas=range(1, 11),
+        cantidad_candidatos=5,
+    )
+
+    candidatos = resultado["candidatos"]
+
+    assert 1 <= len(candidatos) <= 5
+
+    # No debe haber cromosomas duplicados
+    claves = [
+        tuple(sorted(c.items()))
+        for c in candidatos
+    ]
+
+    assert len(claves) == len(set(claves))
+
+    # El mejor de entrenamiento debe estar incluido
+    assert resultado["mejor_cromosoma"] in candidatos
+
+    # Todos deben respetar las restricciones
+    for candidato in candidatos:
+        for gen, (minimo, maximo) in RANGOS.items():
+            assert minimo <= candidato[gen] <= maximo
+
+        assert (
+            candidato["bodega_S_dias"]
+            >= candidato["bodega_s_dias"]
+        )
+
+
+def test_genetico_cantidad_candidatos_invalida():
+
+    with pytest.raises(ValueError):
+        algoritmo_genetico(
+            config={},
+            simulador=simulador_controlado,
+            cruzar=cruce_uniforme,
+            mutar=mutacion_gaussiana,
+            cantidad_candidatos=0,
+        )
