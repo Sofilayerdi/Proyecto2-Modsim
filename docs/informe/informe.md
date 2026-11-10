@@ -8,9 +8,9 @@
 **Docente y fecha de entrega:** pendiente de completar por el equipo.
 
 **Estado del documento:** borrador integrado. Contiene el problema, la
-investigación, la formulación, la implementación y la evidencia de optimización
-disponible. Las comparaciones experimentales y la validación real están
-identificadas como pendientes. Este archivo es el documento maestro del informe.
+investigación, la formulación, la implementación, la optimización y el estudio
+experimental sintético con comparación, atribución y sensibilidad. La validación
+real sigue pendiente. Este archivo es el documento maestro del informe.
 
 ## Resumen
 
@@ -28,10 +28,16 @@ La ejecución disponible utiliza datos sintéticos de 10 tiendas, una bodega,
 alcanzó un costo promedio de Q23,074.24 y un nivel de servicio promedio de
 98.56% en 30 réplicas con semillas independientes de las usadas para seleccionarlo.
 
-Estos resultados verifican la ejecución del método en el sistema sintético.
-La reducción frente a la política base, la sensibilidad y la correspondencia
-con una cadena real todavía deben establecerse mediante los experimentos y
-la validación descritos en este documento.
+Un estudio posterior, sin reentrenamiento, comparó ocho condiciones con 30
+réplicas cada una. Frente a la base, la política mejorada redujo el costo
+promedio en 25.68%, pero aumentó las unidades perdidas en 6.03% y disminuyó
+el servicio en 0.0816 puntos porcentuales. La prueba pareada confirmó la
+reducción de costo; los controles mostraron que el ahorro proviene principalmente
+del ajuste de bodega, sin evidencia estadística suficiente de ahorro incremental
+por los traspasos. Con demanda +20% y existencias de referencia constantes,
+el costo aumentó 19.54% respecto a la mejorada nominal. Estos hallazgos
+corresponden al sistema sintético; la validación frente a una cadena real
+todavía requiere datos y análisis adicionales.
 
 **Palabras clave:** inventario, traspasos laterales, simulación, algoritmo
 genético, restricciones, flujo de costo mínimo.
@@ -44,8 +50,8 @@ genético, restricciones, flujo de costo mínimo.
 4. Implementación de la mejora.
 5. Diseño experimental y verificación.
 6. Comparación con la vida real.
-7. Resultados disponibles y análisis pendiente.
-8. Conclusiones provisionales y limitaciones.
+7. Resultados experimentales.
+8. Conclusiones y limitaciones.
 9. Referencias.
 10. Anexo de reproducibilidad y responsabilidades.
 
@@ -97,8 +103,8 @@ total y el nivel de servicio de una cadena con bodega central.
 6. Contrastar el modelo base con datos reales antes de interpretar la mejora
    como una recomendación operativa.
 
-Los objetivos 5 y 6 requieren trabajo experimental y datos que todavía no
-están completos en el repositorio.
+El objetivo 5 se evaluó en el contrato sintético. El objetivo 6 permanece
+pendiente de la referencia real y su validación.
 
 ### 1.5 Alcance
 
@@ -314,6 +320,12 @@ alcanza, reparte proporcionalmente y redondea hacia abajo. Para la bodega se
 usa la demanda media diaria agregada de la cadena y sus parámetros en días.
 La regla se mantiene; el genético puede cambiar s y S de bodega.
 
+Para aislar el aumento de demanda en la sensibilidad se incorporó una opción
+de referencia de inventario: la demanda real y la media previa del pronóstico
+pueden multiplicarse por 1.2 sin escalar las existencias iniciales ni los
+niveles (s, S). Sin esta opción se conserva el comportamiento original de la
+optimización, donde esos niveles siguen la escala de demanda configurada.
+
 ### 3.5 Distancias, tráfico y tránsito
 
 La distancia entre coordenadas se estima con Haversine, usando un radio
@@ -507,7 +519,7 @@ del algoritmo: no guarda el estado completo de su generador.
 
 ### 5.1 Verificación ya realizada
 
-La última verificación registrada del proyecto obtuvo **122 pruebas aprobadas**.
+La última verificación registrada del proyecto obtuvo **131 pruebas aprobadas**.
 La evidencia disponible cubre:
 
 - Conservación en tiendas, bodega y sistema, incluyendo tránsito final.
@@ -518,59 +530,110 @@ La evidencia disponible cubre:
 - Selección de carga comparada con enumeración exhaustiva en un caso pequeño.
 - Efecto real de parámetros por tipo, reparación y operadores del genético.
 - Igualdad entre ejecución secuencial y paralela y aislamiento del RNG global.
+- Emparejamiento por semilla, intervalos con desviación muestral y ajuste de Holm.
+- Manejo de diferencias nulas y rechazo de semillas duplicadas o no emparejadas.
+- Construcción de escenarios sin modificar el ganador y ejecución integral de
+  un diseño pequeño con archivos estadísticos y gráficas.
 
-Se verificaron las huellas del código y CSV de la corrida guardada. Una
-reejecución de sus 30 semillas finales reprodujo exactamente las métricas
-individuales y los agregados. Esto es verificación interna y reproducibilidad;
-no demuestra correspondencia del modelo con una cadena real.
+La corrida comparativa verificó conservación y existencias no negativas en
+sus 240 réplicas, igualdad de demanda nominal por semilla, constancia del
+inventario inicial y consistencia de costos y servicio. Su condición mejorada
+coincidió con las 30 réplicas finales guardadas de la optimización. Las
+huellas de entradas y código se registran en el manifiesto experimental.
+Esto es verificación interna y reproducibilidad; no demuestra correspondencia
+del modelo con una cadena real.
 
-### 5.2 Comparación de escenarios prevista
+### 5.2 Diseño comparativo ejecutado
 
-**Pendiente de ejecución y análisis por la persona 4.**
+El diseño se fijó en [`experiments/diseno.yaml`](../../experiments/diseno.yaml)
+antes de observar las comparaciones. Se mantuvieron 10 tiendas, 3 productos,
+120 días y el ganador previamente seleccionado, sin volver a entrenar ni
+ajustar sus parámetros con los resultados del experimento.
 
-| Condición | Política | Propósito |
+| Condición | Política y cambio | Propósito |
 | --- | --- | --- |
-| Base | Sin traspasos, reposición de referencia | Punto de comparación |
-| Regla simple | Cobertura y reserva fijas | Separar el efecto de introducir movimientos del de optimizarlos |
-| Mejorada | Parámetros del ganador | Evaluar el desempeño de la política ajustada |
-| Sensibilidad | Mejorada con condiciones modificadas | Examinar robustez |
+| Base | Sin traspasos, bodega s = 10 y S = 30 días | Referencia |
+| Regla simple | H = 3, SS = 2, bodega original | Evaluar movimientos sin optimización económica |
+| Mejorada | Ganador completo, bodega s = 6 y S = 15 días | Evaluar la política ajustada |
+| Bodega ajustada | s = 6 y S = 15, sin traspasos | Separar el efecto de la reposición |
+| Traspasos con bodega original | Genes de traspasos ganadores, s = 10 y S = 30 | Evaluar traspasos manteniendo bodega original |
+| Demanda +20% | Mejorada con demanda y media previa ×1.2 | Estrés con existencias y niveles de reposición constantes |
+| Tráfico pesado | Mejorada con factor de tráfico 2 en todas las franjas | Sensibilidad de transporte |
+| Un vehículo | Mejorada con un viaje diario en lugar de dos | Sensibilidad de capacidad |
 
-Cada condición debe tener 30 réplicas con semillas registradas. Para las
-condiciones con igual demanda se usarán 1001–1030, preservando el emparejamiento
-por semilla. El CSV comparativo tendrá una fila por condición y semilla y
-una columna por métrica, usando servicio como fracción antes de presentarlo.
+Se ejecutaron **30 réplicas por condición, 240 en total**, usando semillas
+1001–1030. Cada réplica completa es la unidad estadística: los 120 días no se
+tratan como 120 observaciones independientes. Para las siete condiciones con
+igual distribución de demanda se comprobó que la trayectoria de demanda fuera
+exactamente la misma por semilla mediante SHA-256. El cambio de distribución
+en demanda +20% conserva el identificador de semilla, pero no una trayectoria
+idéntica ni necesariamente un aumento punto a punto.
 
-La política ajustada cambia también s y S de bodega. Para atribuir una mejora
-específicamente a los traspasos se necesita una comparación adicional que
-mantenga esos parámetros constantes, o un análisis que separe ambos aportes.
+La tabla [`resultados.csv`](../../results/experimentos/semillas_1001_1030/resultados.csv)
+contiene una fila por condición y semilla y las ocho métricas del motor.
+El servicio se guarda como fracción y se transforma a porcentaje al presentar.
+Los controles de bodega permiten distinguir el efecto conjunto de la política
+del efecto incremental de introducir los traspasos con reposición constante.
 
-### 5.3 Sensibilidad prevista
+### 5.3 Condiciones de sensibilidad
 
-Se propone estudiar demanda +20%, tráfico pesado y menor disponibilidad de
-vehículos, identificando qué parámetro cambia en cada condición. En el código
-actual, `factor_demanda=1.2` también escala las medias usadas para inventario
-inicial y umbrales de reposición; no representa un aumento aislado de demanda
-con esas cantidades fijas. El diseño definitivo debe declarar si conserva
-ese comportamiento o controla dichos factores por separado.
+En demanda +20% se configuraron `factor_demanda=1.2` y
+`factor_referencia_inventario=1.0`. Aumentaron demanda real y media previa del
+pronóstico, pero se mantuvieron inventarios iniciales y niveles (s, S) en
+unidades. Se conserva, por tanto, la regla de reposición de referencia y la
+capacidad de transporte; no se aumentan existencias automáticamente para
+compensar el cambio. El indicador sigue estimando reposiciones con la media
+del pronóstico, una aproximación que puede tener más error bajo este estrés.
 
-### 5.4 Tratamiento estadístico previsto
+El tráfico pesado usa factor 2 en todas las horas, incluida la salida ganadora
+a las 23. Se mantienen distancia, costo fijo, costo por km y vehículos. Cambian
+el tiempo de llegada y la penalización de decisión por tráfico, no una tarifa
+de transporte artificialmente mayor. En la tercera sensibilidad se reduce de
+dos a un vehículo, dejando todo lo demás constante. No se reoptimiza ninguna
+condición de sensibilidad.
 
-Se reportarán promedio, desviación estándar e intervalo de confianza del 95%
-por condición. Para costos medios, un intervalo basado en t puede expresarse:
+### 5.4 Estadística e hipótesis
+
+Se calcularon media, desviación estándar muestral (denominador n − 1) e IC
+individual del 95% mediante t con 29 grados de libertad:
 
 $$
 \bar C\pm t_{0.975,29}\frac{s_C}{\sqrt{30}}.
 $$
 
-El método debe identificarse y sus supuestos revisarse. La comparación base
-frente a mejorada debe analizar diferencias por semilla, mediante t pareada
-o Wilcoxon según las características de esas diferencias. No corresponde
-tratarlas como dos muestras independientes.
+Para las comparaciones se definió antes de ejecutar:
 
-Se planifican gráficas de inventario temporal, costo y servicio por escenario
-con intervalos, sensibilidad y convergencia. Solo la convergencia está
-disponible actualmente. Los porcentajes de reducción se calcularán respecto
-a la base; el cambio de nivel de servicio se expresará en puntos porcentuales.
+$$
+d_r=X_{\text{alternativa},r}-X_{\text{referencia},r},\qquad
+H_0:E[d_r]=0,\qquad
+t=\frac{\bar d}{s_d/\sqrt{30}}.
+$$
+
+Se aplicó una t pareada bilateral, equivalente a una t de una muestra sobre
+las diferencias (SciPy, s. f.). Valores negativos de diferencia de costo
+favorecen a la alternativa; valores positivos de servicio favorecen a la
+alternativa. Las réplicas son independientes entre semillas y están emparejadas
+entre condiciones. La inferencia t supone normalidad aproximada de la media
+de las diferencias; con n = 30 es una aproximación que no elimina posibles
+asimetrías o valores extremos.
+
+Se calcularon nueve comparaciones predefinidas para costo y servicio: **18
+pruebas t**. Se reportan p sin ajustar y p ajustado por Holm (1979), con umbral
+0.05 sobre esa familia. Los IC individuales del 95% no son intervalos simultáneos
+ajustados; por ello un IC individual que excluye cero puede coexistir con una
+decisión no significativa después de Holm.
+
+También se calculó Wilcoxon bilateral como comprobación no paramétrica de
+sensibilidad, sin seleccionar entre pruebas según cuál resultara favorable.
+Sus p se conservan sin ajuste y se interpretan como comprobación exploratoria,
+con la salvedad de que Wilcoxon se refiere a localización de diferencias bajo
+sus supuestos, no exactamente a la misma hipótesis de media de la t.
+
+Se generaron figuras de inventario, costo/servicio con IC, desglose de costos y
+sensibilidad. Las trayectorias corresponden a la semilla 1001 y al producto P03
+en la primera tienda de cada clase, elegidos antes de examinar resultados.
+Los porcentajes de cambio se calculan como cambio de medias dividido por la
+media de referencia; los cambios de servicio se presentan en puntos porcentuales.
 
 ## 6. Comparación con la vida real
 
@@ -598,7 +661,7 @@ La tabla final de referencia real, base y mejorada deberá incluir diferencias
 absolutas y porcentuales. Actualmente no hay valores reales que permitan
 completarla ni cuantificar la correspondencia del modelo.
 
-## 7. Resultados disponibles y análisis pendiente
+## 7. Resultados experimentales
 
 ### 7.1 Ejecución sintética de la optimización
 
@@ -671,34 +734,204 @@ Las métricas por semilla se conservan en
 La ejecución tomó aproximadamente 56.22 segundos con seis trabajadores en el
 entorno registrado; ese tiempo no es una garantía para otros equipos.
 
-### 7.4 Comparación pendiente
+### 7.4 Comparación de políticas
 
-| Condición | Costo medio | Servicio medio | IC del 95% | Estado |
-| --- | --- | --- | --- | --- |
-| Base | Pendiente | Pendiente | Pendiente | Falta comparación experimental |
-| Regla simple | Pendiente | Pendiente | Pendiente | Falta comparación experimental |
-| Mejorada | Q23,074.24 | 98.5556% | Pendiente | Hay evaluación individual; falta integrarla al estudio |
-| Sensibilidad | Pendiente | Pendiente | Pendiente | Falta ejecutar condiciones modificadas |
+Cada fila de las tablas siguientes resume 30 períodos simulados de 120 días,
+con las mismas semillas y demanda. No son costos diarios ni muestras de días.
 
-No se dispone todavía de una reducción porcentual respecto a la base, de
-una prueba pareada ni de una comparación real/base/mejorada. La pregunta de
-investigación no puede responderse cuantitativamente con la sola evaluación
-del ganador.
+| Condición | Costo medio (Q) | Desviación estándar (Q) | IC del 95% de la media (Q) | Cambio frente a base |
+| --- | ---: | ---: | --- | ---: |
+| Base | 31,047.76 | 2,973.41 | [29,937.47; 32,158.05] | — |
+| Regla simple | 32,661.15 | 3,132.63 | [31,491.41; 33,830.90] | +5.20% |
+| Mejorada | 23,074.24 | 3,090.61 | [21,920.19; 24,228.30] | −25.68% |
 
-## 8. Conclusiones provisionales y limitaciones
+| Condición | Servicio medio (%) | Desviación (puntos porcentuales) | IC del 95% de servicio (%) | Unidades perdidas | Viajes |
+| --- | ---: | ---: | --- | ---: | ---: |
+| Base | 98.6372 | 0.2876 | [98.5297; 98.7446] | 175.20 | 0.00 |
+| Regla simple | 98.7708 | 0.2698 | [98.6700; 98.8716] | 158.03 | 28.03 |
+| Mejorada | 98.5556 | 0.3199 | [98.4361; 98.6750] | 185.77 | 2.63 |
 
-### 8.1 Conclusiones sustentadas por la evidencia disponible
+![Costo y servicio por política](../../results/experimentos/semillas_1001_1030/graficas/comparacion_escenarios.png)
+
+**Figura 2. Comparación de políticas.** Las barras representan medias y los
+segmentos negros IC individuales del 95%. La mejorada reduce costo, pero su
+servicio es ligeramente menor. El eje de servicio comienza en 95%, por lo que
+la magnitud debe leerse en puntos porcentuales y con las tablas. El solapamiento
+de IC de medias no sustituye el análisis de las diferencias pareadas.
+
+La política mejorada ahorra Q7,973.51 por período frente a la base, equivalente
+a 25.68%, pero el servicio disminuye 0.0816 puntos porcentuales y las unidades
+perdidas aumentan 6.03%. Por tanto, **no se observa una mejora simultánea de
+costo y ventas perdidas**. La regla simple sí reduce unidades perdidas en
+9.80% y aumenta servicio, pero sus 28.03 viajes por período elevan el costo
+total en 5.20%: atender más demanda no compensa económicamente todos sus viajes.
+
+### 7.5 Diferencias pareadas e inferencia
+
+La diferencia es alternativa menos referencia. IC en Q; p corresponde a la
+t bilateral y p-Holm a la familia de 18 pruebas. La comparación principal es
+base frente a mejorada.
+
+| Referencia → alternativa | Diferencia de costo (Q) | IC del 95% de la diferencia (Q) | p sin ajustar | p-Holm |
+| --- | ---: | --- | ---: | ---: |
+| Base → mejorada | −7,973.51 | [−8,295.86; −7,651.17] | 7.68 × 10⁻³⁰ | 1.33 × 10⁻²⁸ |
+| Base → regla simple | +1,613.40 | [+1,323.36; +1,903.44] | 3.27 × 10⁻¹² | 4.91 × 10⁻¹¹ |
+| Regla simple → mejorada | −9,586.91 | [−10,005.79; −9,168.04] | 7.11 × 10⁻²⁹ | 1.14 × 10⁻²⁷ |
+| Base → bodega ajustada | −7,823.28 | [−8,139.13; −7,507.43] | 7.39 × 10⁻³⁰ | 1.33 × 10⁻²⁸ |
+| Bodega ajustada → mejorada | −150.24 | [−411.96; +111.49] | 0.2499 | 1.0000 |
+| Base → traspasos con bodega original | −44.71 | [−184.40; +94.99] | 0.5179 | 1.0000 |
+
+El ahorro principal es estadísticamente significativo, con IC del 95% de
+ahorro positivo de Q7,651.17 a Q8,295.86. Wilcoxon proporciona p = 1.86 × 10⁻⁹
+sin ajustar en esa comparación, consistente con la dirección del resultado.
+
+Para el servicio, mejorada menos base es −0.0816 puntos porcentuales, con IC
+individual [−0.1310; −0.0322], p = 0.0021 y p-Holm = 0.0190. Se detecta una
+disminución pequeña, aunque ambas políticas superan ampliamente 95% en estas
+réplicas. No corresponde describirla como una mejora de servicio.
+
+Todos los estadísticos, p de Wilcoxon y diferencias por semilla están en
+[`pruebas_pareadas.csv`](../../results/experimentos/semillas_1001_1030/pruebas_pareadas.csv)
+y [`diferencias_pareadas.csv`](../../results/experimentos/semillas_1001_1030/diferencias_pareadas.csv).
+La falta de significancia de un control no prueba que su efecto sea exactamente
+cero; indica que esta muestra no aporta evidencia suficiente bajo el diseño.
+
+### 7.6 Atribución del ahorro y composición de costos
+
+| Condición | Inventario (Q) | Traspasos (Q) | Ventas perdidas (Q) | Total (Q) |
+| --- | ---: | ---: | ---: | ---: |
+| Base | 20,808.99 | 0.00 | 10,238.77 | 31,047.76 |
+| Regla simple | 20,739.98 | 2,517.97 | 9,403.20 | 32,661.15 |
+| Mejorada | 12,255.13 | 209.34 | 10,609.77 | 23,074.24 |
+| Bodega ajustada, sin traspasos | 12,255.54 | 0.00 | 10,968.93 | 23,224.48 |
+| Traspasos con bodega original | 20,806.34 | 97.78 | 10,098.93 | 31,003.05 |
+
+![Composición de costos y controles](../../results/experimentos/semillas_1001_1030/graficas/desglose_costos.png)
+
+**Figura 3. Desglose de costos.** La caída del mantenimiento de inventario es
+el componente dominante. El costo de ventas perdidas de la mejorada es mayor
+que el de la base, mientras que la regla simple intercambia menores pérdidas
+por más costo de traslado. Las sumas pueden diferir en un centavo al redondear.
+
+La reducción de mantenimiento de la mejorada es Q8,553.86. A ella se oponen
+Q209.34 de traslado y Q371.00 adicionales de margen perdido, dando un ahorro
+neto de Q7,973.51. El genético encontró un intercambio económicamente favorable
+bajo el costo y objetivo de servicio definidos, no una solución que minimice
+todos los indicadores simultáneamente.
+
+La bodega ajustada sin traspasos ya ahorra Q7,823.28 frente a la base. En la
+descomposición secuencial base → bodega ajustada → mejorada, esa etapa explica
+98.12% del ahorro medio neto observado. Es una descomposición bajo esos
+controles, no un porcentaje causal universal independiente de interacciones.
+
+Manteniendo la bodega ajustada, agregar los traspasos reduce la media Q150.24
+(0.65%), pero su IC incluye cero y p-Holm = 1. Con bodega original, el ahorro
+medio es Q44.71 (0.14%), también no significativo. La mejora de servicio al
+agregar traspasos a la bodega ajustada es +0.0470 puntos porcentuales: p sin
+ajustar = 0.0093, pero p-Holm = 0.0742. No conserva significancia en la familia
+de pruebas predefinida. **La evidencia respalda el ahorro conjunto y el ajuste
+de bodega; no establece un ahorro incremental significativo atribuible solo
+a los traspasos del ganador.**
+
+### 7.7 Comportamiento del inventario
+
+![Inventario temporal de tres tiendas](../../results/experimentos/semillas_1001_1030/graficas/inventario_temporal.png)
+
+**Figura 4. Inventario al cierre de base y mejorada.** Se muestran P03 y las
+tiendas T01, T04 y T08, primeras de cada clase, en la semilla 1001 elegida a
+priori. Los descensos y saltos reflejan consumo y llegadas. Las trayectorias
+coinciden durante muchos días y se separan al cambiar abastecimiento y envíos;
+no se observa una mejora uniforme del inventario de cada tienda. Un valor cero
+al cierre no demuestra por sí solo ventas perdidas, pues puede haberse vendido
+exactamente el stock disponible.
+
+La figura ilustra una réplica, no una media ni evidencia estadística de todas
+las tiendas. Las series completas para ambos escenarios, 10 tiendas y 3
+productos, se guardan en
+[`series_inventario.csv`](../../results/experimentos/semillas_1001_1030/series_inventario.csv);
+la bodega se conserva en una tabla separada.
+
+### 7.8 Sensibilidad del ganador congelado
+
+Cada fila tiene 30 réplicas. Los cambios se expresan respecto a la mejorada
+nominal, sin reentrenamiento.
+
+| Condición | Costo medio (Q) | IC del 95% de costo (Q) | Cambio de costo | Servicio medio (%) | Cambio de servicio (puntos) |
+| --- | ---: | --- | ---: | ---: | ---: |
+| Mejorada nominal | 23,074.24 | [21,920.19; 24,228.30] | — | 98.5556 | — |
+| Demanda +20% | 27,583.78 | [26,460.54; 28,707.02] | +19.54% | 98.0022 | −0.5534 |
+| Tráfico pesado | 23,193.31 | [22,058.90; 24,327.71] | +0.52% | 98.5205 | −0.0351 |
+| Un vehículo | 23,072.75 | [21,929.41; 24,216.10] | −0.01% | 98.5509 | −0.0047 |
+
+![Sensibilidad de costo y servicio](../../results/experimentos/semillas_1001_1030/graficas/sensibilidad.png)
+
+**Figura 5. Sensibilidad.** Las barras e IC muestran mayor deterioro con el
+aumento de demanda. Las modificaciones de tráfico y vehículos tienen cambios
+medios pequeños en este sistema; esto no implica equivalencia operacional.
+
+| Cambio frente a nominal | Diferencia de costo (Q) | IC del 95% de la diferencia (Q) | p-Holm de costo | p-Holm de servicio |
+| --- | ---: | --- | ---: | ---: |
+| Demanda +20% | +4,509.54 | [+3,025.59; +5,993.49] | 8.84 × 10⁻⁶ | 4.52 × 10⁻⁷ |
+| Tráfico pesado | +119.06 | [−71.34; +309.47] | 1.0000 | 0.1551 |
+| Un vehículo | −1.49 | [−55.12; +52.14] | 1.0000 | 1.0000 |
+
+La demanda +20% produce un aumento significativo de costo y una disminución
+significativa de servicio. Las unidades perdidas aumentan de 185.77 a 307.17
+y los viajes de 2.63 a 10.47. El inventario inicial y los umbrales de reposición
+se mantuvieron constantes: no se compensó el estrés con más existencias.
+
+Con tráfico pesado se realizan 1.47 viajes en promedio y se pierde más margen,
+pero no se detecta cambio de costo ni servicio después de Holm. El indicador
+puede descartar viajes al aumentar la penalización por tráfico; la discretización
+diaria también limita la sensibilidad temporal de rutas cortas.
+
+Con un vehículo, el costo medio cambia solo −Q1.49 y no hay evidencia de cambio
+en servicio. El ganador usa pocos viajes a lo largo de 120 días, de modo que la
+capacidad diaria rara vez es restrictiva. Esto no permite concluir que reducir
+la flota sea recomendable: no se modelan costos de propiedad, otras tareas de
+los vehículos ni otras condiciones de demanda.
+
+Todas las réplicas del estudio mantuvieron servicio agregado sobre 95%; la
+menor observación fue 97.36% en demanda +20%. Es evidencia de estas condiciones
+sintéticas, no una garantía para una empresa real o por tienda/producto.
+
+### 7.9 Alcance de la respuesta a la pregunta de investigación
+
+En el sistema sintético, la política ajustada reduce el costo total en 25.68%
+respecto a la base, a costa de un incremento de 6.03% de unidades perdidas.
+La atribución controlada muestra que el ajuste de bodega domina el ahorro;
+no se demuestra ahorro significativo por los traspasos por sí solos. Por tanto,
+la hipótesis de reducir simultáneamente costo y ventas perdidas mediante
+traspasos optimizados **no queda respaldada por esta corrida**. Este resultado
+es informativo y no debe reemplazarse por una afirmación general de mejora.
+
+## 8. Conclusiones y limitaciones
+
+### 8.1 Conclusiones del estudio sintético
 
 1. Se implementó e integró una simulación de inventario con políticas de
    traspasos y un genético propio de 11 genes diferenciados por clase de tienda.
-2. La corrida al tamaño previsto se ejecutó y dejó un ganador, historial,
-   métricas por réplica y procedencia reproducible.
-3. El ganador alcanzó un servicio promedio de 98.56% en la evaluación sintética
-   final de 30 réplicas, con costo promedio de Q23,074.24 por 120 días.
-4. Las pruebas y la reejecución de las réplicas finales respaldan la consistencia
-   interna del código, no su validez como representación de una empresa real.
+2. Se ejecutaron la optimización y un estudio comparativo de 240 réplicas,
+   conservando semillas, datos, ganador, métricas, auditorías y gráficas.
+3. La mejorada redujo el costo promedio de Q31,047.76 a Q23,074.24 (25.68%),
+   con evidencia significativa en la comparación pareada ajustada por Holm.
+4. El ahorro no vino acompañado de menos faltantes: las unidades perdidas
+   aumentaron 6.03% y el servicio bajó 0.0816 puntos porcentuales, aunque
+   permaneció sobre el objetivo agregado de 95% en todas las réplicas.
+5. El ajuste de bodega explica la mayor parte del ahorro medio observado.
+   Los controles no aportan evidencia suficiente de ahorro incremental por
+   los traspasos del ganador con s y S constantes.
+6. La regla simple mejora servicio y reduce pérdidas, pero aumenta el costo.
+   La selección de política implica un intercambio entre objetivos, no una
+   mejora simultánea garantizada de todos ellos.
+7. La sensibilidad identifica demanda +20% como el cambio de mayor impacto
+   entre los estudiados. No se detectan cambios después de Holm para tráfico
+   o un vehículo, sin que esto demuestre equivalencia ni robustez universal.
+8. La verificación interna y el emparejamiento respaldan consistencia del
+   experimento; las recomendaciones para una empresa siguen condicionadas
+   a la calibración y validación real de la persona 5.
 
-### 8.2 Limitaciones y conclusiones todavía no establecidas
+### 8.2 Limitaciones y trabajo pendiente
 
 - El genético y la selección voraz de rutas no garantizan el óptimo global.
   Una sola semilla del genético no permite estimar estabilidad de la búsqueda.
@@ -710,11 +943,16 @@ del ganador.
   la logística omite retornos y rutas multitienda.
 - El 95% se controla mediante una penalización promedio, no como garantía por
   tienda, producto o réplica.
-- Ajustar reposición de bodega y traspasos simultáneamente exige separar ambos
-  efectos al interpretar mejoras.
-- Quedan pendientes los escenarios comparativos, intervalos, sensibilidad,
-  prueba pareada y validación real. Las conclusiones definitivas y recomendaciones
-  operativas se redactarán después de esos análisis.
+- Los controles separan ajustes de bodega y traspasos para este ganador, pero
+  no reoptimizan cada control ni identifican todos los efectos de interacción.
+- La inferencia t es aproximada y los IC son individuales. Holm controla la
+  familia predefinida de 18 pruebas; Wilcoxon se reporta como comprobación
+  exploratoria, sin una declaración independiente de significancia ajustada.
+- Se evalúan tres sensibilidades puntuales, no un barrido completo ni escenarios
+  extremos. La operación sintética tiene pocos viajes y servicio de base alto.
+- Quedan pendientes la validación real, las fuentes empresariales, la revisión
+  final del equipo y el formato de entrega. Las conclusiones aquí son válidas
+  como resultados del sistema sintético, no como una recomendación empresarial.
 
 ## 9. Referencias
 
@@ -727,6 +965,11 @@ del ganador.
    Simulation optimization: a review of algorithms and applications.
    *Annals of Operations Research, 240*, 351–380. Publicado en línea en 2015.
    https://doi.org/10.1007/s10479-015-2019-x
+4. Holm, S. (1979). A simple sequentially rejective multiple test procedure.
+   *Scandinavian Journal of Statistics, 6*(2), 65–70.
+   https://www.jstor.org/stable/4615733
+5. SciPy Community. (s. f.). *scipy.stats.ttest_1samp*. Documentación de SciPy.
+   https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_1samp.html
 
 **Pendiente bibliográfico:** incorporar la referencia empresarial o pública
 real y las fuentes que sustenten costos, márgenes, distancias y parámetros
@@ -743,6 +986,7 @@ Desde la raíz del repositorio, con Python 3.10 o superior y dependencias instal
 ```bash
 python -m pytest -q
 python -m experiments.optimizar --config config.yaml --salida results/optimizacion/nueva_ejecucion --trabajadores 6
+python -m experiments.comparar --config config.yaml --diseno experiments/diseno.yaml --salida results/experimentos/nueva_ejecucion --trabajadores 6
 ```
 
 La salida debe ser una carpeta vacía. Los CSV sintéticos ya están incluidos.
@@ -759,6 +1003,12 @@ garantizan igualdad entre versiones distintas de las dependencias.
 | Historial por generación | [`historial.csv`](../../results/optimizacion/semilla_20261109/historial.csv) |
 | Resultados completos | [`resultado.json`](../../results/optimizacion/semilla_20261109/resultado.json) |
 | Semillas y métricas de finalistas | [`reevaluacion.csv`](../../results/optimizacion/semilla_20261109/reevaluacion.csv) |
+| Diseño experimental | [`experiments/diseno.yaml`](../../experiments/diseno.yaml) |
+| Resultados comparativos | [`resultados.csv`](../../results/experimentos/semillas_1001_1030/resultados.csv) |
+| Medias, desviaciones e IC de las ocho métricas | [`resumen.csv`](../../results/experimentos/semillas_1001_1030/resumen.csv) |
+| Pruebas pareadas | [`pruebas_pareadas.csv`](../../results/experimentos/semillas_1001_1030/pruebas_pareadas.csv) |
+| Auditoría por réplica | [`auditoria.csv`](../../results/experimentos/semillas_1001_1030/auditoria.csv) |
+| Procedencia experimental | [`manifest.json`](../../results/experimentos/semillas_1001_1030/manifest.json) |
 
 ### 10.2 Distribución para completar y revisar el documento
 
@@ -767,10 +1017,10 @@ garantizan igualdad entre versiones distintas de las dependencias.
 | Persona 1 | Revisar problema, objetivos, dinámica, demanda, pronóstico y reposición |
 | Persona 2 | Revisar costos, transporte, indicador y traspasos; integrar formato y PDF final |
 | Persona 3 | Revisar técnica, genético, reproducibilidad y evidencia de optimización |
-| Persona 4 | Completar diseño ejecutado, estadística, comparación y sensibilidad |
+| Persona 4 | Diseño, comparación, estadística y sensibilidad ejecutados e integrados; revisar el análisis final |
 | Persona 5 | Completar referencia real, validación, fuentes y conclusiones definitivas |
 
 La distribución identifica responsabilidades del plan, no certifica autoría
 individual ni aprobación humana de este borrador. Los nombres, carnés y
 registro de contribuciones deben ser completados por el equipo. La revisión
-cruzada de la persona 4 sigue pendiente de su entrega experimental.
+humana cruzada del estudio y la validación real siguen pendientes del equipo.

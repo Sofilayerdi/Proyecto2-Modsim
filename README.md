@@ -13,6 +13,7 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 python -m pytest -q
 python -m experiments.optimizar --config config.yaml --salida results/optimizacion/nueva_ejecucion --trabajadores 6
+python -m experiments.comparar --config config.yaml --diseno experiments/diseno.yaml --salida results/experimentos/nueva_ejecucion --trabajadores 6
 ```
 
 La carpeta de salida debe estar vacía. Se puede usar `--trabajadores 1` para
@@ -48,29 +49,38 @@ data/synthetic/          CSV y procedencia sintéticos
 src/simulation/          carga, demanda, pronóstico y motor
 src/model/               transporte, costos e indicador y políticas de traspasos
 src/optimization/        genético, restricciones, evaluación y convergencia
+src/viz/                 inventario, comparación, desglose y sensibilidad
 experiments/optimizar.py ejecución reproducible de la optimización (persona 3)
+experiments/comparar.py  comparación pareada y estadística (persona 4)
+experiments/diseno.yaml  semillas, sensibilidades y comparaciones predefinidas
 results/optimizacion/    ganador, semillas, métricas por réplica e historial
+results/experimentos/    CSV comparativos, estadística, auditoría y gráficas
 tests/                  pruebas automáticas
 docs/informe/           informe técnico integrado del proyecto
-docs/revisiones/        revisión cruzada y guía de commits
 ```
 
-El ejecutor comparativo de escenarios, las demás gráficas y la validación real
-corresponden a las personas 4 y 5 y siguen pendientes. Los datos reales están
+La comparación sintética, estadística y sensibilidad están ejecutadas. La
+validación real de la persona 5 sigue pendiente. Los datos reales están
 excluidos de Git mediante `data/reference/`.
 
 ## Informe técnico
 
 El documento maestro es [docs/informe/informe.md](docs/informe/informe.md).
-Integra problema, investigación, modelo, costos, políticas, genético y evidencia
-disponible. Identifica las secciones experimentales y de validación todavía
-pendientes. Se edita en Markdown y puede exportarse a PDF al cerrar el informe.
+Integra problema, investigación, modelo, costos, políticas, genético y resultados
+experimentales sintéticos. Identifica la validación real pendiente. Se edita en
+Markdown y puede exportarse a PDF al cerrar el informe.
 
 ## Evidencia guardada
 
 [Corrida con semilla 20261109](results/optimizacion/semilla_20261109/README.md):
 10 tiendas, 3 productos, 120 días, 11 genes y 30 individuos. Terminó en 18
 generaciones por estancamiento. La evaluación final tiene 30 réplicas.
+
+[Estudio comparativo](results/experimentos/semillas_1001_1030/README.md):
+8 condiciones × 30 semillas = 240 réplicas, con controles para separar bodega
+y traspasos. La mejorada reduce costo 25.68% frente a base, pero aumenta
+unidades perdidas 6.03%; el ahorro se asocia principalmente a la bodega.
+Se incluyen IC del 95%, pruebas pareadas con ajuste de Holm y cuatro gráficas.
 
 El manifiesto incluye configuración, rangos, semillas, versiones y SHA-256
 de entradas y código. `git_commit_base` identifica el commit previo a estos
