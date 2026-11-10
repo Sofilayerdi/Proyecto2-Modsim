@@ -1,0 +1,40 @@
+{
+  "fuente_maestra": "docs/informe/informe.md",
+  "diapositivas": 24,
+  "segundos": 900,
+  "apartados": [
+    "Problema",
+    "Objetivos",
+    "Fuentes",
+    "Modelo",
+    "Implementación",
+    "Resultados",
+    "Técnica investigada",
+    "Diseño experimental",
+    "Validación",
+    "Comparación real",
+    "Limitaciones",
+    "Contribuciones",
+    "Conclusiones",
+    "Referencias"
+  ],
+  "archivos_sha256": {
+    "docs/informe/informe.md": "9dad6e9d93b5b825f2696e9891e12473e22cf9a3e0a04f247d41a3146eeb81b8",
+    "docs/informe/informe.html": "0f7ae4bf7e0c88c238b3594380876e76c5f2147f74126035e780cc86a502dad5",
+    "docs/informe/informe.pdf": "5d1fd52703364dda674f6fe53ce7174ece70e91d89ebbf8ea96d694f8f365da1",
+    "docs/presentacion/presentacion.html": "d8db72056877c0a33a1f8afa2e08ade439deab47949db31d87077836d0e19234",
+    "docs/presentacion/presentacion.pdf": "ca1575f5ca62f24c11449fe0ff01623a71e67b8e7d2d0fa5aaffc96be9fa9019",
+    "docs/generar_entregables.py": "4acb3c9ebf0b7d9ae0cf76e27c1efa29f0298b2d35ed2e66a5bc25e3dfb63a15",
+    "docs/graficas_presentacion.py": "f5a5aaa1d925e3a9e825521d91652834eb6c10356379e946900ca09f6c9656c8",
+    "docs/proyecto.json": "b2f994aa2df4c43efde466e95774bb9a874c2692a31fc083d69ee2c30ae4b5be",
+    "docs/figuras/atribucion_presentacion.svg": "125eb8d04318f1136b371ea4153d184da4d028419195caa2626046fe1a002c51",
+    "docs/figuras/comparacion_presentacion.svg": "385710e8a68aa9292e933cb13e0e4466d3023f8f23dce10cb974137c1c94fc07",
+    "docs/figuras/convergencia_presentacion.svg": "ddb84f790c3eaa979306069f7309501544c553982b222e3b3b9b1d85845bb84c",
+    "docs/figuras/inventario_presentacion.svg": "bebf01017f4bbcff123b5173e8f4a78cbb2b6e2aceef014ea25e7ce0dff83734",
+    "docs/figuras/mae_m5_presentacion.svg": "001c934338b79156af5e986e4245cc9b958f6b8e9eadf512584ea4138c7700d9",
+    "docs/figuras/sensibilidad_presentacion.svg": "fb57119fbcd817b80f7bb4bfd0899b202938c342a2d63b5384e280d6ec28169c",
+    "docs/figuras/ventas_m5_presentacion.svg": "f57dce6d4bade2cbb0b2d1a89ee1f442332204d062071bab5b0e7e1a8cd1f7fe"
+  },
+  "dependencias_documentales": "docs/requirements.txt",
+  "alcance": "Estudio sintético y contraste externo parcial M5; no validación operativa"
+}

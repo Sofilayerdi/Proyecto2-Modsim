@@ -1,0 +1,13 @@
+{
+  "universidad": "Universidad del Valle de Guatemala",
+  "facultad": "Facultad de Ingeniería",
+  "curso": "Modelación y Simulación",
+  "lugar_fecha": "Guatemala, 10 de noviembre de 2026",
+  "integrantes": [
+    {"nombre": "Javier Alejandro Chávez León", "carne": "23132"},
+    {"nombre": "Daniel Adolfo Sarmiento Peralta", "carne": "231105"},
+    {"nombre": "Sofía López Ayerdi", "carne": "231929"},
+    {"nombre": "Karen Ximena Toledo Juárez", "carne": "23692"},
+    {"nombre": "Luis Francisco Padilla Juárez", "carne": "23663"}
+  ]
+}

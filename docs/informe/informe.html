@@ -1,0 +1,1753 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informe · Traspasos de inventario</title><style>
+:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#e9eff1;
+color:#19313b;font:16px/1.62 Georgia,serif}main{max-width:1000px;margin:36px auto;
+padding:68px 76px;background:white;box-shadow:0 12px 60px #18333b14}
+.cover{min-height:620px;display:flex;flex-direction:column;justify-content:center;
+border-top:9px solid #187a7c;border-bottom:1px solid #c5d8dc;margin-bottom:36px}
+.cover h1{font:700 54px/1.12 Arial,sans-serif;letter-spacing:-2px;margin:30px 0}
+.cover .eyebrow{color:#187a7c;letter-spacing:2px;font:700 12px Arial,sans-serif}
+.cover p{max-width:650px;color:#526b75}.cover .tag{color:#975d16;font-weight:bold}
+.cover .institution{font:700 19px/1.5 Arial,sans-serif;color:#183b45;margin-top:22px}
+.cover .members{font:15px/1.7 Arial,sans-serif;color:#2d515c;padding-left:0;list-style:none}
+.cover .members li{margin:3px 0}.cover .date{font:14px/1.5 Arial,sans-serif;margin-top:22px}
+h2,h3{font-family:Arial,sans-serif;line-height:1.25;color:#16313b}
+h2{font-size:29px;border-top:3px solid #187a7c;padding-top:18px;margin-top:50px}
+h3{font-size:19px;margin-top:28px}p,li{orphans:3;widows:3}
+a{color:#146b78;text-decoration:none;overflow-wrap:anywhere}
+table{border-collapse:collapse;width:100%;table-layout:fixed;font:12px/1.4 Arial,sans-serif;
+margin:20px 0}th,td{padding:9px 7px;vertical-align:top;border-bottom:1px solid #d8e3e6;
+overflow-wrap:anywhere}th{background:#eaf5f4;color:#16474b;text-align:left}
+tr:nth-child(even) td{background:#f6f9fa}thead{display:table-header-group}tr{break-inside:avoid}
+img{display:block;max-width:100%;height:auto;margin:20px auto;break-inside:avoid}
+pre{padding:15px;background:#f0f5f6;white-space:pre-wrap;overflow-wrap:anywhere;
+font:12px/1.5 monospace;border-left:3px solid #187a7c}code{font-size:.87em}
+blockquote{margin:16px 0;padding:6px 20px;border-left:3px solid #c88d39;color:#526b75}
+.math-block{text-align:center;max-width:100%;font-size:.92em;margin:24px 0;break-inside:avoid}
+.toc{padding:20px;background:#eff7f7;display:grid;grid-template-columns:1fr 1fr;gap:8px;
+font:14px/1.5 Arial,sans-serif}.toc strong{grid-column:1/-1}
+@media print{@page{size:A4}body{background:white;font-size:10.5pt;line-height:1.5}
+main{padding:0;margin:0;max-width:none;box-shadow:none}.cover{min-height:220mm;break-after:page}
+.cover h1{font-size:40pt}.cover .eyebrow{font-size:10pt}
+h2{break-before:auto;font-size:20pt;margin-top:26px;padding-top:12px;break-after:avoid}
+h2:nth-of-type(5),h2:nth-of-type(7),h2:nth-of-type(10),h2:nth-of-type(13){break-before:page;margin-top:0}
+h3{font-size:13pt;break-after:avoid}table{font-size:8.3pt}th,td{padding:6px 5px}
+pre{font-size:8pt}img{max-height:205mm;object-fit:contain}.toc{font-size:10pt}
+a{color:#185a66}h2,h3{break-inside:avoid}.math-block{font-size:.9em}}
+</style></head><body><main><header class="cover"><span class="eyebrow">PROYECTO 2 · INFORME TÉCNICO</span>
+<p class="institution">Universidad del Valle de Guatemala<br>Facultad de Ingeniería</p>
+<p>Modelación y Simulación</p>
+<h1>Traspasos de inventario<br>entre tiendas</h1>
+<ul class="members"><li>Javier Alejandro Chávez León — <strong>23132</strong></li><li>Daniel Adolfo Sarmiento Peralta — <strong>231105</strong></li><li>Sofía López Ayerdi — <strong>231929</strong></li><li>Karen Ximena Toledo Juárez — <strong>23692</strong></li><li>Luis Francisco Padilla Juárez — <strong>23663</strong></li></ul>
+<p class="date">Guatemala, 10 de noviembre de 2026</p>
+<p class="tag">Estudio sintético y contraste externo con ventas M5.</p></header><nav class="toc"><strong>Contenido</strong><a href="#1-problema">1. Problema</a><a href="#2-objetivos">2. Objetivos</a><a href="#3-fuentes">3. Fuentes</a><a href="#4-técnica-investigada">4. Técnica investigada</a><a href="#5-modelo">5. Modelo</a><a href="#6-implementación">6. Implementación</a><a href="#7-diseño-experimental">7. Diseño experimental</a><a href="#8-validación">8. Validación</a><a href="#9-comparación-real">9. Comparación real</a><a href="#10-resultados">10. Resultados</a><a href="#11-limitaciones">11. Limitaciones</a><a href="#12-conclusiones">12. Conclusiones</a><a href="#13-referencias">13. Referencias</a><a href="#14-contribuciones">14. Contribuciones</a></nav><p><strong>Alcance de cierre:</strong> prototipo reproducible, comparación sintética y contraste
+externo de ventas públicas M5. La referencia pública reemplaza la referencia
+empresarial no disponible para este estudio; no representa ni valida la
+operación de Walmart o de una cadena concreta. Este es el único documento
+maestro; sus versiones HTML y PDF se generan a partir de este archivo.</p>
+<p><strong>Resumen</strong></p>
+<p>Se desarrolló un modelo de simulación diaria de inventario para una cadena de
+tiendas abastecida desde una bodega central. El modelo representa demanda
+aleatoria, ventas perdidas, reposición mediante reglas (s, S) y traspasos entre
+tiendas. La mejora propuesta ajusta los parámetros de una política de traspasos
+mediante un algoritmo genético con reparación de restricciones, evaluación por
+réplicas y reevaluación de candidatos. Un flujo de costo mínimo selecciona la
+carga de cada viaje, mientras una heurística voraz selecciona las rutas.</p>
+<p>La ejecución disponible utiliza datos sintéticos de 10 tiendas, una bodega,
+3 productos y un horizonte de 120 días. El genético, con 30 individuos y hasta
+50 generaciones, terminó en la generación 18 por estancamiento. El ganador
+alcanzó un costo promedio de Q23,074.24 y un nivel de servicio promedio de
+98.56% en 30 réplicas con semillas independientes de las usadas para seleccionarlo.</p>
+<p>Un estudio posterior, sin reentrenamiento, comparó ocho condiciones con 30
+réplicas cada una. Frente a la base, la política mejorada redujo el costo
+promedio en 25.68%, pero aumentó las unidades perdidas en 6.03% y disminuyó
+el servicio en 0.0816 puntos porcentuales. La prueba pareada confirmó la
+reducción de costo; los controles mostraron que el ahorro proviene principalmente
+del ajuste de bodega, sin evidencia estadística suficiente de ahorro incremental
+por los traspasos. Con demanda +20% y existencias de referencia constantes,
+el costo aumentó 19.54% respecto a la mejorada nominal. Estos hallazgos
+corresponden al sistema sintético; el contraste parcial M5 y sus limitaciones
+se presentan en los apartados de validación y comparación real. La fuente M5
+se reprodujo y verificó, y la mejorada obtuvo MAE 5.61 frente a 5.56 de la base,
+sin traspasos y con servicio simulado de 94.51%. La conclusión externa es de
+correspondencia limitada, no de validación operativa favorable.</p>
+<p><strong>Palabras clave:</strong> inventario, traspasos laterales, simulación, algoritmo
+genético, restricciones, flujo de costo mínimo.</p>
+<p><strong>Contenido:</strong> Problema · Objetivos · Fuentes · Técnica investigada · Modelo ·
+Implementación · Diseño experimental · Validación · Comparación real ·
+Resultados · Limitaciones · Conclusiones · Referencias · Contribuciones.</p>
+<h2 id="1-problema">1. Problema</h2>
+<h3 id="11-contexto-y-planteamiento">1.1 Contexto y planteamiento</h3>
+<p>La demanda de un producto no es uniforme entre los puntos de venta de una
+cadena. Una tienda puede agotar sus existencias mientras otra conserva unidades
+que tardarán en venderse. Si cada tienda depende exclusivamente de reposiciones
+desde bodega, el inventario disponible en otros establecimientos no se aprovecha
+para responder a esos faltantes.</p>
+<p>Los traspasos laterales trasladan unidades entre tiendas del mismo nivel de la
+red. Pueden evitar ventas perdidas, pero introducen costos de viaje y el riesgo
+de dejar sin existencias al donante. Por ello, no basta con mover productos de
+una tienda con más inventario a otra con menos: debe evaluarse si llegarán a
+tiempo y si el beneficio esperado compensa el costo y el riesgo.</p>
+<p>El proyecto estudia esta decisión mediante simulación y optimización. Usa dos
+fuentes de evidencia separadas: un contrato sintético para optimizar y comparar,
+y ventas públicas M5 para contrastar ventas fuera de la calibración. La cadena
+empresarial contemplada al inicio no aportó datos al repositorio; se cierra el
+estudio con la referencia pública, declarando el cambio de alcance.</p>
+<h3 id="12-pregunta-de-investigación">1.2 Pregunta de investigación</h3>
+<p>¿Cuánto se reducen el costo total y las ventas perdidas de la cadena si los
+traspasos entre tiendas se deciden con una política optimizada, en lugar de
+depender solo de la reposición desde bodega?</p>
+<h3 id="13-alcance">1.3 Alcance</h3>
+<p>Se incluyen una bodega, múltiples tiendas y productos, demanda semanalmente
+estacional, pronóstico simple, reposición (s, S), transporte e inventario en
+tránsito, costos y ventas perdidas. La ejecución disponible considera 10
+tiendas, 3 productos y 120 días, dentro del tamaño sugerido en el plan.</p>
+<p>No se modelan precios variables, sustitución entre productos, pedidos de
+clientes pendientes, retornos de vehículos ni rutas con varias paradas. Cada
+vehículo puede hacer como máximo un viaje directo por día. La reposición sigue
+una regla (s, S); sus parámetros de bodega forman parte del cromosoma, por lo
+que su ajuste debe distinguirse del efecto exclusivo de los traspasos.</p>
+<h2 id="2-objetivos">2. Objetivos</h2>
+<h3 id="21-objetivo-general">2.1 Objetivo general</h3>
+<p>Evaluar, mediante simulación, el efecto de una política de traspasos cuyos
+parámetros se ajustan con un algoritmo genético sobre costo, servicio y
+faltantes, distinguiendo el desempeño sintético de su correspondencia externa
+con ventas observadas.</p>
+<h3 id="22-objetivos-específicos-y-evidencia-de-cumplimiento">2.2 Objetivos específicos y evidencia de cumplimiento</h3>
+<table>
+<thead>
+<tr>
+<th>Objetivo</th>
+<th>Evidencia de cierre</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Representar inventario, demanda, ventas y reposición</td>
+<td>Motor diario, balances y pruebas</td>
+</tr>
+<tr>
+<td>Formular costos e indicador económico</td>
+<td>Transporte, cobertura, reserva y V documentados</td>
+</tr>
+<tr>
+<td>Respetar restricciones de inventario y transporte</td>
+<td>Políticas, validaciones y auditorías por réplica</td>
+</tr>
+<tr>
+<td>Optimizar una política con restricciones</td>
+<td>11 genes, reparación, réplicas y reevaluación</td>
+</tr>
+<tr>
+<td>Comparar políticas y sensibilidad</td>
+<td>240 réplicas, controles, IC y pruebas pareadas</td>
+</tr>
+<tr>
+<td>Contrastar ventas contra una referencia real pública</td>
+<td>M5: calibración separada, 60 réplicas y errores fuera de muestra</td>
+</tr>
+</tbody>
+</table>
+<p>El último objetivo se limita expresamente a ventas. La validación de inventarios,
+costos y operaciones reales queda como trabajo futuro, porque esas variables
+no están observadas en las entradas utilizadas.</p>
+<h2 id="3-fuentes">3. Fuentes</h2>
+<h3 id="31-datos-y-procedencia">3.1 Datos y procedencia</h3>
+<table>
+<thead>
+<tr>
+<th>Fuente</th>
+<th>Contenido y uso</th>
+<th>Naturaleza</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data/synthetic/</code></td>
+<td>10 tiendas, 3 productos, medias semanales y clases para optimización</td>
+<td>Sintética, semilla 20261109</td>
+</tr>
+<tr>
+<td>Kaggle M5, copia pública de Nixtla</td>
+<td>Ventas diarias y calendario para contraste externo</td>
+<td>Observaciones reales de ventas</td>
+</tr>
+<tr>
+<td><code>config.yaml</code></td>
+<td>Costos, capacidades, distancias aproximadas y reglas de reposición</td>
+<td>Estimaciones y supuestos</td>
+</tr>
+<tr>
+<td>Resultados y manifiestos</td>
+<td>Métricas, semillas, versiones, código y entradas verificadas</td>
+<td>Evidencia generada por el modelo</td>
+</tr>
+</tbody>
+</table>
+<p>M5 se obtiene de la competición original y de su copia pública, citadas en
+Referencias. Se seleccionaron CA_1–CA_3 y FOODS_1_001–003. No se incorporó
+el ZIP al repositorio; se conservan su URL, receta y SHA-256
+<code>cc704ba15d6802f8262e6ec7d4c6041e4ad6366a94365e8c84f721e450eed774</code>.
+El ZIP se descargó de nuevo y sus resultados se reprodujeron exactamente.</p>
+<h3 id="32-separación-entre-observación-y-supuesto">3.2 Separación entre observación y supuesto</h3>
+<p>Las ventas M5 no son demanda total, inventario, costos ni rutas observadas.
+Las coordenadas usadas por el simulador son hipotéticas en Guatemala y no
+describen las ubicaciones de las tiendas de California. Los márgenes en Q y
+las reglas (s, S) son supuestos compartidos del prototipo. No se convierten
+ventas de Walmart en un supuesto costo real en quetzales.</p>
+<p>No se dispone de una fuente empresarial propia ni de todos los parámetros
+operativos reales. Se documenta esta ausencia como límite del alcance, sin
+rellenar los campos desconocidos con ceros ni presentar el modelo como una
+réplica de la operación real.</p>
+<h2 id="4-técnica-investigada">4. Técnica investigada</h2>
+<h3 id="41-selección-de-un-algoritmo-genético">4.1 Selección de un algoritmo genético</h3>
+<p>Los parámetros de una política de inventario interactúan de forma no lineal:
+una mayor reserva protege al donante, pero reduce la cantidad transferible;
+un umbral económico alto evita viajes poco rentables, pero puede dejar demanda
+sin atender. Las evaluaciones contienen ruido porque la demanda es aleatoria.</p>
+<p>Un algoritmo genético permite explorar una representación mixta de enteros y
+reales utilizando el simulador como evaluador, sin requerir derivadas del costo.
+Eiben y Smith (2015) presentan la representación, selección, recombinación y
+mutación como componentes configurables de los algoritmos evolutivos. En este
+proyecto el cromosoma describe una política reutilizable y no una lista de
+todos los movimientos diarios, lo que limita la dimensión de búsqueda.</p>
+<h3 id="42-manejo-de-restricciones">4.2 Manejo de restricciones</h3>
+<p>Deb (2000) estudia el manejo de restricciones en algoritmos genéticos y la
+distinción entre factibilidad y calidad. Nuestra implementación combina
+reparación y penalización; no implementa las reglas específicas de selección
+por factibilidad propuestas por ese autor.</p>
+<p>Se distinguen dos niveles:</p>
+<ul>
+<li><strong>Política válida:</strong> genes dentro de sus rangos, valores enteros donde
+corresponde, S de bodega mayor o igual que s y horizontes compatibles con
+el pronóstico.</li>
+<li><strong>Acciones válidas:</strong> envíos limitados por exceso y capacidad, reserva de
+exhibición, inventario no negativo y conservación durante el tránsito.</li>
+</ul>
+<p>El objetivo de 95% de servicio se trata como una restricción blanda sobre el
+promedio de réplicas: incumplirlo aumenta el fitness, pero no invalida
+automáticamente al candidato ni garantiza 95% por tienda o producto.</p>
+<h3 id="43-optimización-mediante-simulación-y-evaluación-ruidosa">4.3 Optimización mediante simulación y evaluación ruidosa</h3>
+<p>Amaran et al. (2016) describen la optimización mediante simulación como la
+búsqueda de decisiones cuyo desempeño se obtiene evaluando un modelo. Aquí
+la función objetivo se estima con réplicas y no se conoce de forma cerrada.</p>
+<p>Para un candidato <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B8;</mi></mrow></math>, se minimiza:</p>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mover><mi>F</mi><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00028;</mo><mi>&#x003B8;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>R</mi></mrow></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>r</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>R</mi></mrow></munderover><msub><mi>C</mi><mi>r</mi></msub><mo stretchy="false">&#x00028;</mo><mi>&#x003B8;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mi>&#x003BB;</mi><mo>max</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>0.95</mn><mo>&#x02212;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>R</mi></mrow></mfrac><msubsup><mo>&#x02211;</mo><mrow><mi>r</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>R</mi></mrow></msubsup><mi>N</mi><msub><mi>S</mi><mi>r</mi></msub><mo stretchy="false">&#x00028;</mo><mi>&#x003B8;</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x0002C;</mo><mspace width="2em" /><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mn>100000</mn><mo>&#x0002E;</mo></mrow></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mi>r</mi></msub></mrow></math> se expresa en quetzales y <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>N</mi><msub><mi>S</mi><mi>r</mi></msub></mrow></math> como fracción entre cero y uno.
+Un déficit de 0.01 en servicio promedio agrega Q1,000 al fitness. El valor de
+la penalización es un supuesto del equipo, no una calibración económica real.</p>
+<p>Se emplean las mismas semillas de demanda para comparar candidatos durante
+el entrenamiento. Los cinco mejores genotipos distintos se reevalúan con
+semillas adicionales y el ganador se evalúa con un tercer conjunto independiente.
+Esto reduce el riesgo de seleccionar una política por una realización favorable.</p>
+<h3 id="44-extensión-y-fundamento-bibliográfico">4.4 Extensión y fundamento bibliográfico</h3>
+<p>La extensión del genético visto en clase combina reparación, evaluación con
+réplicas y números aleatorios comunes, reevaluación de finalistas e integración
+con el simulador y el flujo de costo mínimo. Se describe la extensión realmente
+implementada; la documentación no presupone una aprobación académica externa.</p>
+<table>
+<thead>
+<tr>
+<th>Fuente</th>
+<th>Aporte al enfoque</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Eiben y Smith (2015)</td>
+<td>Representación, operadores y administración de población</td>
+</tr>
+<tr>
+<td>Deb (2000)</td>
+<td>Fundamento del manejo de restricciones y factibilidad</td>
+</tr>
+<tr>
+<td>Amaran et al. (2016)</td>
+<td>Marco de optimización con evaluaciones de simulación</td>
+</tr>
+</tbody>
+</table>
+<p>Estas referencias sustentan el enfoque general, no demuestran que la población,
+rangos o penalización elegidos sean óptimos para esta aplicación.</p>
+<h2 id="5-modelo">5. Modelo</h2>
+<p><img src="../figuras/sistema.svg" alt="Sistema de inventario y traspasos" /></p>
+<p><strong>Esquema del sistema.</strong> La reposición de proveedor y bodega coexiste con los
+traspasos entre tiendas. El genético ajusta reglas; no programa cada envío.</p>
+<h3 id="51-conjuntos-estados-y-decisiones">5.1 Conjuntos, estados y decisiones</h3>
+<p>Se consideran tiendas <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>j</mi><mo>&#x02208;</mo><mo stretchy="false">&#x0007B;</mo><mn>1</mn><mo>&#x0002C;</mo><mi>&#x02026;</mi><mo>&#x0002C;</mo><mi>N</mi><mo stretchy="false">&#x0007D;</mo></mrow></math>, productos
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x02208;</mo><mo stretchy="false">&#x0007B;</mo><mn>1</mn><mo>&#x0002C;</mo><mi>&#x02026;</mi><mo>&#x0002C;</mo><mi>K</mi><mo stretchy="false">&#x0007D;</mo></mrow></math>, una bodega <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi></mrow></math> y días
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>t</mi><mo>&#x02208;</mo><mo stretchy="false">&#x0007B;</mo><mn>0</mn><mo>&#x0002C;</mo><mi>&#x02026;</mi><mo>&#x0002C;</mo><mi>T</mi><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x0007D;</mo></mrow></math>. Cada tienda pertenece a una clase de demanda
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>g</mi><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02208;</mo><mo stretchy="false">&#x0007B;</mo><mtext>alta</mtext><mo>&#x0002C;</mo><mtext>media</mtext><mo>&#x0002C;</mo><mtext>baja</mtext><mo stretchy="false">&#x0007D;</mo></mrow></math>.</p>
+<table>
+<thead>
+<tr>
+<th>Símbolo</th>
+<th>Descripción</th>
+<th>Unidad</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>I</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub></mrow></math></td>
+<td>Inventario disponible en tienda</td>
+<td>Unidades</td>
+</tr>
+<tr>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>W</mi><mrow><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub></mrow></math></td>
+<td>Inventario disponible en bodega</td>
+<td>Unidades</td>
+</tr>
+<tr>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>A</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub></mrow></math></td>
+<td>Llegadas programadas a tiendas</td>
+<td>Unidades</td>
+</tr>
+<tr>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>A</mi><mrow><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow><mi>w</mi></msubsup></mrow></math></td>
+<td>Llegadas programadas a bodega</td>
+<td>Unidades</td>
+</tr>
+<tr>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>D</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub></mrow></math></td>
+<td>Demanda real de una réplica</td>
+<td>Unidades/día</td>
+</tr>
+<tr>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover><mi>&#x003BC;</mi><mo>&#x0005E;</mo></mover><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi><mo>&#x0002B;</mo><mi>&#x02113;</mi></mrow></msub></mrow></math></td>
+<td>Pronóstico de demanda futura</td>
+<td>Unidades/día</td>
+</tr>
+<tr>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>Y</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub></mrow></math></td>
+<td>Unidades vendidas</td>
+<td>Unidades/día</td>
+</tr>
+<tr>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>P</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub></mrow></math></td>
+<td>Unidades de demanda perdida</td>
+<td>Unidades/día</td>
+</tr>
+<tr>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>q</mi><mrow><mi>i</mi><mi>j</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub></mrow></math></td>
+<td>Cantidad enviada entre tiendas</td>
+<td>Unidades</td>
+</tr>
+<tr>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math></td>
+<td>Distancia vial estimada</td>
+<td>km</td>
+</tr>
+<tr>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>m</mi><mi>k</mi></msub></mrow></math></td>
+<td>Margen no obtenido por unidad perdida</td>
+<td>Q/unidad</td>
+</tr>
+</tbody>
+</table>
+<p>La política observa inventario, llegadas comprometidas, pérdidas acumuladas y
+pronóstico después de las ventas del día. No recibe las realizaciones futuras
+de demanda utilizadas por el motor.</p>
+<h3 id="52-datos-parámetros-y-procedencia">5.2 Datos, parámetros y procedencia</h3>
+<p>Los CSV sintéticos contienen 10 tiendas y 210 registros de demanda: una fila
+por tienda, producto y día semanal. La clase de tienda se declara antes de
+simular. El generador usa medias base de 6, 3 y 1.5 unidades/día por producto,
+factores de clase 1.5, 1 y 0.6, heterogeneidad multiplicativa lognormal y un
+perfil semanal normalizado. Las dispersiones por clase son 2, 4 y 6.</p>
+<table>
+<thead>
+<tr>
+<th>Parámetro</th>
+<th>Valor de referencia</th>
+<th>Origen y función</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Horizonte</td>
+<td>120 días</td>
+<td>Supuesto dentro del tamaño previsto</td>
+</tr>
+<tr>
+<td>Tiendas, bodega y productos</td>
+<td>10, 1 y 3</td>
+<td>Diseño del contrato sintético</td>
+</tr>
+<tr>
+<td>Márgenes P01, P02 y P03</td>
+<td>Q12, Q35 y Q90/unidad</td>
+<td>Estimados; valoran ventas perdidas</td>
+</tr>
+<tr>
+<td>Mantenimiento</td>
+<td>Q0.08/unidad·día</td>
+<td>Estimado; penaliza inventario al cierre</td>
+</tr>
+<tr>
+<td>Viaje fijo</td>
+<td>Q60/viaje</td>
+<td>Estimado; activa un traslado</td>
+</tr>
+<tr>
+<td>Costo variable</td>
+<td>Q4/km</td>
+<td>Estimado; depende de distancia</td>
+</tr>
+<tr>
+<td>Vehículos</td>
+<td>2</td>
+<td>Supuesto; un viaje por vehículo y día</td>
+</tr>
+<tr>
+<td>Capacidad por vehículo</td>
+<td>150 unidades</td>
+<td>Supuesto; compartida por productos</td>
+</tr>
+<tr>
+<td>Velocidad</td>
+<td>30 km/h</td>
+<td>Estimada, antes del tráfico</td>
+</tr>
+<tr>
+<td>Factor vial</td>
+<td>1.3</td>
+<td>Estimado; multiplica Haversine</td>
+</tr>
+<tr>
+<td>Factores de tráfico</td>
+<td>1.0–1.9</td>
+<td>Estimados por franja de salida</td>
+</tr>
+<tr>
+<td>Mínimo de exhibición</td>
+<td>2 unidades/producto</td>
+<td>Supuesto; reserva del donante al enviar</td>
+</tr>
+<tr>
+<td>Inventario inicial de tienda</td>
+<td>7 días de demanda media</td>
+<td>Supuesto, redondeado a unidades</td>
+</tr>
+<tr>
+<td>Inventario inicial de bodega</td>
+<td>21 días de demanda media de la cadena</td>
+<td>Supuesto, redondeado a unidades</td>
+</tr>
+<tr>
+<td>Entrega de bodega a tienda</td>
+<td>2 días</td>
+<td>Estimada</td>
+</tr>
+<tr>
+<td>Seguridad y objetivo de reposición en tienda</td>
+<td>3 y 12 días</td>
+<td>Supuestos de la regla fija</td>
+</tr>
+<tr>
+<td>Entrega de proveedor a bodega</td>
+<td>7 días</td>
+<td>Estimada</td>
+</tr>
+<tr>
+<td>s y S de bodega, base</td>
+<td>10 y 30 días</td>
+<td>Supuestos; sustituibles por el candidato</td>
+</tr>
+<tr>
+<td>Ventana de pronóstico</td>
+<td>4 semanas</td>
+<td>Supuesto</td>
+</tr>
+<tr>
+<td>Horizonte de pronóstico</td>
+<td>14 días</td>
+<td>Supuesto; limita H + SS</td>
+</tr>
+<tr>
+<td>Descuento diario <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B4;</mi></mrow></math></td>
+<td>0.98</td>
+<td>Supuesto de valoración temporal</td>
+</tr>
+</tbody>
+</table>
+<p>Las coordenadas son ficticias alrededor de (14.60, −90.52). La procedencia y
+la semilla de generación se conservan en
+<a href="../../data/synthetic/procedencia.json"><code>procedencia.json</code></a>. Ninguna magnitud
+de esta tabla debe citarse como medición real de una empresa.</p>
+<h3 id="53-demanda-aleatoria-y-pronóstico">5.3 Demanda aleatoria y pronóstico</h3>
+<p>La demanda usa una media por tienda, producto y día semanal. Si la dispersión
+varianza/media es uno, se utiliza Poisson; si es mayor que uno, se usa binomial
+negativa parametrizada para obtener la media y dispersión especificadas:</p>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>E</mi><mo stretchy="false">[</mo><msub><mi>D</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub><mo stretchy="false">]</mo><mo>&#x0003D;</mo><msub><mi>&#x003BC;</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub><mo>&#x0002C;</mo><mspace width="2em" /><mo>Var</mo><mo stretchy="false">&#x00028;</mo><msub><mi>D</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mi>&#x003D5;</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub><msub><mi>&#x003BC;</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub><mo>&#x0002E;</mo></mrow></math></div>
+<p>El motor pregenera la demanda de toda la réplica a partir de la semilla.
+Con igual configuración de demanda y semilla, la secuencia no cambia al
+modificar la política de traspasos.</p>
+<p>El pronóstico promedia las ventas observadas del mismo día semanal en las
+últimas cuatro semanas. Las semanas todavía no observadas se completan con
+la media previa del archivo de entrada. Se producen 14 días de pronóstico.
+Se utilizan ventas observadas, no demanda futura; cuando hubo agotamientos,
+esta serie puede subestimar la demanda latente.</p>
+<h3 id="54-dinámica-diaria-y-reposición">5.4 Dinámica diaria y reposición</h3>
+<p>El orden diario es el siguiente:</p>
+<pre><code class="language-text">para cada día:
+    recibir llegadas programadas a tiendas y bodega
+    atender demanda con el inventario disponible
+    registrar ventas perdidas
+    construir pronóstico y decidir traspasos
+    descontar envíos del donante y programar su llegada
+    aplicar reposición (s, S) de tiendas desde bodega
+    aplicar compras (s, S) de bodega al proveedor
+    registrar inventario de cierre, costos y balances
+</code></pre>
+<p>Después de recibir llegadas:</p>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>Y</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub><mo>&#x0003D;</mo><mo>min</mo><mo stretchy="false">&#x00028;</mo><msub><mi>I</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub><mo>&#x0002C;</mo><msub><mi>D</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>P</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub><mo>&#x0003D;</mo><msub><mi>D</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub><mo>&#x02212;</mo><msub><mi>Y</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub><mo>&#x0002E;</mo></mrow></math></div>
+<p>Las pérdidas no se acumulan como pedidos pendientes de clientes. Los envíos
+se descuentan del inventario al despachar y se reciben cuando termina el tránsito.</p>
+<p>La reposición utiliza la posición de inventario: existencias más unidades
+ya en camino. Si la posición es menor o igual que s, se pide hasta S:</p>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>Q</mi><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007B;</mo><mtable><mtr><mtd columnalign="left"><mo>max</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mi>&#x02308;</mi><mi>S</mi><mo>&#x02212;</mo><mtext>posición</mtext><mi>&#x02309;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo></mtd><mtd columnalign="left"><mtext>posición</mtext><mo>&#x02264;</mo><mi>s</mi><mo>&#x0002C;</mo></mtd></mtr><mtr><mtd columnalign="left"><mn>0</mn><mo>&#x0002C;</mo></mtd><mtd columnalign="left"><mtext>en&#x000A0;otro&#x000A0;caso</mtext><mo>&#x0002E;</mo></mtd></mtr></mtable></mrow></mrow></math></div>
+<p>Para tiendas, s equivale a demanda media diaria por tiempo de entrega más
+seguridad, y S a demanda media diaria por días objetivo. Si la bodega no
+alcanza, reparte proporcionalmente y redondea hacia abajo. Para la bodega se
+usa la demanda media diaria agregada de la cadena y sus parámetros en días.
+La regla se mantiene; el genético puede cambiar s y S de bodega.</p>
+<p>Para aislar el aumento de demanda en la sensibilidad se incorporó una opción
+de referencia de inventario: la demanda real y la media previa del pronóstico
+pueden multiplicarse por 1.2 sin escalar las existencias iniciales ni los
+niveles (s, S). Sin esta opción se conserva el comportamiento original de la
+optimización, donde esos niveles siguen la escala de demanda configurada.</p>
+<h3 id="55-distancias-tráfico-y-tránsito">5.5 Distancias, tráfico y tránsito</h3>
+<p>La distancia entre coordenadas se estima con Haversine, usando un radio
+terrestre de 6371.0088 km, y se multiplica por el factor vial 1.3. No es una
+distancia calculada sobre una red real de carreteras.</p>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003C4;</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>h</mi><mi>d</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow><mrow><mi>v</mi></mrow></mfrac><mspace width="0.167em" /><mi>f</mi><mo stretchy="false">&#x00028;</mo><msub><mi>h</mi><mi>d</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>L</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>&#x0003D;</mo><mo>max</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mn>1</mn><mo>&#x0002C;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x02308;</mo><mfrac><mrow><msub><mi>h</mi><mi>d</mi></msub><mo>&#x0002B;</mo><msub><mi>&#x003C4;</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>h</mi><mi>d</mi></msub><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>24</mn></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x02309;</mo></mrow><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x0002E;</mo></mrow></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C4;</mi></mrow></math> se expresa en horas y <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>L</mi></mrow></math> en días. Se aplica el factor de la
+franja de salida; no se integra el cambio de tráfico durante el viaje.
+El motor no admite que un traspaso llegue en el día del despacho. La distancia
+y el costo corresponden a la ida, sin recorrido de retorno modelado.</p>
+<h3 id="56-cobertura-exceso-e-indicador-económico">5.6 Cobertura, exceso e indicador económico</h3>
+<p>La cobertura compara inventario con demanda media prevista. Demanda cero
+implica cobertura infinita. Para un donante de clase g, el exceso transferible es:</p>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mo>cob</mo><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>I</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub></mrow><mrow><msub><mover><mi>&#x003BC;</mi><mo stretchy="true">&#x000AF;</mo></mover><mrow><mi>i</mi><mi>k</mi></mrow></msub></mrow></mfrac><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>e</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>&#x0003D;</mo><mo>max</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0230A;</mo><msub><mi>I</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>&#x02212;</mo><mo>max</mo><mo stretchy="false">&#x0007B;</mo><msub><mi>I</mi><mrow><mo>min</mo></mrow></msub><mo>&#x0002C;</mo><msub><mover><mi>&#x003BC;</mi><mo stretchy="true">&#x000AF;</mo></mover><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>H</mi><mi>g</mi></msub><mo>&#x0002B;</mo><mi>S</mi><msub><mi>S</mi><mi>g</mi></msub><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x0007D;</mo><mo stretchy="true" fence="true" form="postfix">&#x0230B;</mo></mrow><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x0002E;</mo></mrow></math></div>
+<p>La media <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mi>&#x003BC;</mi><mo stretchy="true">&#x000AF;</mo></mover></mrow></math> se calcula sobre el horizonte de esa tienda. Las
+llegadas pendientes ayudan a estimar faltantes y ventas futuras; no se cuentan
+como unidades disponibles hoy para enviar.</p>
+<p>Para un viaje consolidado de i a j con cantidades <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi mathvariant="bold">q</mi></mrow></math>, el valor
+de decisión se aproxima como:</p>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>V</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi mathvariant="bold">q</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><munder><mo>&#x02211;</mo><mi>k</mi></munder><msub><mi>m</mi><mi>k</mi></msub><mrow><mo stretchy="true" fence="true" form="prefix">[</mo><msubsup><mo>&#x02211;</mo><mrow><mi>&#x02113;</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><msub><mi>H</mi><mrow><mi>g</mi><mo stretchy="false">&#x00028;</mo><mi>j</mi><mo stretchy="false">&#x00029;</mo></mrow></msub></mrow></msubsup><mi>&#x00394;</mi><msub><mover><mi>Y</mi><mo>&#x0005E;</mo></mover><mrow><mi>j</mi><mi>k</mi><mo>&#x0002C;</mo><mi>&#x02113;</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi mathvariant="bold">q</mi><mo stretchy="false">&#x00029;</mo><msup><mi>&#x003B4;</mi><mrow><mi>&#x02113;</mi></mrow></msup><mo>&#x02212;</mo><msubsup><mo>&#x02211;</mo><mrow><mi>&#x02113;</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>&#x02308;</mi><msub><mi>H</mi><mrow><mi>g</mi><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mo>&#x0002B;</mo><mi>S</mi><msub><mi>S</mi><mrow><mi>g</mi><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mi>&#x02309;</mi></mrow></msubsup><mi>&#x00394;</mi><msub><mover><mi>P</mi><mo>&#x0005E;</mo></mover><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>&#x02113;</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi mathvariant="bold">q</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="true" fence="true" form="postfix">]</mo></mrow><mo>&#x02212;</mo><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>&#x02212;</mo><msub><mi>p</mi><mi>T</mi></msub><mo>max</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo>&#x0002C;</mo><mi>f</mi><mo stretchy="false">&#x00028;</mo><msub><mi>h</mi><mi>d</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>&#x0002C;</mo></mrow></math></div>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>&#x0003D;</mo><msub><mi>c</mi><mi>f</mi></msub><mo>&#x0002B;</mo><msub><mi>c</mi><mrow><mi>k</mi><mi>m</mi></mrow></msub><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>&#x0002E;</mo></mrow></math></div>
+<p>Las ventas extra y pérdidas adicionales se obtienen comparando proyecciones
+de inventario con y sin envío, usando el pronóstico como demanda esperada.
+No se integra toda la distribución de demanda. Se consideran llegadas
+comprometidas y una estimación del despacho de bodega de hoy, limitada por su
+stock; no se anticipan todas las reposiciones futuras.</p>
+<p>El costo fijo se resta una vez por viaje, aunque consolide productos. La
+penalización por tráfico influye en la decisión, pero no es un gasto físico
+añadido al costo total. La política económica acepta un viaje solo si
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>V</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>&#x0003E;</mo><msub><mi>u</mi><mi>V</mi></msub></mrow></math>; si una reposición cubre las ventas antes de que llegue el
+traspaso, el beneficio adicional disminuye o desaparece.</p>
+<h3 id="57-costos-métricas-y-restricciones">5.7 Costos, métricas y restricciones</h3>
+<p>El costo físico por réplica es:</p>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>C</mi><mo>&#x0003D;</mo><msub><mi>C</mi><mi>I</mi></msub><mo>&#x0002B;</mo><msub><mi>C</mi><mi>T</mi></msub><mo>&#x0002B;</mo><msub><mi>C</mi><mi>P</mi></msub><mo>&#x0002C;</mo></mrow></math></div>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>C</mi><mi>I</mi></msub><mo>&#x0003D;</mo><mi>h</mi><munderover><mo>&#x02211;</mo><mrow><mi>t</mi><mo>&#x0003D;</mo><mn>0</mn></mrow><mrow><mi>T</mi><mo>&#x02212;</mo><mn>1</mn></mrow></munderover><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><msub><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>k</mi></mrow></msub><msubsup><mi>I</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow><mrow><mrow><mi mathvariant="normal">c</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi></mrow></mrow></msubsup><mo>&#x0002B;</mo><msub><mo>&#x02211;</mo><mi>k</mi></msub><msubsup><mi>W</mi><mrow><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow><mrow><mrow><mi mathvariant="normal">c</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi></mrow></mrow></msubsup><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>C</mi><mi>T</mi></msub><mo>&#x0003D;</mo><munder><mo>&#x02211;</mo><mrow><mtext>viajes</mtext></mrow></munder><mo stretchy="false">&#x00028;</mo><msub><mi>c</mi><mi>f</mi></msub><mo>&#x0002B;</mo><msub><mi>c</mi><mrow><mi>k</mi><mi>m</mi></mrow></msub><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>C</mi><mi>P</mi></msub><mo>&#x0003D;</mo><munder><mo>&#x02211;</mo><mrow><mi>t</mi><mo>&#x0002C;</mo><mi>i</mi><mo>&#x0002C;</mo><mi>k</mi></mrow></munder><msub><mi>m</mi><mi>k</mi></msub><msub><mi>P</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub><mo>&#x0002E;</mo></mrow></math></div>
+<p>El mantenimiento se cobra al stock de cierre en tiendas y bodega, no a las
+unidades en tránsito. El costo de ventas perdidas representa margen no obtenido,
+no el precio completo de venta. La implementación no incorpora costos de compra
+ni fletes de proveedor o bodega dentro del costo de traspasos laterales.</p>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>N</mi><mi>S</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mo>&#x02211;</mo><mrow><mi>t</mi><mo>&#x0002C;</mo><mi>i</mi><mo>&#x0002C;</mo><mi>k</mi></mrow></msub><msub><mi>Y</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub></mrow><mrow><msub><mo>&#x02211;</mo><mrow><mi>t</mi><mo>&#x0002C;</mo><mi>i</mi><mo>&#x0002C;</mo><mi>k</mi></mrow></msub><msub><mi>D</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub></mrow></mfrac><mo>&#x0002E;</mo></mrow></math></div>
+<p>Si la demanda total es cero, se define servicio igual a uno. Se registran
+también unidades perdidas, viajes consolidados y kilómetros recorridos.</p>
+<p>Los envíos deben cumplir:</p>
+<ul>
+<li>Cantidades enteras positivas, tiendas distintas y llegada posterior al despacho.</li>
+<li>Inventario disponible no negativo y donante por encima del mínimo de exhibición.</li>
+<li>Envíos agregados de cada donante/producto no mayores que su exceso disponible.</li>
+<li>Un viaje por vehículo y día, con capacidad compartida entre productos.</li>
+<li>Conservación de unidades, incluyendo inventario que sigue en tránsito al terminar.</li>
+</ul>
+<h2 id="6-implementación">6. Implementación</h2>
+<h3 id="61-arquitectura-y-políticas">6.1 Arquitectura y políticas</h3>
+<pre><code class="language-text">CSV + configuración
+    → carga y validación
+    → motor diario + demanda y pronóstico
+    → política de traspasos
+        → transporte y valoración económica
+        → selección de carga por flujo y de rutas por heurística
+    → métricas por réplica
+    → evaluación y operadores del genético
+    → ganador, historial y evaluación independiente
+</code></pre>
+<p>El escenario base no ejecuta traspasos. La regla simple usa umbrales fijos
+de cobertura y reserva, y prioriza tiendas y productos por índice sin buscar
+rentabilidad. Puede ejecutar viajes con V negativo, pero respeta las
+restricciones físicas y evita cubrir dos veces faltantes ya atendidos por
+envíos planificados.</p>
+<p>La política económica calcula curvas de beneficio marginal por producto para
+cada ruta. Un flujo de costo mínimo selecciona unidades con capacidad común
+y una salida de costo cero para dejar capacidad sin usar. Después se resta
+el costo real del viaje y se elige la ruta de mayor V aceptable. Se actualizan
+inventario y llegadas antes de decidir el siguiente vehículo.</p>
+<p>El flujo optimiza la carga de cada ruta; la selección de rutas es voraz y no
+garantiza el óptimo global con cargos fijos. Los costos marginales se redondean
+a microquetzales para el flujo; V se comprueba sin ese redondeo. Las líneas
+de productos comparten un identificador de viaje y solo una contiene el costo
+y los kilómetros, evitando duplicaciones en las métricas.</p>
+<h3 id="62-cromosoma-de-11-genes">6.2 Cromosoma de 11 genes</h3>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><msub><mi>s</mi><mi>w</mi></msub><mo>&#x0002C;</mo><msub><mi>S</mi><mi>w</mi></msub><mo>&#x0002C;</mo><msub><mi>H</mi><mi>a</mi></msub><mo>&#x0002C;</mo><mi>S</mi><msub><mi>S</mi><mi>a</mi></msub><mo>&#x0002C;</mo><msub><mi>H</mi><mi>m</mi></msub><mo>&#x0002C;</mo><mi>S</mi><msub><mi>S</mi><mi>m</mi></msub><mo>&#x0002C;</mo><msub><mi>H</mi><mi>b</mi></msub><mo>&#x0002C;</mo><mi>S</mi><msub><mi>S</mi><mi>b</mi></msub><mo>&#x0002C;</mo><msub><mi>u</mi><mi>V</mi></msub><mo>&#x0002C;</mo><msub><mi>p</mi><mi>T</mi></msub><mo>&#x0002C;</mo><msub><mi>h</mi><mi>d</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002E;</mo></mrow></math></div>
+<table>
+<thead>
+<tr>
+<th>Genes</th>
+<th>Tipo y cantidad</th>
+<th>Rango</th>
+<th>Función</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bodega_s_dias</code></td>
+<td>Un entero</td>
+<td>5–20</td>
+<td>Umbral de bodega en días</td>
+</tr>
+<tr>
+<td><code>bodega_S_dias</code></td>
+<td>Un entero</td>
+<td>15–45</td>
+<td>Objetivo de bodega en días</td>
+</tr>
+<tr>
+<td><code>horizonte_dias_alta/media/baja</code></td>
+<td>Tres enteros</td>
+<td>1–7</td>
+<td>H por clase</td>
+</tr>
+<tr>
+<td><code>seguridad_dias_alta/media/baja</code></td>
+<td>Tres enteros</td>
+<td>0–7</td>
+<td>SS por clase</td>
+</tr>
+<tr>
+<td><code>umbral_valor_q</code></td>
+<td>Un real</td>
+<td>0–200</td>
+<td>Umbral por viaje, Q</td>
+</tr>
+<tr>
+<td><code>peso_trafico</code></td>
+<td>Un real</td>
+<td>0–2</td>
+<td>Penalización adicional de tráfico</td>
+</tr>
+<tr>
+<td><code>hora_despacho</code></td>
+<td>Un entero</td>
+<td>0–23</td>
+<td>Hora de salida</td>
+</tr>
+</tbody>
+</table>
+<p>La ampliación de siete genes globales a once permite diferenciar reservas
+y horizontes por clase, conforme al rango de 10–20 genes previsto en el plan.
+Los límites son supuestos de diseño y requieren análisis de sensibilidad.
+La reparación acota los genes, redondea enteros y garantiza S ≥ s y
+H + SS compatible con el horizonte de pronóstico configurado.</p>
+<h3 id="63-operadores-y-control-del-algoritmo">6.3 Operadores y control del algoritmo</h3>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Configuración utilizada</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Población</td>
+<td>30 individuos</td>
+</tr>
+<tr>
+<td>Máximo de generaciones</td>
+<td>50</td>
+</tr>
+<tr>
+<td>Selección</td>
+<td>Torneo de 3</td>
+</tr>
+<tr>
+<td>Cruce</td>
+<td>Uniforme, probabilidad 0.85</td>
+</tr>
+<tr>
+<td>Mutación</td>
+<td>Probabilidad 0.10 por hijo; modifica un gen elegido al azar</td>
+</tr>
+<tr>
+<td>Perturbación</td>
+<td>Gaussiana con σ igual a 10% del rango del gen</td>
+</tr>
+<tr>
+<td>Elitismo</td>
+<td>2 individuos</td>
+</tr>
+<tr>
+<td>Parada por estancamiento</td>
+<td>10 generaciones consecutivas sin mejora</td>
+</tr>
+<tr>
+<td>Finalistas</td>
+<td>Hasta 5 genotipos distintos</td>
+</tr>
+</tbody>
+</table>
+<p>Población y máximo de generaciones utilizan el extremo inferior del presupuesto
+del plan. No se presentan como valores calibrados u óptimos. Cada hijo se
+repara. Los genotipos repetidos reutilizan su evaluación dentro de la corrida,
+porque configuración y semillas permanecen fijas.</p>
+<h3 id="64-réplicas-integración-y-reproducibilidad">6.4 Réplicas, integración y reproducibilidad</h3>
+<table>
+<thead>
+<tr>
+<th>Generador o etapa</th>
+<th>Semilla o conjunto</th>
+<th>Uso</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Datos sintéticos</td>
+<td>20261109</td>
+<td>Generador independiente de entradas</td>
+</tr>
+<tr>
+<td>Operadores del genético</td>
+<td>20261109</td>
+<td>Instancia local <code>random.Random</code></td>
+</tr>
+<tr>
+<td>Entrenamiento</td>
+<td>1–10</td>
+<td>Fitness bajo demanda común</td>
+</tr>
+<tr>
+<td>Reevaluación</td>
+<td>11–40</td>
+<td>Elección entre finalistas</td>
+</tr>
+<tr>
+<td>Evaluación final</td>
+<td>1001–1030</td>
+<td>Medición posterior a la selección</td>
+</tr>
+</tbody>
+</table>
+<p>Los conjuntos de demanda son disjuntos. El final no participa en selección,
+mutación, criterio de parada ni elección del ganador. El proceso principal
+administra los operadores; los trabajadores evalúan candidatos con semillas
+fijas y devuelven los resultados en orden, conservando la reproducibilidad.</p>
+<p>El adaptador conecta el genético con el motor y la política económica. La
+corrida conserva ganador, historial por generación, métricas por réplica,
+gráfica y manifiesto con versiones, configuración y huellas SHA-256 de entradas
+y código. Una instantánea de progreso no equivale a una reanudación completa
+del algoritmo: no guarda el estado completo de su generador.</p>
+<h3 id="65-ejecución-reproducible-y-entregables">6.5 Ejecución reproducible y entregables</h3>
+<p>Desde la raíz, con Python 3.10+ y las dependencias de <code>requirements.txt</code>:</p>
+<pre><code class="language-bash">python -m pytest -q
+python -m experiments.optimizar --config config.yaml --salida results/optimizacion/nueva --trabajadores 6
+python -m experiments.comparar --config config.yaml --diseno experiments/diseno.yaml --salida results/experimentos/nueva --trabajadores 6
+python -m src.validation.m5 --m5 /ruta/m5.zip --salida results/validacion/nueva
+python -m src.validation.comparacion --origen results/validacion/nueva --salida results/validacion/nuevo_cierre --zip-fuente /ruta/m5.zip
+</code></pre>
+<p>Las carpetas de salida deben estar vacías. Los CSV sintéticos están incluidos;
+el ZIP público se obtiene de la fuente citada. Los manifiestos conservan las
+versiones exactas, entradas, semillas y huellas de código. Las fechas, rutas y
+tiempos pueden cambiar al reproducir; versiones distintas pueden cambiar las
+realizaciones numéricas. Las pruebas no incluyen la descarga automática de M5.</p>
+<p>El informe maestro es este Markdown; HTML y PDF son sus exportaciones. La
+presentación general agrupa cinco bloques de tres minutos e incluye notas,
+resultados y límites del contraste real.</p>
+<h2 id="7-diseño-experimental">7. Diseño experimental</h2>
+<h3 id="71-diseño-comparativo-ejecutado">7.1 Diseño comparativo ejecutado</h3>
+<p>El diseño se fijó en <a href="../../experiments/diseno.yaml"><code>experiments/diseno.yaml</code></a>
+antes de observar las comparaciones. Se mantuvieron 10 tiendas, 3 productos,
+120 días y el ganador previamente seleccionado, sin volver a entrenar ni
+ajustar sus parámetros con los resultados del experimento.</p>
+<table>
+<thead>
+<tr>
+<th>Condición</th>
+<th>Política y cambio</th>
+<th>Propósito</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base</td>
+<td>Sin traspasos, bodega s = 10 y S = 30 días</td>
+<td>Referencia</td>
+</tr>
+<tr>
+<td>Regla simple</td>
+<td>H = 3, SS = 2, bodega original</td>
+<td>Evaluar movimientos sin optimización económica</td>
+</tr>
+<tr>
+<td>Mejorada</td>
+<td>Ganador completo, bodega s = 6 y S = 15 días</td>
+<td>Evaluar la política ajustada</td>
+</tr>
+<tr>
+<td>Bodega ajustada</td>
+<td>s = 6 y S = 15, sin traspasos</td>
+<td>Separar el efecto de la reposición</td>
+</tr>
+<tr>
+<td>Traspasos con bodega original</td>
+<td>Genes de traspasos ganadores, s = 10 y S = 30</td>
+<td>Evaluar traspasos manteniendo bodega original</td>
+</tr>
+<tr>
+<td>Demanda +20%</td>
+<td>Mejorada con demanda y media previa ×1.2</td>
+<td>Estrés con existencias y niveles de reposición constantes</td>
+</tr>
+<tr>
+<td>Tráfico pesado</td>
+<td>Mejorada con factor de tráfico 2 en todas las franjas</td>
+<td>Sensibilidad de transporte</td>
+</tr>
+<tr>
+<td>Un vehículo</td>
+<td>Mejorada con un viaje diario en lugar de dos</td>
+<td>Sensibilidad de capacidad</td>
+</tr>
+</tbody>
+</table>
+<p>Se ejecutaron <strong>30 réplicas por condición, 240 en total</strong>, usando semillas
+1001–1030. Cada réplica completa es la unidad estadística: los 120 días no se
+tratan como 120 observaciones independientes. Para las siete condiciones con
+igual distribución de demanda se comprobó que la trayectoria de demanda fuera
+exactamente la misma por semilla mediante SHA-256. El cambio de distribución
+en demanda +20% conserva el identificador de semilla, pero no una trayectoria
+idéntica ni necesariamente un aumento punto a punto.</p>
+<p>La tabla <a href="../../results/experimentos/semillas_1001_1030/resultados.csv"><code>resultados.csv</code></a>
+contiene una fila por condición y semilla y las ocho métricas del motor.
+El servicio se guarda como fracción y se transforma a porcentaje al presentar.
+Los controles de bodega permiten distinguir el efecto conjunto de la política
+del efecto incremental de introducir los traspasos con reposición constante.</p>
+<h3 id="72-condiciones-de-sensibilidad">7.2 Condiciones de sensibilidad</h3>
+<p>En demanda +20% se configuraron <code>factor_demanda=1.2</code> y
+<code>factor_referencia_inventario=1.0</code>. Aumentaron demanda real y media previa del
+pronóstico, pero se mantuvieron inventarios iniciales y niveles (s, S) en
+unidades. Se conserva, por tanto, la regla de reposición de referencia y la
+capacidad de transporte; no se aumentan existencias automáticamente para
+compensar el cambio. El indicador sigue estimando reposiciones con la media
+del pronóstico, una aproximación que puede tener más error bajo este estrés.</p>
+<p>El tráfico pesado usa factor 2 en todas las horas, incluida la salida ganadora
+a las 23. Se mantienen distancia, costo fijo, costo por km y vehículos. Cambian
+el tiempo de llegada y la penalización de decisión por tráfico, no una tarifa
+de transporte artificialmente mayor. En la tercera sensibilidad se reduce de
+dos a un vehículo, dejando todo lo demás constante. No se reoptimiza ninguna
+condición de sensibilidad.</p>
+<h3 id="73-estadística-e-hipótesis">7.3 Estadística e hipótesis</h3>
+<p>Se calcularon media, desviación estándar muestral (denominador n − 1) e IC
+individual del 95% mediante t con 29 grados de libertad:</p>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mover><mi>C</mi><mo stretchy="true">&#x000AF;</mo></mover><mi>&#x000B1;</mi><msub><mi>t</mi><mrow><mn>0.975</mn><mo>&#x0002C;</mo><mn>29</mn></mrow></msub><mfrac><mrow><msub><mi>s</mi><mi>C</mi></msub></mrow><mrow><msqrt><mrow><mn>30</mn></mrow></msqrt></mrow></mfrac><mo>&#x0002E;</mo></mrow></math></div>
+<p>Para las comparaciones se definió antes de ejecutar:</p>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>d</mi><mi>r</mi></msub><mo>&#x0003D;</mo><msub><mi>X</mi><mrow><mtext>alternativa</mtext><mo>&#x0002C;</mo><mi>r</mi></mrow></msub><mo>&#x02212;</mo><msub><mi>X</mi><mrow><mtext>referencia</mtext><mo>&#x0002C;</mo><mi>r</mi></mrow></msub><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>H</mi><mn>0</mn></msub><mi>:</mi><mi>E</mi><mo stretchy="false">[</mo><msub><mi>d</mi><mi>r</mi></msub><mo stretchy="false">]</mo><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002C;</mo><mspace width="2em" /><mi>t</mi><mo>&#x0003D;</mo><mfrac><mrow><mover><mi>d</mi><mo stretchy="true">&#x000AF;</mo></mover></mrow><mrow><msub><mi>s</mi><mi>d</mi></msub><mo>&#x0002F;</mo><msqrt><mrow><mn>30</mn></mrow></msqrt></mrow></mfrac><mo>&#x0002E;</mo></mrow></math></div>
+<p>Se aplicó una t pareada bilateral, equivalente a una t de una muestra sobre
+las diferencias (SciPy, s. f.). Valores negativos de diferencia de costo
+favorecen a la alternativa; valores positivos de servicio favorecen a la
+alternativa. Las réplicas son independientes entre semillas y están emparejadas
+entre condiciones. La inferencia t supone normalidad aproximada de la media
+de las diferencias; con n = 30 es una aproximación que no elimina posibles
+asimetrías o valores extremos.</p>
+<p>Se calcularon nueve comparaciones predefinidas para costo y servicio: <strong>18
+pruebas t</strong>. Se reportan p sin ajustar y p ajustado por Holm (1979), con umbral
+0.05 sobre esa familia. Los IC individuales del 95% no son intervalos simultáneos
+ajustados; por ello un IC individual que excluye cero puede coexistir con una
+decisión no significativa después de Holm.</p>
+<p>También se calculó Wilcoxon bilateral como comprobación no paramétrica de
+sensibilidad, sin seleccionar entre pruebas según cuál resultara favorable.
+Sus p se conservan sin ajuste y se interpretan como comprobación exploratoria,
+con la salvedad de que Wilcoxon se refiere a localización de diferencias bajo
+sus supuestos, no exactamente a la misma hipótesis de media de la t.</p>
+<p>Se generaron figuras de inventario, costo/servicio con IC, desglose de costos y
+sensibilidad. Las trayectorias corresponden a la semilla 1001 y al producto P03
+en la primera tienda de cada clase, elegidos antes de examinar resultados.
+Los porcentajes de cambio se calculan como cambio de medias dividido por la
+media de referencia; los cambios de servicio se presentan en puntos porcentuales.</p>
+<h2 id="8-validación">8. Validación</h2>
+<h3 id="81-verificación-interna-y-reproducibilidad">8.1 Verificación interna y reproducibilidad</h3>
+<p>La suite completa obtuvo <strong>141 pruebas aprobadas</strong>. Cubre conservación,
+inventario no negativo, demanda cero, inventario abundante, exhibición, exceso,
+capacidad, tránsito, costos, consolidación y carga óptima en casos pequeños.
+También comprueba reparación, parámetros por tipo, semillas locales, igualdad
+secuencial/paralela, emparejamiento, intervalos y ajuste de Holm.</p>
+<p>Las 240 réplicas sintéticas pasaron balances y auditorías. El ajuste de Holm
+se contrastó con <code>statsmodels</code>; la t principal y su IC, con <code>scipy.stats.ttest_rel</code>.
+La mejorada coincide con la evaluación independiente previa del ganador.</p>
+<p>Para M5 se verificó el hash del ZIP público descargado y se volvieron a ejecutar
+las 60 simulaciones. Los cuatro archivos numéricos originales coinciden
+exactamente. El cierre recalcula tablas de diferencias y distingue valores
+reales no disponibles de ceros; la evidencia está en
+<a href="../../results/validacion/cierre_m5/resumen.json"><code>resumen.json</code></a>.
+Estas comprobaciones verifican la ejecución del software, no una correspondencia
+operativa que las entradas no permiten medir.</p>
+<h3 id="82-validación-externa-de-ventas-protocolo">8.2 Validación externa de ventas: protocolo</h3>
+<p>Se usan los 124 días de calibración para estimar media y varianza por día de
+semana; la dispersión se limita a un mínimo de uno. Los 56 días posteriores
+no se usan al estimar esos parámetros. Las pruebas comprueban que alterar las
+ventas del período reservado no cambia la calibración. El ganador permanece
+entrenado en datos sintéticos: M5 evalúa transferencia externa, no un ganador
+reajustado a las ventas de validación.</p>
+<p>El MAE y el error absoluto relativo se calculan sobre <strong>24 observaciones
+tienda-semana reales</strong>, comparadas con la media de las réplicas. Las 30
+simulaciones no multiplican la cantidad de observaciones reales. No se fijó
+un umbral ex ante de aceptación del MAE y no se declara validación favorable
+por haber ejecutado el procedimiento. La correspondencia se evalúa de forma
+descriptiva y resultó limitada.</p>
+<h3 id="83-resultado-y-frontera-de-validez">8.3 Resultado y frontera de validez</h3>
+<p>La base subestima ventas totales en 20.74% y tiene error absoluto agregado de
+31.35%. La mejorada no corrige la discrepancia: error de 31.63%, servicio
+simulado promedio 94.51% y cero traspasos. La política no conserva su desempeño
+sintético al trasladarla a este contexto.</p>
+<p>No se conocen demanda real total, inventarios, rutas, reglas de reposición ni
+costos reales. El objetivo externo se cierra como <strong>contraste parcial de ventas
+con resultado limitado</strong>, no como certificación de una política de inventario.
+Para desplegarla serían necesarios datos operativos y nueva calibración.</p>
+<h2 id="9-comparación-real">9. Comparación real</h2>
+<h3 id="91-fuente-selección-y-separación-temporal">9.1 Fuente, selección y separación temporal</h3>
+<p>Se realizó un contraste parcial con ventas diarias públicas de Walmart de la
+<a href="https://www.kaggle.com/competitions/m5-forecasting-accuracy/data">competición M5</a>,
+usando la <a href="https://github.com/Nixtla/m5-forecasts/tree/main/datasets">copia de Nixtla</a>.
+Se seleccionaron tres tiendas de California (CA_1, CA_2 y CA_3) y tres productos
+FOODS_1_001–003. Se calibraron las medias y dispersiones con los 124 días del
+28/10/2015 al 28/02/2016; los 56 días siguientes, del 29/02 al 24/04/2016,
+quedaron reservados para el contraste. La unidad es tienda-semana, sumando los
+productos: 24 observaciones. La base y la mejorada tienen 30 réplicas cada una.
+El ganador procede del experimento sintético y no fue reentrenado en M5.</p>
+<h3 id="92-ventas-reales-base-y-mejorada">9.2 Ventas reales, base y mejorada</h3>
+<p>Se compara cada venta real semanal con la media de las réplicas mediante:</p>
+<div class="math-block"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>M</mi><mi>A</mi><mi>E</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>n</mi></mrow></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>a</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>n</mi></mrow></munderover><mo stretchy="false">&#x0007C;</mo><msub><mover><mi>y</mi><mo>&#x0005E;</mo></mover><mi>a</mi></msub><mo>&#x02212;</mo><msub><mi>y</mi><mi>a</mi></msub><mo stretchy="false">&#x0007C;</mo><mo>&#x0002E;</mo></mrow></math></div>
+<p>El error relativo agregado es la suma de errores absolutos dividida por la suma
+de ventas reales, multiplicada por 100; así se incluyen observaciones reales
+cero sin dividir por cero individual. Si el total real es cero no se informa.</p>
+<table>
+<thead>
+<tr>
+<th>Métrica</th>
+<th style="text-align:right">Real</th>
+<th style="text-align:right">Base simulada</th>
+<th style="text-align:right">Mejorada simulada</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ventas totales, unidades</td>
+<td style="text-align:right">426</td>
+<td style="text-align:right">337.67</td>
+<td style="text-align:right">334.67</td>
+</tr>
+<tr>
+<td>MAE, unidades por tienda-semana</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">5.56</td>
+<td style="text-align:right">5.61</td>
+</tr>
+<tr>
+<td>Error absoluto agregado relativo</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">31.35 %</td>
+<td style="text-align:right">31.63 %</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Comparación de ventas totales</th>
+<th style="text-align:right">Diferencia (unidades)</th>
+<th style="text-align:right">Cambio respecto a la referencia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base − real</td>
+<td style="text-align:right">−88.33</td>
+<td style="text-align:right">−20.74%</td>
+</tr>
+<tr>
+<td>Mejorada − real</td>
+<td style="text-align:right">−91.33</td>
+<td style="text-align:right">−21.44%</td>
+</tr>
+<tr>
+<td>Mejorada − base</td>
+<td style="text-align:right">−3.00</td>
+<td style="text-align:right">−0.89%</td>
+</tr>
+</tbody>
+</table>
+<p>La tabla completa con diferencias absolutas y porcentuales está en
+<a href="../../results/validacion/cierre_m5/comparacion_real.csv"><code>comparacion_real.csv</code></a>.
+Los costos reales y el servicio real se mantienen como no disponibles, no cero.</p>
+<p>La correspondencia de ventas es limitada: el total simulado base está 88.33
+unidades por debajo del observado (−20.74 % del total real). Este error neto
+difiere del 31.35 % de error absoluto agregado, que no permite cancelaciones.
+La mejorada vende 3 unidades menos que la
+base (−0.89 %). Su costo hipotético baja Q88.87 (7.69 %), pero no hay costos
+reales comparables y no se registraron viajes; por tanto no se demuestra una
+mejora por traspasos ni un cambio en Walmart.</p>
+<p>El costo supuesto varía entre réplicas: desviación estándar Q365.57 para la
+base y Q453.82 para la mejorada. El servicio promedio es 95.32 % y 94.51 %, con
+desviaciones de 2.98 y 3.22 puntos porcentuales. Estas dispersiones describen
+el modelo, no incertidumbre sobre el desempeño real. La selección de tres
+tiendas y tres artículos no justifica extrapolar a la cadena completa.</p>
+<h3 id="93-incertidumbre-del-modelo-y-cumplimiento-de-servicio">9.3 Incertidumbre del modelo y cumplimiento de servicio</h3>
+<table>
+<thead>
+<tr>
+<th>Condición</th>
+<th style="text-align:right">Ventas medias</th>
+<th>IC Monte Carlo del 95% de ventas</th>
+<th style="text-align:right">Costo supuesto medio (Q)</th>
+<th style="text-align:right">Servicio simulado medio (%)</th>
+<th style="text-align:right">Réplicas bajo 95%</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base</td>
+<td style="text-align:right">337.67</td>
+<td>[327.43; 347.90]</td>
+<td style="text-align:right">1,156.34</td>
+<td style="text-align:right">95.32</td>
+<td style="text-align:right">9 de 30</td>
+</tr>
+<tr>
+<td>Mejorada</td>
+<td style="text-align:right">334.67</td>
+<td>[324.90; 344.43]</td>
+<td style="text-align:right">1,067.47</td>
+<td style="text-align:right">94.51</td>
+<td style="text-align:right">12 de 30</td>
+</tr>
+</tbody>
+</table>
+<p>Estos intervalos estiman incertidumbre de la media simulada bajo el generador
+calibrado, no intervalos del desempeño real. Que 426 ventas observadas superen
+el intervalo del modelo muestra una discrepancia descriptiva, no una prueba
+formal contra un proceso real cuyo error y estructura se desconocen.</p>
+<p>La comparación pareada del modelo da diferencia de costo −Q88.87, IC
+[−Q146.25; −Q31.49], p-Holm = 0.0036, y diferencia de servicio −0.8155 puntos,
+IC [−1.1726; −0.4584], p-Holm = 0.00013. Son dos pruebas exploratorias añadidas
+al cierre, de una familia M5 separada de las 18 sintéticas; no fueron
+prerregistradas. El costo baja por supuestos de reposición, no
+por traspasos; los viajes son cero. La disminución de servicio y las 12
+réplicas mejoradas bajo 95% impiden prometer cumplimiento operativo.</p>
+<h3 id="94-comparación-visual">9.4 Comparación visual</h3>
+<p><img src="../../results/validacion/m5/graficas/ventas_reales_simuladas.png" alt="Ventas reales y simuladas por tienda" /></p>
+<p><strong>Figura 1. Ventas semanales por tienda.</strong> Las curvas simuladas muestran la media de 30
+réplicas; la curva observada procede de M5. Las diferencias entre las curvas
+ilustran que la calibración no reproduce exactamente las ventas observadas.</p>
+<p><img src="../../results/validacion/m5/graficas/mae_por_tienda.png" alt="MAE de ventas por tienda" /></p>
+<p><strong>Figura 2. Error de la base por tienda.</strong> El MAE es 5.19 unidades/semana para CA_1,
+5.75 para CA_2 y 5.75 para CA_3. Son errores descriptivos sobre ocho semanas,
+no garantías de error futuro ni evidencia de validez del resto del sistema.</p>
+<p>La ubicación, inventarios, costos y reposición del modelo son supuestos, no la
+operación de Walmart. Las ventas pueden estar censuradas por agotamiento y no
+equivalen necesariamente a demanda. No se validaron inventarios, traspasos ni
+costos con datos reales; ese análisis pertenece a una fase operativa futura. Los
+archivos, receta y advertencias están en <a href="../../results/validacion/m5/README.md">results/validacion/m5</a>.</p>
+<h2 id="10-resultados">10. Resultados</h2>
+<h3 id="101-ejecución-sintética-de-la-optimización">10.1 Ejecución sintética de la optimización</h3>
+<p>La corrida utilizó 10 tiendas, una bodega, 3 productos y 120 días. Con población
+30, máximo 50 generaciones y paciencia 10, terminó en la generación 18. El
+mejor de entrenamiento apareció en la generación 8 y se evaluaron 176
+genotipos distintos.</p>
+<p>Se realizaron 1,950 réplicas: 1,760 de entrenamiento de candidatos únicos,
+150 de reevaluación de cinco finalistas, 30 finales y 10 para identificar el
+fitness de entrenamiento del ganador definitivo. Las repeticiones de un
+genotipo dentro del entrenamiento utilizaron la evaluación almacenada.</p>
+<p><img src="../../results/optimizacion/semilla_20261109/convergencia.png" alt="Convergencia del algoritmo genético" /></p>
+<p><strong>Figura 3. Convergencia y servicio en entrenamiento.</strong> El mejor fitness
+histórico descendió de Q23,536.98 a Q22,378.04. Las curvas de costo y fitness
+coinciden porque los mejores históricos no reciben penalización. El descenso
+describe progreso de la búsqueda, no una reducción contra la política base.
+El servicio puede variar aun cuando el mejor fitness histórico no empeore.</p>
+<h3 id="102-parámetros-del-ganador">10.2 Parámetros del ganador</h3>
+<table>
+<thead>
+<tr>
+<th>Parámetro</th>
+<th style="text-align:right">Valor seleccionado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>s y S de bodega</td>
+<td style="text-align:right">6 y 15 días</td>
+</tr>
+<tr>
+<td>H y SS, demanda alta</td>
+<td style="text-align:right">4 y 6 días</td>
+</tr>
+<tr>
+<td>H y SS, demanda media</td>
+<td style="text-align:right">3 y 4 días</td>
+</tr>
+<tr>
+<td>H y SS, demanda baja</td>
+<td style="text-align:right">1 y 3 días</td>
+</tr>
+<tr>
+<td>Umbral económico</td>
+<td style="text-align:right">Q129.661968</td>
+</tr>
+<tr>
+<td>Peso de tráfico</td>
+<td style="text-align:right">0.746413</td>
+</tr>
+<tr>
+<td>Hora de despacho</td>
+<td style="text-align:right">23</td>
+</tr>
+</tbody>
+</table>
+<p>Los valores mostrados están redondeados; el
+<a href="../../results/optimizacion/semilla_20261109/ganador.json"><code>ganador.json</code></a>
+conserva la precisión utilizada. La hora de salida es un resultado del modelo
+discreto y no debe interpretarse automáticamente como recomendación operativa.</p>
+<h3 id="103-desempeño-en-las-etapas-de-evaluación">10.3 Desempeño en las etapas de evaluación</h3>
+<table>
+<thead>
+<tr>
+<th>Etapa del ganador</th>
+<th style="text-align:right">Fitness promedio (Q)</th>
+<th style="text-align:right">Réplicas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entrenamiento</td>
+<td style="text-align:right">22,378.04</td>
+<td style="text-align:right">10</td>
+</tr>
+<tr>
+<td>Reevaluación</td>
+<td style="text-align:right">22,739.86</td>
+<td style="text-align:right">30</td>
+</tr>
+<tr>
+<td>Evaluación final</td>
+<td style="text-align:right">23,074.24</td>
+<td style="text-align:right">30</td>
+</tr>
+</tbody>
+</table>
+<p>Las diferencias entre etapas reflejan demanda de conjuntos distintos. En
+general, el ganador de entrenamiento puede diferir del elegido al reevaluar;
+en esta corrida ambos coinciden.</p>
+<table>
+<thead>
+<tr>
+<th>Métrica de evaluación final</th>
+<th style="text-align:right">Promedio por período de 120 días</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Costo total</td>
+<td style="text-align:right">Q23,074.24</td>
+</tr>
+<tr>
+<td>Costo de inventario</td>
+<td style="text-align:right">Q12,255.13</td>
+</tr>
+<tr>
+<td>Costo de traslado</td>
+<td style="text-align:right">Q209.34</td>
+</tr>
+<tr>
+<td>Costo de ventas perdidas</td>
+<td style="text-align:right">Q10,609.77</td>
+</tr>
+<tr>
+<td>Nivel de servicio</td>
+<td style="text-align:right">98.5556%</td>
+</tr>
+<tr>
+<td>Unidades perdidas</td>
+<td style="text-align:right">185.77</td>
+</tr>
+<tr>
+<td>Viajes consolidados</td>
+<td style="text-align:right">2.63</td>
+</tr>
+<tr>
+<td>Kilómetros modelados</td>
+<td style="text-align:right">12.84</td>
+</tr>
+</tbody>
+</table>
+<p>Los costos de componentes se muestran redondeados. Los conteos tienen
+decimales porque son promedios entre réplicas. Las 30 réplicas finales
+superaron 95% de servicio; el promedio no recibe penalización, por lo que
+fitness y costo total coinciden. Este resultado no garantiza servicio mínimo
+en cada tienda ni bajo condiciones diferentes.</p>
+<p>Las métricas por semilla se conservan en
+<a href="../../results/optimizacion/semilla_20261109/evaluacion_final.csv"><code>evaluacion_final.csv</code></a>.
+La ejecución tomó aproximadamente 56.22 segundos con seis trabajadores en el
+entorno registrado; ese tiempo no es una garantía para otros equipos.</p>
+<h3 id="104-comparación-de-políticas">10.4 Comparación de políticas</h3>
+<p>Cada fila de las tablas siguientes resume 30 períodos simulados de 120 días,
+con las mismas semillas y demanda. No son costos diarios ni muestras de días.</p>
+<table>
+<thead>
+<tr>
+<th>Condición</th>
+<th style="text-align:right">Costo medio (Q)</th>
+<th style="text-align:right">Desviación estándar (Q)</th>
+<th>IC del 95% de la media (Q)</th>
+<th style="text-align:right">Cambio frente a base</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base</td>
+<td style="text-align:right">31,047.76</td>
+<td style="text-align:right">2,973.41</td>
+<td>[29,937.47; 32,158.05]</td>
+<td style="text-align:right">—</td>
+</tr>
+<tr>
+<td>Regla simple</td>
+<td style="text-align:right">32,661.15</td>
+<td style="text-align:right">3,132.63</td>
+<td>[31,491.41; 33,830.90]</td>
+<td style="text-align:right">+5.20%</td>
+</tr>
+<tr>
+<td>Mejorada</td>
+<td style="text-align:right">23,074.24</td>
+<td style="text-align:right">3,090.61</td>
+<td>[21,920.19; 24,228.30]</td>
+<td style="text-align:right">−25.68%</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Condición</th>
+<th style="text-align:right">Servicio medio (%)</th>
+<th style="text-align:right">Desviación (puntos porcentuales)</th>
+<th>IC del 95% de servicio (%)</th>
+<th style="text-align:right">Unidades perdidas</th>
+<th style="text-align:right">Viajes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base</td>
+<td style="text-align:right">98.6372</td>
+<td style="text-align:right">0.2876</td>
+<td>[98.5297; 98.7446]</td>
+<td style="text-align:right">175.20</td>
+<td style="text-align:right">0.00</td>
+</tr>
+<tr>
+<td>Regla simple</td>
+<td style="text-align:right">98.7708</td>
+<td style="text-align:right">0.2698</td>
+<td>[98.6700; 98.8716]</td>
+<td style="text-align:right">158.03</td>
+<td style="text-align:right">28.03</td>
+</tr>
+<tr>
+<td>Mejorada</td>
+<td style="text-align:right">98.5556</td>
+<td style="text-align:right">0.3199</td>
+<td>[98.4361; 98.6750]</td>
+<td style="text-align:right">185.77</td>
+<td style="text-align:right">2.63</td>
+</tr>
+</tbody>
+</table>
+<p><img src="../../results/experimentos/semillas_1001_1030/graficas/comparacion_escenarios.png" alt="Costo y servicio por política" /></p>
+<p><strong>Figura 4. Comparación de políticas.</strong> Las barras representan medias y los
+segmentos negros IC individuales del 95%. La mejorada reduce costo, pero su
+servicio es ligeramente menor. El eje de servicio comienza en 95%, por lo que
+la magnitud debe leerse en puntos porcentuales y con las tablas. El solapamiento
+de IC de medias no sustituye el análisis de las diferencias pareadas.</p>
+<p>La política mejorada ahorra Q7,973.51 por período frente a la base, equivalente
+a 25.68%, pero el servicio disminuye 0.0816 puntos porcentuales y las unidades
+perdidas aumentan 6.03%. Por tanto, <strong>no se observa una mejora simultánea de
+costo y ventas perdidas</strong>. La regla simple sí reduce unidades perdidas en
+9.80% y aumenta servicio, pero sus 28.03 viajes por período elevan el costo
+total en 5.20%: atender más demanda no compensa económicamente todos sus viajes.</p>
+<h3 id="105-diferencias-pareadas-e-inferencia">10.5 Diferencias pareadas e inferencia</h3>
+<p>La diferencia es alternativa menos referencia. IC en Q; p corresponde a la
+t bilateral y p-Holm a la familia de 18 pruebas. La comparación principal es
+base frente a mejorada.</p>
+<table>
+<thead>
+<tr>
+<th>Referencia → alternativa</th>
+<th style="text-align:right">Diferencia de costo (Q)</th>
+<th>IC del 95% de la diferencia (Q)</th>
+<th style="text-align:right">p sin ajustar</th>
+<th style="text-align:right">p-Holm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base → mejorada</td>
+<td style="text-align:right">−7,973.51</td>
+<td>[−8,295.86; −7,651.17]</td>
+<td style="text-align:right">7.68 × 10⁻³⁰</td>
+<td style="text-align:right">1.33 × 10⁻²⁸</td>
+</tr>
+<tr>
+<td>Base → regla simple</td>
+<td style="text-align:right">+1,613.40</td>
+<td>[+1,323.36; +1,903.44]</td>
+<td style="text-align:right">3.27 × 10⁻¹²</td>
+<td style="text-align:right">4.91 × 10⁻¹¹</td>
+</tr>
+<tr>
+<td>Regla simple → mejorada</td>
+<td style="text-align:right">−9,586.91</td>
+<td>[−10,005.79; −9,168.04]</td>
+<td style="text-align:right">7.11 × 10⁻²⁹</td>
+<td style="text-align:right">1.14 × 10⁻²⁷</td>
+</tr>
+<tr>
+<td>Base → bodega ajustada</td>
+<td style="text-align:right">−7,823.28</td>
+<td>[−8,139.13; −7,507.43]</td>
+<td style="text-align:right">7.39 × 10⁻³⁰</td>
+<td style="text-align:right">1.33 × 10⁻²⁸</td>
+</tr>
+<tr>
+<td>Bodega ajustada → mejorada</td>
+<td style="text-align:right">−150.24</td>
+<td>[−411.96; +111.49]</td>
+<td style="text-align:right">0.2499</td>
+<td style="text-align:right">1.0000</td>
+</tr>
+<tr>
+<td>Base → traspasos con bodega original</td>
+<td style="text-align:right">−44.71</td>
+<td>[−184.40; +94.99]</td>
+<td style="text-align:right">0.5179</td>
+<td style="text-align:right">1.0000</td>
+</tr>
+</tbody>
+</table>
+<p>El ahorro principal es estadísticamente significativo, con IC del 95% de
+ahorro positivo de Q7,651.17 a Q8,295.86. Wilcoxon proporciona p = 1.86 × 10⁻⁹
+sin ajustar en esa comparación, consistente con la dirección del resultado.</p>
+<p>Para el servicio, mejorada menos base es −0.0816 puntos porcentuales, con IC
+individual [−0.1310; −0.0322], p = 0.0021 y p-Holm = 0.0190. Se detecta una
+disminución pequeña, aunque ambas políticas superan ampliamente 95% en estas
+réplicas. No corresponde describirla como una mejora de servicio.</p>
+<p>Todos los estadísticos, p de Wilcoxon y diferencias por semilla están en
+<a href="../../results/experimentos/semillas_1001_1030/pruebas_pareadas.csv"><code>pruebas_pareadas.csv</code></a>
+y <a href="../../results/experimentos/semillas_1001_1030/diferencias_pareadas.csv"><code>diferencias_pareadas.csv</code></a>.
+La falta de significancia de un control no prueba que su efecto sea exactamente
+cero; indica que esta muestra no aporta evidencia suficiente bajo el diseño.</p>
+<h3 id="106-atribución-del-ahorro-y-composición-de-costos">10.6 Atribución del ahorro y composición de costos</h3>
+<table>
+<thead>
+<tr>
+<th>Condición</th>
+<th style="text-align:right">Inventario (Q)</th>
+<th style="text-align:right">Traspasos (Q)</th>
+<th style="text-align:right">Ventas perdidas (Q)</th>
+<th style="text-align:right">Total (Q)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base</td>
+<td style="text-align:right">20,808.99</td>
+<td style="text-align:right">0.00</td>
+<td style="text-align:right">10,238.77</td>
+<td style="text-align:right">31,047.76</td>
+</tr>
+<tr>
+<td>Regla simple</td>
+<td style="text-align:right">20,739.98</td>
+<td style="text-align:right">2,517.97</td>
+<td style="text-align:right">9,403.20</td>
+<td style="text-align:right">32,661.15</td>
+</tr>
+<tr>
+<td>Mejorada</td>
+<td style="text-align:right">12,255.13</td>
+<td style="text-align:right">209.34</td>
+<td style="text-align:right">10,609.77</td>
+<td style="text-align:right">23,074.24</td>
+</tr>
+<tr>
+<td>Bodega ajustada, sin traspasos</td>
+<td style="text-align:right">12,255.54</td>
+<td style="text-align:right">0.00</td>
+<td style="text-align:right">10,968.93</td>
+<td style="text-align:right">23,224.48</td>
+</tr>
+<tr>
+<td>Traspasos con bodega original</td>
+<td style="text-align:right">20,806.34</td>
+<td style="text-align:right">97.78</td>
+<td style="text-align:right">10,098.93</td>
+<td style="text-align:right">31,003.05</td>
+</tr>
+</tbody>
+</table>
+<p><img src="../../results/experimentos/semillas_1001_1030/graficas/desglose_costos.png" alt="Composición de costos y controles" /></p>
+<p><strong>Figura 5. Desglose de costos.</strong> La caída del mantenimiento de inventario es
+el componente dominante. El costo de ventas perdidas de la mejorada es mayor
+que el de la base, mientras que la regla simple intercambia menores pérdidas
+por más costo de traslado. Las sumas pueden diferir en un centavo al redondear.</p>
+<p>La reducción de mantenimiento de la mejorada es Q8,553.86. A ella se oponen
+Q209.34 de traslado y Q371.00 adicionales de margen perdido, dando un ahorro
+neto de Q7,973.51. El genético encontró un intercambio económicamente favorable
+bajo el costo y objetivo de servicio definidos, no una solución que minimice
+todos los indicadores simultáneamente.</p>
+<p>La bodega ajustada sin traspasos ya ahorra Q7,823.28 frente a la base. En la
+descomposición secuencial base → bodega ajustada → mejorada, esa etapa explica
+98.12% del ahorro medio neto observado. Es una descomposición bajo esos
+controles, no un porcentaje causal universal independiente de interacciones.</p>
+<p>Manteniendo la bodega ajustada, agregar los traspasos reduce la media Q150.24
+(0.65%), pero su IC incluye cero y p-Holm = 1. Con bodega original, el ahorro
+medio es Q44.71 (0.14%), también no significativo. La mejora de servicio al
+agregar traspasos a la bodega ajustada es +0.0470 puntos porcentuales: p sin
+ajustar = 0.0093, pero p-Holm = 0.0742. No conserva significancia en la familia
+de pruebas predefinida. <strong>La evidencia respalda el ahorro conjunto y el ajuste
+de bodega; no establece un ahorro incremental significativo atribuible solo
+a los traspasos del ganador.</strong></p>
+<h3 id="107-comportamiento-del-inventario">10.7 Comportamiento del inventario</h3>
+<p><img src="../../results/experimentos/semillas_1001_1030/graficas/inventario_temporal.png" alt="Inventario temporal de tres tiendas" /></p>
+<p><strong>Figura 6. Inventario al cierre de base y mejorada.</strong> Se muestran P03 y las
+tiendas T01, T04 y T08, primeras de cada clase, en la semilla 1001 elegida a
+priori. Los descensos y saltos reflejan consumo y llegadas. Las trayectorias
+coinciden durante muchos días y se separan al cambiar abastecimiento y envíos;
+no se observa una mejora uniforme del inventario de cada tienda. Un valor cero
+al cierre no demuestra por sí solo ventas perdidas, pues puede haberse vendido
+exactamente el stock disponible.</p>
+<p>La figura ilustra una réplica, no una media ni evidencia estadística de todas
+las tiendas. Las series completas para ambos escenarios, 10 tiendas y 3
+productos, se guardan en
+<a href="../../results/experimentos/semillas_1001_1030/series_inventario.csv"><code>series_inventario.csv</code></a>;
+la bodega se conserva en una tabla separada.</p>
+<h3 id="108-sensibilidad-del-ganador-congelado">10.8 Sensibilidad del ganador congelado</h3>
+<p>Cada fila tiene 30 réplicas. Los cambios se expresan respecto a la mejorada
+nominal, sin reentrenamiento.</p>
+<table>
+<thead>
+<tr>
+<th>Condición</th>
+<th style="text-align:right">Costo medio (Q)</th>
+<th>IC del 95% de costo (Q)</th>
+<th style="text-align:right">Cambio de costo</th>
+<th style="text-align:right">Servicio medio (%)</th>
+<th style="text-align:right">Cambio de servicio (puntos)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mejorada nominal</td>
+<td style="text-align:right">23,074.24</td>
+<td>[21,920.19; 24,228.30]</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">98.5556</td>
+<td style="text-align:right">—</td>
+</tr>
+<tr>
+<td>Demanda +20%</td>
+<td style="text-align:right">27,583.78</td>
+<td>[26,460.54; 28,707.02]</td>
+<td style="text-align:right">+19.54%</td>
+<td style="text-align:right">98.0022</td>
+<td style="text-align:right">−0.5534</td>
+</tr>
+<tr>
+<td>Tráfico pesado</td>
+<td style="text-align:right">23,193.31</td>
+<td>[22,058.90; 24,327.71]</td>
+<td style="text-align:right">+0.52%</td>
+<td style="text-align:right">98.5205</td>
+<td style="text-align:right">−0.0351</td>
+</tr>
+<tr>
+<td>Un vehículo</td>
+<td style="text-align:right">23,072.75</td>
+<td>[21,929.41; 24,216.10]</td>
+<td style="text-align:right">−0.01%</td>
+<td style="text-align:right">98.5509</td>
+<td style="text-align:right">−0.0047</td>
+</tr>
+</tbody>
+</table>
+<p><img src="../../results/experimentos/semillas_1001_1030/graficas/sensibilidad.png" alt="Sensibilidad de costo y servicio" /></p>
+<p><strong>Figura 7. Sensibilidad.</strong> Las barras e IC muestran mayor deterioro con el
+aumento de demanda. Las modificaciones de tráfico y vehículos tienen cambios
+medios pequeños en este sistema; esto no implica equivalencia operacional.</p>
+<table>
+<thead>
+<tr>
+<th>Cambio frente a nominal</th>
+<th style="text-align:right">Diferencia de costo (Q)</th>
+<th>IC del 95% de la diferencia (Q)</th>
+<th style="text-align:right">p-Holm de costo</th>
+<th style="text-align:right">p-Holm de servicio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Demanda +20%</td>
+<td style="text-align:right">+4,509.54</td>
+<td>[+3,025.59; +5,993.49]</td>
+<td style="text-align:right">8.84 × 10⁻⁶</td>
+<td style="text-align:right">4.52 × 10⁻⁷</td>
+</tr>
+<tr>
+<td>Tráfico pesado</td>
+<td style="text-align:right">+119.06</td>
+<td>[−71.34; +309.47]</td>
+<td style="text-align:right">1.0000</td>
+<td style="text-align:right">0.1551</td>
+</tr>
+<tr>
+<td>Un vehículo</td>
+<td style="text-align:right">−1.49</td>
+<td>[−55.12; +52.14]</td>
+<td style="text-align:right">1.0000</td>
+<td style="text-align:right">1.0000</td>
+</tr>
+</tbody>
+</table>
+<p>La demanda +20% produce un aumento significativo de costo y una disminución
+significativa de servicio. Las unidades perdidas aumentan de 185.77 a 307.17
+y los viajes de 2.63 a 10.47. El inventario inicial y los umbrales de reposición
+se mantuvieron constantes: no se compensó el estrés con más existencias.</p>
+<p>Con tráfico pesado se realizan 1.47 viajes en promedio y se pierde más margen,
+pero no se detecta cambio de costo ni servicio después de Holm. El indicador
+puede descartar viajes al aumentar la penalización por tráfico; la discretización
+diaria también limita la sensibilidad temporal de rutas cortas.</p>
+<p>Con un vehículo, el costo medio cambia solo −Q1.49 y no hay evidencia de cambio
+en servicio. El ganador usa pocos viajes a lo largo de 120 días, de modo que la
+capacidad diaria rara vez es restrictiva. Esto no permite concluir que reducir
+la flota sea recomendable: no se modelan costos de propiedad, otras tareas de
+los vehículos ni otras condiciones de demanda.</p>
+<p>Todas las réplicas del estudio mantuvieron servicio agregado sobre 95%; la
+menor observación fue 97.36% en demanda +20%. Es evidencia de estas condiciones
+sintéticas, no una garantía para una empresa real o por tienda/producto.</p>
+<h3 id="109-alcance-de-la-respuesta-a-la-pregunta-de-investigación">10.9 Alcance de la respuesta a la pregunta de investigación</h3>
+<p>En el sistema sintético, la política ajustada reduce el costo total en 25.68%
+respecto a la base, a costa de un incremento de 6.03% de unidades perdidas.
+La atribución controlada muestra que el ajuste de bodega domina el ahorro;
+no se demuestra ahorro significativo por los traspasos por sí solos. Por tanto,
+la hipótesis de reducir simultáneamente costo y ventas perdidas mediante
+traspasos optimizados <strong>no queda respaldada por esta corrida</strong>. Este resultado
+es informativo y no debe reemplazarse por una afirmación general de mejora.</p>
+<h2 id="11-limitaciones">11. Limitaciones</h2>
+<ul>
+<li>El genético y la selección voraz de rutas no garantizan el óptimo global.
+Una sola semilla del genético no permite estimar estabilidad de la búsqueda.</li>
+<li>La demanda, ubicaciones y clasificación son sintéticas; los costos y otros
+parámetros son estimaciones o supuestos sin calibración empresarial.</li>
+<li>El pronóstico basado en ventas puede subestimar demanda por faltantes; el
+indicador usa una proyección determinista de demanda esperada.</li>
+<li>La discretización diaria limita la representación de tráfico intradía y
+la logística omite retornos y rutas multitienda.</li>
+<li>El 95% se controla mediante una penalización promedio, no como garantía por
+tienda, producto o réplica.</li>
+<li>Los controles separan ajustes de bodega y traspasos para este ganador, pero
+no reoptimizan cada control ni identifican todos los efectos de interacción.</li>
+<li>La inferencia t es aproximada y los IC son individuales. Holm controla la
+familia predefinida de 18 pruebas; Wilcoxon se reporta como comprobación
+exploratoria, sin una declaración independiente de significancia ajustada.</li>
+<li>Se evalúan tres sensibilidades puntuales, no un barrido completo ni escenarios
+extremos. La operación sintética tiene pocos viajes y servicio de base alto.</li>
+<li>En M5 solo hay ventas observadas de tres tiendas y tres artículos. El
+servicio real no se observa y el modelo reutiliza costos y ubicaciones
+hipotéticas, no una calibración operativa de Walmart.</li>
+<li>El ganador sintético no se reentrena en M5. El contraste evalúa transferencia
+de una política, no la mejor política posible para ese conjunto público.</li>
+<li>No hubo traspasos en M5, por lo que ese caso no identifica su efecto. El
+servicio de 94.51% muestra que el objetivo de 95% no se conserva externamente.</li>
+<li>El diseño inicial de una referencia empresarial propia se sustituyó por M5.
+Validar una cadena concreta requeriría datos que no forman parte de este
+estudio. Los resultados no constituyen una recomendación de despliegue.</li>
+</ul>
+<h2 id="12-conclusiones">12. Conclusiones</h2>
+<ol>
+<li>Se completó un prototipo integrado de simulación diaria, valoración de
+traspasos y optimización mediante un genético propio de 11 genes por tipo.
+La conservación, reproducibilidad e integración están verificadas.</li>
+<li>El estudio sintético de 240 réplicas muestra una reducción del costo de
+Q31,047.76 a Q23,074.24 (25.68%), significativa en el análisis pareado con
+Holm, pero con aumento de unidades perdidas de 6.03% y caída de servicio de
+0.0816 puntos porcentuales. No hay mejora simultánea de ambos objetivos.</li>
+<li>Los controles atribuyen la mayor parte del ahorro al ajuste de bodega. El
+ahorro incremental medio por traspasos no es estadísticamente concluyente
+con reposición constante; no debe confundirse con el ahorro conjunto.</li>
+<li>La regla simple reduce pérdidas, pero aumenta costo. La sensibilidad a
+demanda +20% es la más importante entre las estudiadas; los cambios de
+tráfico y flota no son significativos después del ajuste, sin demostrar
+equivalencia operacional.</li>
+<li>El contraste M5 usa calibración temporal separada y 60 réplicas reproducidas.
+La correspondencia es limitada: MAE base 5.56, error absoluto relativo
+31.35% y subestimación de ventas de 20.74%. El ganador no mejora esos errores.</li>
+<li>En M5, la mejorada reduce solo costo hipotético, no un costo real observado;
+no realiza viajes y presenta servicio simulado promedio de 94.51%. La
+política no debe trasladarse a una operación real sin recalibración.</li>
+<li>La principal aportación es metodológica: una cadena de evidencia trazable
+que diferencia optimización, verificación, comparación y validez externa.
+Los resultados negativos y límites forman parte del cierre, no se ocultan.</li>
+</ol>
+<h2 id="13-referencias">13. Referencias</h2>
+<ol>
+<li>Eiben, A. E., &amp; Smith, J. E. (2015). <em>Introduction to Evolutionary Computing</em>
+(2.ª ed.). Springer. https://doi.org/10.1007/978-3-662-44874-8</li>
+<li>Deb, K. (2000). An efficient constraint handling method for genetic algorithms.
+<em>Computer Methods in Applied Mechanics and Engineering, 186</em>(2–4), 311–338.
+https://doi.org/10.1016/S0045-7825(99)00389-8</li>
+<li>Amaran, S., Sahinidis, N. V., Sharda, B., &amp; Bury, S. J. (2016).
+Simulation optimization: a review of algorithms and applications.
+<em>Annals of Operations Research, 240</em>, 351–380. Publicado en línea en 2015.
+https://doi.org/10.1007/s10479-015-2019-x</li>
+<li>Holm, S. (1979). A simple sequentially rejective multiple test procedure.
+<em>Scandinavian Journal of Statistics, 6</em>(2), 65–70.
+https://www.jstor.org/stable/4615733</li>
+<li>SciPy Community. (s. f.). <em>scipy.stats.ttest_1samp</em>. Documentación de SciPy.
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_1samp.html</li>
+<li>M5 Forecasting Accuracy. <em>Datos de ventas de Walmart</em>. Kaggle.
+https://www.kaggle.com/competitions/m5-forecasting-accuracy/data
+Copia del conjunto consultada en https://github.com/Nixtla/m5-forecasts/tree/main/datasets</li>
+</ol>
+<p>Las fuentes metodológicas y públicas están identificadas. Los parámetros
+etiquetados como supuestos no tienen una fuente empresarial observada y no
+se presentan como valores calibrados. No se atribuyen a las referencias los
+resultados propios ni una certificación de los parámetros elegidos.</p>
+<h2 id="14-contribuciones">14. Contribuciones</h2>
+<h3 id="141-integrantes">14.1 Integrantes</h3>
+<p>El proyecto fue desarrollado por el siguiente equipo de la Facultad de Ingeniería
+de la Universidad del Valle de Guatemala, en el curso de Modelación y Simulación:</p>
+<table>
+<thead>
+<tr>
+<th>Integrante</th>
+<th>Carné</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Javier Alejandro Chávez León</td>
+<td>23132</td>
+</tr>
+<tr>
+<td>Daniel Adolfo Sarmiento Peralta</td>
+<td>231105</td>
+</tr>
+<tr>
+<td>Sofía López Ayerdi</td>
+<td>231929</td>
+</tr>
+<tr>
+<td>Karen Ximena Toledo Juárez</td>
+<td>23692</td>
+</tr>
+<tr>
+<td>Luis Francisco Padilla Juárez</td>
+<td>23663</td>
+</tr>
+</tbody>
+</table>
+<p>Las contribuciones se organizan en cinco áreas integradas. La relación de
+integrantes fue proporcionada por el equipo y se conserva en <code>docs/proyecto.json</code>;
+no se deduce de nombres de usuario del repositorio.</p>
+<table>
+<thead>
+<tr>
+<th>Área de contribución</th>
+<th>Trabajo incorporado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Simulación y pronóstico</td>
+<td>Motor diario, demanda, estados, reposición, carga y pruebas</td>
+</tr>
+<tr>
+<td>Costos y traspasos</td>
+<td>Transporte, indicador económico, restricciones y políticas</td>
+</tr>
+<tr>
+<td>Optimización</td>
+<td>Genético, 11 genes, operadores, reparación, reevaluación y ganador</td>
+</tr>
+<tr>
+<td>Experimentación</td>
+<td>Diseño pareado, 240 réplicas, estadística, sensibilidad y gráficas</td>
+</tr>
+<tr>
+<td>Contraste externo</td>
+<td>Calibración M5, comparación real/base/mejorada y análisis de límites</td>
+</tr>
+</tbody>
+</table>
+<p>La implementación, integración y preparación de materiales contaron con
+asistencia de programación. La explicación, revisión y defensa académica de
+los resultados corresponden al equipo.</p>
+<h3 id="142-estado-de-cierre-de-los-cinco-roles">14.2 Estado de cierre de los cinco roles</h3>
+<p>Los módulos y resultados de los cinco roles están integrados para el alcance
+de estudio sintético y contraste público parcial. El informe, la comparación
+real y la presentación describen ese alcance, sin afirmar validación de una
+cadena empresarial. La revisión automatizada comprende 141 pruebas, controles
+de datos y reproducción desde la fuente M5. La revisión y defensa por el equipo
+son responsabilidad de sus integrantes y no se certifican automáticamente.</p>
+<p>Los datos institucionales y de integrantes están incorporados en la portada,
+el informe y la presentación general con la fecha de entrega indicada por el equipo.</p>
+<h3 id="143-productos-entregados">14.3 Productos entregados</h3>
+<table>
+<thead>
+<tr>
+<th>Evidencia</th>
+<th>Ubicación</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Datos y configuración</td>
+<td><a href="../../data/synthetic/README.md"><code>data/synthetic/</code></a>, <a href="../../config.yaml"><code>config.yaml</code></a></td>
+</tr>
+<tr>
+<td>Ganador e historial</td>
+<td><a href="../../results/optimizacion/semilla_20261109/README.md"><code>results/optimizacion/</code></a></td>
+</tr>
+<tr>
+<td>Comparación y sensibilidad</td>
+<td><a href="../../results/experimentos/semillas_1001_1030/README.md"><code>results/experimentos/</code></a></td>
+</tr>
+<tr>
+<td>Ventas M5 y receta</td>
+<td><a href="../../results/validacion/m5/README.md"><code>results/validacion/m5/</code></a></td>
+</tr>
+<tr>
+<td>Comparación real cerrada</td>
+<td><a href="../../results/validacion/cierre_m5/comparacion_real.csv"><code>comparacion_real.csv</code></a></td>
+</tr>
+<tr>
+<td>Verificación de fuente y reproducción</td>
+<td><a href="../../results/validacion/cierre_m5/resumen.json"><code>resumen de cierre</code></a></td>
+</tr>
+<tr>
+<td>Presentación general</td>
+<td><a href="../presentacion/presentacion.html"><code>presentacion.html</code></a></td>
+</tr>
+</tbody>
+</table>
+</main></body></html>

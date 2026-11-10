@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Inventario en movimiento · Proyecto 2</title>
+  <style>
+    :root{--ink:#203944;--paper:#ffffff;--teal:#14756f;--amber:#99621b;--muted:#5c737e;--scale:1;color-scheme:light}
+    *{box-sizing:border-box}body{margin:0;background:#e5edf0;color:var(--ink);font-family:Arial,Helvetica,sans-serif;overflow:hidden}
+    #stage{position:fixed;inset:0 0 65px;overflow:hidden}#deck{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform:translate(-50%,-50%) scale(var(--scale));transform-origin:center}
+    .slide{display:none;position:relative;width:1280px;height:720px;padding:40px 58px 48px;background:radial-gradient(ellipse at 100% 0,#e7f5ef 0,transparent 48%),#fbfcfa;overflow:hidden;flex-direction:column;border-top:6px solid #21877e}
+    .slide.activa{display:flex}.slide:after{content:"UVG  /  FACULTAD DE INGENIERÍA  /  PROYECTO 2";position:absolute;bottom:20px;left:58px;color:#617b86;font-size:10px;letter-spacing:1.5px}
+    .eyebrow{color:var(--teal);font-size:13px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase;margin:0 0 17px}
+    h1{font-size:44px;line-height:1.1;letter-spacing:-1.6px;margin:0 0 20px;max-width:1140px}h2{font-size:25px;line-height:1.2;margin:0 0 15px;color:var(--teal)}
+    p,li{font-size:22px;line-height:1.43;margin:0 0 15px}ul{padding-left:25px;margin:0}li{padding-left:4px}
+    .muted{color:var(--muted)}.amber{color:var(--amber)}.teal{color:var(--teal)}.small{font-size:17px;line-height:1.45}.tiny{font-size:14px;line-height:1.4}
+    .cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.wide-left{grid-template-columns:1.6fr 1fr}
+    .card{padding:22px 24px;border:1px solid #d6e3e4;border-radius:18px;background:#ffffffc9;box-shadow:0 6px 24px #234a5506}.card h2{font-size:20px}.number{font-size:58px;font-weight:750;letter-spacing:-2.5px;line-height:1.1;margin:9px 0 14px}
+    .card p{font-size:20px}.callout{border-left:4px solid #d69a48;padding:12px 18px;background:#fff2de;border-radius:0 10px 10px 0;margin-top:18px;font-size:20px;line-height:1.4}
+    .footnote{font-size:15px;color:var(--muted);margin-top:auto;padding-top:10px;line-height:1.35}.chip{display:inline-block;border:1px solid #b9dcd4;background:#edf8f3;border-radius:99px;padding:7px 12px;font-size:13px;color:var(--teal);letter-spacing:.3px}
+    .hero h1{font-size:64px;max-width:650px;letter-spacing:-2.8px;margin:10px 0 22px}.hero .lead{max-width:680px;font-size:25px;color:#526a77}.hero .cover-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:40px;align-items:center;margin-top:24px}.hero .institution{font-size:21px;line-height:1.35;margin:0 0 7px}.roster{font-size:18px!important;line-height:1.65!important;margin-bottom:9px!important}.roster strong{color:#176c68}.cover-date{font-size:17px;color:#536b76;margin-top:24px}
+    .formula{padding:23px;background:#edf5f4;border:1px solid #c7dfdc;border-radius:16px;font-size:25px;line-height:1.5;margin:10px 0 23px}.steps{display:flex;gap:16px;margin:22px 0}.step{flex:1;padding:24px 15px;border-top:3px solid var(--teal);background:#edf5f2;border-radius:0 0 12px 12px;font-size:21px;line-height:1.35}.step b{display:block;color:var(--teal);font-size:13px;margin-bottom:15px;letter-spacing:2px}
+    table{width:100%;border-collapse:collapse;font-size:20px;line-height:1.35;margin:10px 0 18px}th,td{text-align:left;padding:12px 14px;border-bottom:1px solid #cedfe2}th{font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}.highlight td{background:#e7f4ef;color:#136961;font-weight:700}
+    .figure{background:white;border:1px solid #e0e9e9;border-radius:15px;padding:10px;margin:4px 0 10px;overflow:hidden}.figure img{display:block;width:100%;max-height:370px;object-fit:contain}.figure.tall img{max-height:400px}.figure.slim img{max-height:320px}
+    .intro{font-size:20px;color:#536d79;line-height:1.4;margin-bottom:13px}.chart-slide{padding:32px 48px 44px}.chart-slide h1{font-size:36px;letter-spacing:-1.1px;margin-bottom:12px}.chart-slide .eyebrow{margin-bottom:10px}.chart-slide .figure img{max-height:350px}.chart-slide .reading{font-size:18px;line-height:1.4;margin:8px 0 0;padding:10px 16px;border-left:3px solid #25877c;background:#edf6f1}.chart-slide .footnote{font-size:14px}.icon{width:25px;height:25px;vertical-align:middle;margin-right:10px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.eyebrow .icon{width:21px;height:21px}.card .icon{color:var(--teal);width:28px;height:28px;margin-bottom:8px}.agenda{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.agenda .card{padding:20px}.agenda p{font-size:19px}.agenda h2{font-size:19px}.refs{padding-left:20px}.refs li{font-size:17px;line-height:1.4;margin-bottom:13px}.refs a{overflow-wrap:anywhere}.team-table{font-size:21px}.team-table td{padding:10px 14px}
+    .bars{margin:25px 0}.barrow{display:grid;grid-template-columns:210px 1fr 150px;gap:16px;align-items:center;margin:18px 0;font-size:19px}.bar{height:36px;max-width:100%;border-radius:4px;background:#8099aa}.bar.tealbar{background:var(--teal)}.bar.amberbar{background:var(--amber)}
+    .notes{display:none}.slide a{color:var(--teal)}.matrix{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.matrix .card{padding:22px 16px}.matrix p{font-size:18px}.matrix h2{font-size:19px}
+    #d18 h1{font-size:40px}#d18 .cols>div:not(.card)>p{font-size:21px;line-height:1.38}#d18 .card .small{font-size:17px}#d18 .card .tiny{font-size:13px}
+    nav{position:fixed;bottom:0;left:0;right:0;height:65px;background:#f7faf9;border-top:1px solid #c8dadd;display:flex;align-items:center;gap:10px;padding:10px 20px;z-index:10;font-size:13px}nav button{background:white;border:1px solid #c1d5d9;color:#234a57;padding:8px 12px;border-radius:7px;font:inherit;cursor:pointer}nav button:focus-visible{outline:2px solid var(--teal)}nav button:disabled{opacity:.35;cursor:default}#progreso{position:absolute;top:-2px;left:0;height:3px;background:var(--teal);width:0}#bloque{flex:1;color:var(--muted)}#contador{font-variant-numeric:tabular-nums;min-width:52px}
+    #notas{position:fixed;bottom:65px;left:0;right:0;height:200px;background:#ecf3f3;color:#173642;padding:22px 40px;display:none;overflow:auto;border-top:3px solid var(--teal);font-size:18px;line-height:1.6}body.con-notas #notas{display:block}body.con-notas #stage{bottom:265px}#notas h2{font-size:16px;color:#176e75;margin-bottom:10px}
+    dialog{max-width:820px;width:90vw;max-height:80vh;background:#fbfcfa;border:1px solid #c6dadd;border-radius:16px;color:var(--ink);padding:30px}dialog::backdrop{background:#27414b99}dialog .lista{display:grid;grid-template-columns:1fr 1fr;gap:9px}dialog button{font:16px Arial;text-align:left;background:white;color:#234a57;border:1px solid #c9dadd;border-radius:7px;padding:11px;cursor:pointer}
+    @media(max-width:700px){nav{padding:8px;gap:6px}nav button{padding:7px 8px;font-size:12px}#bloque{display:none}#notas{padding:16px;font-size:15px}}
+    @media print{@page{size:1280px 720px;margin:0}body{width:1280px;height:auto;overflow:visible;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}#stage{position:static;width:1280px;height:auto;overflow:visible}#deck{position:static;width:1280px;height:auto;transform:none!important}.slide{display:flex!important;break-after:page;break-inside:avoid}.slide:last-child{break-after:auto}nav,#notas,dialog{display:none!important}}
+  </style>
+</head>
+<body>
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg"><defs>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="m12 12 8-8m-4 0h4v4"/></symbol>
+  <symbol id="ic-data" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v7c0 4 16 4 16 0V5M4 12v7c0 4 16 4 16 0v-7"/></symbol>
+  <symbol id="ic-model" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="6" rx="1"/><rect x="1" y="16" width="7" height="6" rx="1"/><rect x="16" y="16" width="7" height="6" rx="1"/><path d="M12 8v4H4v4m8-4h8v4"/></symbol>
+  <symbol id="ic-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M7 16v-5m5 5V6m5 10v-8"/></symbol>
+  <symbol id="ic-lab" viewBox="0 0 24 24"><path d="M9 2h6m-5 0v7L4 19c-1 2 1 3 3 3h10c2 0 4-1 3-3L14 9V2M7 15h10"/><circle cx="11" cy="17" r=".6"/></symbol>
+  <symbol id="ic-code" viewBox="0 0 24 24"><path d="m7 6-6 6 6 6m10-12 6 6-6 6M14 3l-4 18"/></symbol>
+  <symbol id="ic-shield" viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-9 10-9 10S3 17 3 12V6l9-4Z"/><path d="m8 12 3 3 5-6"/></symbol>
+  <symbol id="ic-book" viewBox="0 0 24 24"><path d="M12 5C7 2 3 3 2 4v15c4-2 7-1 10 1 3-2 6-3 10-1V4c-3-2-6-1-10 1v15"/></symbol>
+  <symbol id="ic-people" viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><circle cx="4" cy="9" r="2"/><circle cx="20" cy="9" r="2"/><path d="M6 22v-5c0-6 12-6 12 0v5M1 20v-4c0-2 1-3 3-3m19 7v-4c0-2-1-3-3-3"/></symbol>
+  <symbol id="ic-warning" viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2ZM12 8v6m0 3v1"/></symbol>
+  <symbol id="ic-move" viewBox="0 0 24 24"><path d="M2 7h18m-5-5 5 5-5 5M22 17H4m5-5-5 5 5 5"/></symbol>
+</defs></svg>
+<main id="stage"><div id="deck">
+
+  <section class="slide hero activa" id="d1" data-bloque="1 · Problema y fuentes" data-segundos="25" data-titulo="Inventario en movimiento">
+    <p class="eyebrow">Proyecto 2 · Modelación y Simulación</p>
+    <p class="institution"><strong>Universidad del Valle de Guatemala</strong><br>Facultad de Ingeniería</p>
+    <div class="cover-grid"><div><h1>Traspasos de<br>inventario entre<br>tiendas</h1><p class="lead">Simular, optimizar y contrastar<br>antes de recomendar.</p><span class="chip">Estudio sintético + referencia pública M5</span></div>
+    <div class="card"><h2><svg class="icon"><use href="#ic-people"/></svg>Integrantes</h2>
+      <p class="roster">Javier Alejandro Chávez León<br><strong>23132</strong></p>
+      <p class="roster">Daniel Adolfo Sarmiento Peralta<br><strong>231105</strong></p>
+      <p class="roster">Sofía López Ayerdi · <strong>231929</strong></p>
+      <p class="roster">Karen Ximena Toledo Juárez · <strong>23692</strong></p>
+      <p class="roster">Luis Francisco Padilla Juárez · <strong>23663</strong></p>
+    </div></div>
+    <p class="cover-date">Guatemala, 10 de noviembre de 2026</p>
+    <aside class="notes">Presentar el sistema y el objetivo. Hay dos niveles de evidencia: experimentos sintéticos de inventario y contraste externo con ventas públicas. No afirmaremos que el simulador reproduce una empresa real. La exposición sigue cinco bloques de tres minutos y termina con lo que los resultados permiten y no permiten concluir.</aside>
+  </section>
+
+  <section class="slide" id="recorrido" data-bloque="1 · Problema y fuentes" data-segundos="20" data-titulo="Recorrido del informe">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-book"/></svg>Recorrido de la presentación</p><h1>Del problema a una conclusión<br>respaldada por los resultados.</h1>
+    <div class="agenda"><div class="card"><h2>1 · Punto de partida</h2><p>Problema<br>Objetivos<br>Fuentes</p></div><div class="card"><h2>2 · Solución propuesta</h2><p>Técnica investigada<br>Modelo<br>Implementación</p></div><div class="card"><h2>3 · Cómo se evalúa</h2><p>Diseño experimental<br>Validación<br>Comparación real</p></div></div>
+    <div class="callout">Cierre: resultados, limitaciones, conclusiones, referencias y contribuciones.</div>
+    <p class="footnote">Cinco bloques de tres minutos. Las cifras sintéticas y las observaciones reales se presentan por separado.</p>
+    <aside class="notes">Mostrar la ruta de los catorce apartados del informe. No son catorce afirmaciones de éxito: la exposición explica primero el sistema y luego prueba qué resultados se sostienen. Las gráficas se leen con sus unidades, población y condiciones, evitando mezclar simulación y operación real.</aside>
+  </section>
+
+  <section class="slide" id="d2" data-bloque="1 · Problema y fuentes" data-segundos="45" data-titulo="El desbalance entre tiendas" data-apartados="Problema">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-move"/></svg>01 / Problema</p><h1>El producto existe.<br>Pero no siempre donde se necesita.</h1>
+    <p class="intro">Una misma cadena puede tener exceso en una tienda y demanda sin atender en otra. La reposición desde bodega no siempre llega antes de la venta perdida.</p>
+    <div class="three">
+      <div class="card"><h2>Tienda donante</h2><div class="number teal">Exceso</div><p>Unidades con baja urgencia de venta.</p></div>
+      <div class="card"><h2>Decisión de traslado</h2><div class="number amber">¿Mover?</div><p>Costo de viaje, tiempo y riesgo para el donante.</p></div>
+      <div class="card"><h2>Tienda receptora</h2><div class="number">Faltante</div><p>Demanda que podría perderse antes de reponer.</p></div>
+    </div>
+    <div class="callout">¿Cuánto cambian costo y ventas perdidas al ajustar una política de traspasos?</div>
+    <aside class="notes">Explicar un ejemplo: una tienda conserva unidades mientras otra agota el mismo producto. Moverlo puede ayudar, pero si llega después de la reposición, si es caro o deja corto al donante, no conviene. La pregunta original busca reducir costo y pérdidas; los datos determinarán si ambas cosas ocurren y si el efecto es realmente atribuible a traspasos.</aside>
+  </section>
+
+  <section class="slide" id="d3" data-bloque="1 · Problema y fuentes" data-segundos="40" data-titulo="Objetivos verificables" data-apartados="Objetivos">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-target"/></svg>02 / Objetivos</p><h1>Medir el efecto sobre costo,<br>servicio y ventas perdidas.</h1>
+    <p class="intro">Objetivo general: evaluar una política de traspasos ajustada con un genético, distinguiendo el desempeño del modelo de su correspondencia con ventas reales.</p>
+    <div class="steps"><div class="step"><b>01 · REPRESENTAR</b>Inventario, demanda<br>y reposición diaria.</div><div class="step"><b>02 · OPTIMIZAR</b>Parámetros de una política válida.</div><div class="step"><b>03 · COMPARAR</b>Réplicas, controles<br>y sensibilidad.</div><div class="step"><b>04 · CONTRASTAR</b>Ventas simuladas frente a M5.</div></div>
+    <p class="muted">Costo total como objetivo principal.<br>Servicio y pérdidas como resultados que también deben explicarse.</p>
+    <aside class="notes">El objetivo general es evaluar el efecto de la política, no producir una demostración positiva a toda costa. Cada etapa tiene un entregable verificable. El costo resume mantenimiento, viajes y margen perdido; el servicio y las unidades perdidas permiten detectar intercambios que un único número podría ocultar.</aside>
+  </section>
+
+  <section class="slide" id="d4" data-bloque="1 · Problema y fuentes" data-segundos="50" data-titulo="Fuentes y alcance" data-apartados="Fuentes">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-data"/></svg>03 / Fuentes</p><h1>Dos conjuntos. Dos alcances.</h1>
+    <p class="intro">Los datos sintéticos permiten controlar el experimento. M5 aporta ventas reales para examinar si el patrón simulado se transfiere a un contexto externo.</p>
+    <div class="cols"><div class="card"><h2>Contrato sintético</h2><div class="number teal">10 × 3 × 120</div><p>Tiendas × productos × días.</p><p class="small muted">Clases alta, media y baja; costos estimados y reglas supuestas. Optimización y comparación controlada.</p></div><div class="card"><h2>Ventas reales públicas M5</h2><div class="number amber">3 × 3 × 56</div><p>Tiendas × productos × días de contraste.</p><p class="small muted">Ventas Walmart observadas. Inventario, ubicación operativa y costos no observados.</p></div></div>
+    <p class="footnote">Fuentes: Kaggle M5 / copia Nixtla. Fundamentos: Eiben y Smith (2015), Deb (2000), Amaran et al. (2016). Detalle en el informe.</p>
+    <aside class="notes">El estudio de inventario se ejecuta en diez tiendas sintéticas durante ciento veinte días. Para la referencia externa usamos M5, no datos empresariales privados. Las ventas sí son reales; coordenadas, márgenes y reposición del simulador no son datos de Walmart. Esta separación es esencial para no llamar ahorro real a una magnitud generada por supuestos.</aside>
+  </section>
+
+  <section class="slide chart-slide" id="d5" data-bloque="2 · Modelo y traspasos" data-segundos="45" data-titulo="Modelo diario" data-apartados="Modelo">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-model"/></svg>05 / Modelo</p><h1>Un sistema diario con reposición y movimientos laterales.</h1>
+    <p class="intro">La demanda es Poisson o binomial negativa. El pronóstico usa cuatro semanas por día semanal; las ventas no atendidas se pierden, no quedan pendientes.</p>
+    <div class="figure"><img src="../figuras/sistema.svg" alt="Proveedor, bodega y tiendas conectadas por reposición y traspasos; el genético ajusta la política."></div>
+    <p class="footnote">Orden: llegadas → ventas → traspasos → reposición (s, S) → costos y balances.</p>
+    <aside class="notes">Recorrer el diagrama desde proveedor a tiendas. Primero llegan pedidos, luego ocurre la demanda y se venden las unidades disponibles. Tras las ventas, la política decide envíos y después se reponen tiendas y bodega. Lo que se envía desaparece del donante y se mantiene en tránsito hasta su llegada. Las unidades no se crean ni desaparecen en los traspasos.</aside>
+  </section>
+
+  <section class="slide" id="d6" data-bloque="2 · Modelo y traspasos" data-segundos="50" data-titulo="Costos e indicador económico" data-apartados="Modelo">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-move"/></svg>05 / Modelo · costos y decisión</p><h1>Un traslado debe pagar su viaje.</h1>
+    <p class="intro">El costo total suma inventario, transporte y margen de ventas perdidas. El indicador V decide si el beneficio esperado de mover productos supera su costo y riesgo.</p>
+    <div class="formula">V = ventas extra descontadas − riesgo del donante<br>− costo del viaje − penalización de tráfico</div>
+    <div class="three"><div class="card"><h2>Beneficio</h2><p>Ventas que el receptor puede atender a tiempo.</p></div><div class="card"><h2>Protección</h2><p>Reserva H + SS y mínimo de exhibición.</p></div><div class="card"><h2>Logística</h2><p>Q60 por viaje + Q4/km; productos consolidados.</p></div></div>
+    <p class="footnote">Parámetros económicos estimados. La penalización de tráfico afecta decisión, no el gasto físico registrado.</p>
+    <aside class="notes">V compara proyecciones con y sin envío, sin mirar demanda futura real. El viaje se cobra una vez aunque lleve varios productos. Si la bodega llega antes y ya cubre las ventas, el traspaso pierde valor. El factor de descuento reduce valor de ventas lejanas y la reserva del donante limita el riesgo. Los costos usados son estimaciones del prototipo.</aside>
+  </section>
+
+  <section class="slide" id="d7" data-bloque="2 · Modelo y traspasos" data-segundos="45" data-titulo="Implementación y restricciones" data-apartados="Implementación">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-code"/></svg>06 / Implementación</p><h1>Carga óptima por ruta.<br>Selección voraz de viajes.</h1>
+    <p class="intro">Python integra motor, políticas, genético y experimentos. NetworkX selecciona la carga de cada viaje; el estado se actualiza antes de asignar el siguiente vehículo.</p>
+    <div class="cols"><div><h2>Flujo de costo mínimo</h2><ul><li>Beneficio marginal por unidad.</li><li>Capacidad común entre productos.</li><li>Opción de dejar capacidad sin usar.</li></ul></div><div><h2>Restricciones</h2><ul><li>Exceso y exhibición del donante.</li><li>Tránsito y conservación.</li><li>Un viaje por vehículo y día.</li></ul></div></div>
+    <div class="callout">NetworkX optimiza la carga; la heurística de rutas no garantiza el óptimo global con costos fijos.</div>
+    <aside class="notes">Esta distinción evita sobreafirmar la técnica vista en clase. Para una ruta, el flujo elige cantidades entre productos según beneficio marginal. Después se cobra el fijo y se compara V para elegir una ruta. Se actualiza el estado antes del siguiente vehículo. No es un optimizador global de toda la flota; esa es una limitación explícita, no una propiedad oculta.</aside>
+  </section>
+
+  <section class="slide chart-slide" id="inventario" data-bloque="2 · Modelo y traspasos" data-segundos="40" data-titulo="Cómo evoluciona el inventario" data-apartados="Modelo|Resultados">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-chart"/></svg>05 / Modelo en funcionamiento</p><h1>El inventario cae con ventas y sube con llegadas.</h1>
+    <p class="intro">P03, semilla 1001: dos tiendas seleccionadas a priori. Cada línea es una réplica de 120 días; no es un promedio.</p>
+    <div class="figure"><img src="../figuras/inventario_presentacion.svg" alt="Inventario al cierre para T01 y T08: comparación de base y mejorada durante 120 días."></div>
+    <p class="reading"><strong>Lectura:</strong> las trayectorias coinciden muchos días y luego se separan. No hay una mejora uniforme en todas las tiendas; un cierre en cero no demuestra por sí solo una venta perdida.</p>
+    <p class="footnote">Eje vertical: unidades al cierre. Base y mejorada usan exactamente la misma demanda por semilla.</p>
+    <aside class="notes">Recorrer los ejes antes de interpretar. La curva cae por consumo y salta por llegadas; también puede cambiar por envíos. Se muestran las primeras tiendas de demanda alta y baja, no las que más favorecen la política. Muchas trayectorias coinciden y después cambian por abastecimiento y movimientos. No se usa una única tienda para afirmar un resultado global.</aside>
+  </section>
+
+  <section class="slide" id="d8" data-bloque="3 · Técnica y optimización" data-segundos="60" data-titulo="Genético de 11 genes" data-apartados="Técnica investigada">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-lab"/></svg>04 / Técnica investigada</p><h1>El genético ajusta reglas,<br>no miles de movimientos.</h1>
+    <p class="intro">La simulación evalúa cada candidato. Reparación de restricciones, réplicas comunes y reevaluación de finalistas amplían el genético básico visto en clase.</p>
+    <div class="three"><div class="card"><div class="number teal">6</div><h2>Genes por tipo</h2><p>H y SS para demanda alta, media y baja.</p></div><div class="card"><div class="number teal">2</div><h2>Genes de bodega</h2><p>s y S en días de demanda de la cadena.</p></div><div class="card"><div class="number teal">3</div><h2>Genes de decisión</h2><p>Umbral V, peso de tráfico y hora de despacho.</p></div></div>
+    <p class="footnote">Torneo k = 3 · cruce uniforme 0.85 · mutación gaussiana 0.10 por hijo · elitismo 2 · reparación.</p>
+    <aside class="notes">La extensión combina restricciones y evaluación ruidosa. Cada hijo se repara: rangos, enteros, S mayor o igual que s y horizontes compatibles con el pronóstico. La probabilidad de mutación es por hijo y, cuando se activa, cambia un gen. Los parámetros por tipo permiten reservas distintas sin asignar un gen a cada día o movimiento.</aside>
+  </section>
+
+  <section class="slide" id="d9" data-bloque="3 · Técnica y optimización" data-segundos="50" data-titulo="Fitness y semillas" data-apartados="Técnica investigada|Implementación">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-target"/></svg>06 / Implementación · evaluación</p><h1>Misma demanda para comparar.<br>Demanda nueva para evaluar.</h1>
+    <div class="formula">Fitness = costo promedio + 100,000 × max(0, 0.95 − servicio promedio)</div>
+    <div class="three"><div class="card"><h2>Entrenamiento</h2><div class="number">1–10</div><p>Semillas comunes.</p></div><div class="card"><h2>Reevaluación</h2><div class="number">11–40</div><p>Cinco finalistas.</p></div><div class="card"><h2>Evaluación final</h2><div class="number amber">1001–1030</div><p>No selecciona candidatos.</p></div></div>
+    <p class="footnote">Semilla local del genético: 20261109. Servicio 95% es una restricción blanda, no una garantía.</p>
+    <aside class="notes">El generador de demanda y el de operadores son independientes. Repetimos cada candidato con las mismas diez semillas y reevaluamos finalistas con treinta adicionales. El conjunto final queda reservado. Un déficit de un punto porcentual de servicio promedio agrega mil quetzales al fitness. La penalización no obliga a cumplir servicio en cada tienda o realización.</aside>
+  </section>
+
+  <section class="slide chart-slide" id="d10" data-bloque="3 · Técnica y optimización" data-segundos="70" data-titulo="Convergencia y ganador" data-apartados="Técnica investigada|Resultados">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-chart"/></svg>10 / Resultados · optimización</p><h1>La búsqueda mejora hasta la generación 8.</h1>
+    <p class="intro">30 individuos y máximo 50 generaciones. La parada en la generación 18 responde a diez sin mejora; se evaluaron 176 candidatos distintos.</p>
+    <div class="figure"><img src="../figuras/convergencia_presentacion.svg" alt="El mejor fitness cae de 23536.98 a 22378.04; el servicio de entrenamiento se mantiene sobre 95%."></div>
+    <p class="reading"><strong>Lectura:</strong> menor fitness es mejor bajo el objetivo definido. La convergencia no demuestra ni óptimo global ni ahorro frente a la base; eso requiere el experimento comparativo.</p>
+    <p class="footnote">Ganador: bodega 6/15 días; H/SS alta 4/6, media 3/4 y baja 1/3; umbral Q129.66. Fitness y costo coinciden sin penalización.</p>
+    <aside class="notes">El mejor se encuentra en la generación ocho y se detiene después de diez sin mejora. Las curvas de costo y fitness coinciden porque el mejor histórico no recibió penalización en entrenamiento. El ganador cambia reservas de bodega además de traspasos. Por eso los siguientes controles son indispensables: la convergencia no demuestra que los traspasos expliquen el ahorro ni que exista un óptimo global.</aside>
+  </section>
+
+  <section class="slide" id="d11" data-bloque="4 · Experimentos y resultados" data-segundos="35" data-titulo="Diseño experimental" data-apartados="Diseño experimental">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-lab"/></svg>07 / Diseño experimental</p><h1>8 condiciones × 30 réplicas.<br>Un ganador congelado.</h1>
+    <p class="intro">240 réplicas con semillas 1001–1030. Los controles separan el cambio de bodega del aporte específico de los traspasos.</p>
+    <div class="matrix"><div class="card"><h2>Políticas</h2><p>Base<br>Regla simple<br>Mejorada</p></div><div class="card"><h2>Controles</h2><p>Solo bodega ajustada<br><br>Traspasos con bodega original</p></div><div class="card"><h2>Sensibilidad</h2><p>Demanda +20%<br>Tráfico ×2<br>Un vehículo</p></div><div class="card"><h2>Inferencia</h2><p>IC del 95%<br>t pareada + Holm<br>Wilcoxon adicional</p></div></div>
+    <div class="callout">La unidad estadística es una réplica de 120 días, no cada día individual.</div>
+    <aside class="notes">El diseño se fija antes de observar los resultados y usa las semillas finales. Las condiciones nominales comparten exactamente la misma trayectoria de demanda por semilla, comprobada con hash. Son dieciocho pruebas t y se ajustan con Holm. El aumento de demanda mantiene inventarios y niveles de reposición de referencia constantes para no compensarlo automáticamente.</aside>
+  </section>
+
+  <section class="slide" id="d12" data-bloque="4 · Experimentos y resultados" data-segundos="35" data-titulo="Ahorro y contraparte" data-apartados="Resultados">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-chart"/></svg>10 / Resultados sintéticos</p><h1>Menor costo.<br><span class="amber">No menos faltantes.</span></h1>
+    <div class="three"><div class="card"><h2>Costo total</h2><div class="number teal">−25.68%</div><p>Q31,047.76 → Q23,074.24</p></div><div class="card"><h2>Unidades perdidas</h2><div class="number amber">+6.03%</div><p>175.20 → 185.77</p></div><div class="card"><h2>Servicio</h2><div class="number">−0.0816</div><p>Puntos porcentuales.<br>98.6372% → 98.5556%</p></div></div>
+    <div class="callout">Ahorro medio: Q7,973.51 por 120 días.<br>IC pareado: Q7,651.17–Q8,295.86 · p-Holm = 1.33 × 10⁻²⁸.</div>
+    <aside class="notes">La comparación principal sí muestra ahorro. Pero las pérdidas aumentan y el servicio baja ligeramente. No debemos presentar el resultado como una mejora simultánea ni ocultar ese intercambio. La regla simple logra más servicio y menos pérdidas, pero cuesta cinco punto veinte por ciento más que la base. La política ganadora optimiza el objetivo económico que definimos.</aside>
+  </section>
+
+  <section class="slide chart-slide" id="comparacion" data-bloque="4 · Experimentos y resultados" data-segundos="35" data-titulo="Comparación de políticas" data-apartados="Resultados">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-chart"/></svg>10 / Resultados · comparación</p><h1>El costo y el servicio cuentan historias distintas.</h1>
+    <p class="intro">Las barras resumen 30 réplicas por política; los segmentos representan IC individuales del 95%. Los costos son por 120 días.</p>
+    <div class="figure"><img src="../figuras/comparacion_presentacion.svg" alt="La regla simple tiene mayor costo y servicio; la mejorada menor costo con servicio ligeramente menor que la base."></div>
+    <p class="reading"><strong>Lectura:</strong> la regla simple evita más faltantes, pero sus viajes elevan el costo 5.20%. La mejorada minimiza el costo, no todos los indicadores a la vez.</p>
+    <p class="footnote">El eje de servicio comienza en 95%. El solapamiento de IC individuales no sustituye la prueba de diferencias pareadas.</p>
+    <aside class="notes">Señalar primero las unidades y después comparar. La barra de regla simple es más costosa porque mueve más; atiende un poco más de demanda. La política ajustada tiene el menor costo y un servicio todavía alto, pero algo inferior a base. Los intervalos muestran incertidumbre Monte Carlo, mientras la comparación estadística correcta utiliza pares de la misma semilla.</aside>
+  </section>
+
+  <section class="slide chart-slide" id="d13" data-bloque="4 · Experimentos y resultados" data-segundos="40" data-titulo="Atribución del ahorro" data-apartados="Resultados">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-chart"/></svg>10 / Resultados · atribución</p><h1>La reducción se concentra en mantener menos inventario.</h1>
+    <p class="intro">Cada barra separa inventario, traslados y margen perdido. El control de bodega ajustada no permite ningún traspaso.</p>
+    <div class="figure"><img src="../figuras/atribucion_presentacion.svg" alt="El costo de inventario cae mucho al ajustar bodega; el costo total de bodega ajustada casi coincide con mejorada."></div>
+    <p class="reading"><strong>Lectura:</strong> agregar traspasos a bodega ajustada ahorra Q150.24 en promedio, pero el IC de diferencia [−Q411.96; +Q111.49] incluye cero: p-Holm = 1.</p>
+    <p class="footnote">El ajuste de bodega explica 98.12% del ahorro medio neto en esta descomposición secuencial; no es una atribución causal universal.</p>
+    <aside class="notes">El control sin traspasos ya logra casi todo el ahorro. La diferencia incremental es pequeña y no concluyente. Con bodega original tampoco se demuestra ahorro por traspasos solos. Este es uno de los hallazgos principales del proyecto: optimizar varios parámetros a la vez puede producir ahorro por un mecanismo distinto al que inicialmente queríamos estudiar.</aside>
+  </section>
+
+  <section class="slide chart-slide" id="d14" data-bloque="4 · Experimentos y resultados" data-segundos="35" data-titulo="Sensibilidad" data-apartados="Diseño experimental|Resultados">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-lab"/></svg>10 / Resultados · sensibilidad</p><h1>El aumento de demanda es el estrés más importante.</h1>
+    <p class="intro">Se conserva el ganador sin reentrenar. En demanda +20%, inventario inicial y niveles de reposición permanecen constantes.</p>
+    <div class="figure"><img src="../figuras/sensibilidad_presentacion.svg" alt="La demanda más veinte por ciento aumenta el costo y reduce el servicio; tráfico y un vehículo muestran cambios medios pequeños."></div>
+    <p class="reading"><strong>Lectura:</strong> demanda +20% aumenta costo 19.54% y reduce servicio a 98.0022%. Tráfico y flota no son significativos después de Holm; eso no prueba equivalencia.</p>
+    <p class="footnote">Medias e IC del 95%; tráfico ×2 en todas las franjas o un vehículo en lugar de dos, sin cambiar otros parámetros.</p>
+    <aside class="notes">No reentrenamos el ganador bajo estrés. La demanda mayor aumenta pérdidas y costo, aun manteniendo el promedio de servicio sobre noventa y cinco en este caso sintético. El bajo número de viajes hace que reducir vehículos tenga poco efecto en esta muestra. No es una recomendación de reducir flota ni una demostración de robustez en condiciones no estudiadas.</aside>
+  </section>
+
+  <section class="slide" id="d15" data-bloque="5 · Validación y cierre" data-segundos="35" data-titulo="Validación externa M5" data-apartados="Validación">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-shield"/></svg>08 / Validación</p><h1>La prueba externa<br>no reutiliza la calibración.</h1>
+    <p class="intro">El motor y sus balances pasan 141 pruebas. La validez externa se examina por separado: reproducir el software no implica reproducir la operación real.</p>
+    <div class="cols"><div class="card"><h2>Calibración</h2><div class="number teal">124 días</div><p>28 oct 2015 → 28 feb 2016</p><p class="small muted">Media y dispersión por día semanal.</p></div><div class="card"><h2>Contraste reservado</h2><div class="number amber">56 días</div><p>29 feb → 24 abr 2016</p><p class="small muted">24 observaciones reales tienda-semana.<br>30 réplicas por política; no 720 observaciones reales.</p></div></div>
+    <p class="footnote">ZIP público y SHA-256 verificados. Reejecución de las 60 réplicas: cuatro archivos numéricos idénticos.</p>
+    <aside class="notes">Solo el primer período estima los parámetros de demanda. El ganador sigue siendo el sintético, así que esta prueba evalúa transferencia, no ajuste específico a M5. Comparamos medias de simulación con observaciones reales. Reprodujimos el conjunto desde la fuente pública y verificamos exactamente sus archivos. Eso certifica reproducibilidad, no que el modelo sea una representación operacional de Walmart.</aside>
+  </section>
+
+  <section class="slide" id="d16" data-bloque="5 · Validación y cierre" data-segundos="30" data-titulo="Comparación real" data-apartados="Comparación real">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-data"/></svg>09 / Comparación real</p><h1>El contraste muestra<br><span class="amber">correspondencia limitada.</span></h1>
+    <table><thead><tr><th>Métrica</th><th>Real M5</th><th>Base</th><th>Mejorada</th></tr></thead><tbody>
+      <tr><td>Ventas totales</td><td>426</td><td>337.67</td><td>334.67</td></tr>
+      <tr><td>MAE tienda-semana</td><td>—</td><td>5.56</td><td>5.61</td></tr>
+      <tr><td>Error absoluto relativo</td><td>—</td><td>31.35%</td><td>31.63%</td></tr>
+      <tr class="highlight"><td>Servicio simulado</td><td>No observado</td><td>95.32%</td><td>94.51%</td></tr>
+    </tbody></table>
+    <div class="callout">12 de 30 réplicas mejoradas quedan bajo 95%.<br>No hubo traspasos: el cambio de costo no mide una mejora por traslados.</div>
+    <aside class="notes">La base subestima las ventas reales un veinte punto setenta y cuatro por ciento. El treinta y uno punto treinta y cinco es otro indicador: suma errores absolutos por tienda y semana, sin cancelación. La mejorada no corrige la discrepancia y pierde el objetivo de servicio promedio. Los costos son hipotéticos; su caída no es ahorro observado de Walmart.</aside>
+  </section>
+
+  <section class="slide chart-slide" id="ventas-m5" data-bloque="5 · Validación y cierre" data-segundos="35" data-titulo="Ventas reales y simuladas" data-apartados="Comparación real|Validación">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-chart"/></svg>09 / Comparación real · trayectorias</p><h1>Las ventas reales varían más que las medias simuladas.</h1>
+    <p class="intro">Tres productos agregados por tienda y semana. La línea oscura es la observación M5; las otras dos son medias de 30 réplicas.</p>
+    <div class="figure"><img src="../figuras/ventas_m5_presentacion.svg" alt="Ventas observadas con picos que las medias simuladas no reproducen en CA_1, CA_2 y CA_3."></div>
+    <p class="reading"><strong>Lectura:</strong> la base simula 337.67 ventas frente a 426 observadas: −20.74%. La media de réplicas suaviza el ruido; no debe interpretarse como una realización individual.</p>
+    <p class="footnote">29 de febrero–24 de abril de 2016. Unidades por semana; no son ventas ni ubicaciones reales de tiendas guatemaltecas.</p>
+    <aside class="notes">Las observaciones tienen picos que no siguen las curvas medias simuladas. Parte de la suavidad viene de promediar treinta réplicas, pero también hay subestimación de nivel: el total simulado queda por debajo del real. No comparamos dos series observadas equivalentes ni tratamos el promedio como una trayectoria real. M5 aporta ventas externas, no inventario observado.</aside>
+  </section>
+
+  <section class="slide chart-slide" id="errores-m5" data-bloque="5 · Validación y cierre" data-segundos="20" data-titulo="Error por tienda" data-apartados="Comparación real|Validación">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-target"/></svg>09 / Comparación real · error</p><h1>El error se mide en las mismas unidades que las ventas.</h1>
+    <p class="intro">MAE de la base: promedio del error absoluto en ocho semanas por tienda. Un menor valor indica más proximidad a las ventas observadas.</p>
+    <div class="figure"><img src="../figuras/mae_m5_presentacion.svg" alt="MAE de la base de 5.19 unidades por semana en CA_1 y 5.75 en CA_2 y CA_3."></div>
+    <p class="reading"><strong>Lectura:</strong> MAE global 5.56 unidades/tienda-semana y error absoluto relativo 31.35%. Este último no es el error neto de −20.74%: no permite cancelaciones.</p>
+    <p class="footnote">24 observaciones reales, no 24 × 30 observaciones independientes. No se fijó un umbral ex ante para declarar validación favorable.</p>
+    <aside class="notes">Explicar que el MAE no es un porcentaje y que el error absoluto relativo no es lo mismo que la diferencia entre totales. El primero resume distancia semanal sin cancelación; el sesgo neto sí permite compensación entre excesos y déficits. La selección de tres tiendas y tres productos limita cualquier generalización a la cadena completa.</aside>
+  </section>
+
+  <section class="slide" id="d17" data-bloque="5 · Validación y cierre" data-segundos="20" data-titulo="Limitaciones" data-apartados="Limitaciones">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-warning"/></svg>11 / Limitaciones</p><h1>Qué respalda el estudio.<br>Y dónde termina.</h1>
+    <div class="cols"><div class="card"><h2>Respaldado</h2><ul><li>141 pruebas y balances.</li><li>Comparaciones reproducibles.</li><li>Datos reales de ventas M5.</li><li>Resultados y supuestos trazables.</li></ul></div><div class="card"><h2 class="amber">No demostrado</h2><ul><li>Óptimo global.</li><li>Costos reales o inventario Walmart.</li><li>Beneficio aislado de traspasos.</li><li>Validez operacional universal.</li></ul></div></div>
+    <aside class="notes">La discretización diaria, los costos estimados, las ventas censuradas y una sola semilla del genético limitan la generalización. La referencia empresarial inicial se reemplaza aquí por una fuente pública de ventas y se declara el cambio de alcance. No debemos convertir una prueba negativa de transferencia en una promesa de mejora real.</aside>
+  </section>
+
+  <section class="slide" id="equipo" data-bloque="5 · Validación y cierre" data-segundos="20" data-titulo="Contribuciones del equipo" data-apartados="Contribuciones">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-people"/></svg>14 / Contribuciones</p><h1>Cinco áreas de trabajo,<br>un proyecto integrado.</h1>
+    <div class="cols"><div><h2>Equipo de trabajo</h2><table class="team-table"><tbody>
+      <tr><td>Javier Alejandro Chávez León</td><td>23132</td></tr><tr><td>Daniel Adolfo Sarmiento Peralta</td><td>231105</td></tr><tr><td>Sofía López Ayerdi</td><td>231929</td></tr><tr><td>Karen Ximena Toledo Juárez</td><td>23692</td></tr><tr><td>Luis Francisco Padilla Juárez</td><td>23663</td></tr>
+    </tbody></table></div><div class="card"><h2>Aportes incorporados</h2><ul><li>Simulación y pronóstico.</li><li>Costos y políticas de traspasos.</li><li>Genético y restricciones.</li><li>Experimentación y estadística.</li><li>Contraste con ventas reales M5.</li></ul></div></div>
+    <p class="footnote">Universidad del Valle de Guatemala · Facultad de Ingeniería · Modelación y Simulación.</p>
+    <aside class="notes">Presentar al equipo y las cinco áreas que se integraron en el resultado. La tabla identifica integrantes y carnés proporcionados por el equipo. La columna de aportes describe el trabajo conjunto, sin deducir una distribución individual no confirmada a partir de cuentas de Git.</aside>
+  </section>
+
+  <section class="slide" id="d18" data-bloque="5 · Validación y cierre" data-segundos="20" data-titulo="Conclusiones y referencias" data-apartados="Conclusiones|Referencias">
+    <p class="eyebrow"><svg class="icon"><use href="#ic-book"/></svg>12–13 / Conclusiones y referencias</p><h1>Optimizar exige<br>explicar el mecanismo.</h1>
+    <div class="cols wide-left"><div><p><span class="teal">01.</span> Hay ahorro sintético, pero no reducción simultánea de faltantes.</p><p><span class="teal">02.</span> El ahorro proviene sobre todo de la bodega; el efecto incremental de traspasos no es concluyente.</p><p><span class="amber">03.</span> M5 muestra límites de transferencia: todavía no es una recomendación operativa.</p></div><div class="card"><h2><svg class="icon"><use href="#ic-book"/></svg>Referencias esenciales</h2><ul class="refs">
+      <li>Eiben y Smith (2015). <em>Introduction to Evolutionary Computing.</em></li>
+      <li>Deb (2000). Manejo de restricciones en algoritmos genéticos.</li>
+      <li>Amaran et al. (2016). Optimización mediante simulación.</li>
+      <li>Kaggle M5 / Nixtla. Ventas y calendario públicos.</li>
+    </ul><p class="tiny"><a href="../informe/informe.html">Bibliografía completa y resultados en el informe →</a></p></div></div>
+    <p class="footnote">Guatemala, 10 de noviembre de 2026 · Modelación y Simulación.</p>
+    <aside class="notes">Cerrar respondiendo la pregunta: el costo disminuye en el sistema sintético, pero las pérdidas aumentan y el mecanismo dominante es bodega. M5 no valida el traslado de la política a una operación real. Las referencias mostradas son una selección breve; el informe incluye detalles bibliográficos, estadística y fuentes completas. Invitar preguntas sobre supuestos y controles.</aside>
+  </section>
+
+</div></main>
+<nav aria-label="Controles de presentación">
+  <div id="progreso"></div>
+  <button id="prev" type="button" aria-label="Diapositiva anterior">←</button>
+  <span id="contador" aria-live="polite">1 / 24</span>
+  <button id="next" type="button" aria-label="Diapositiva siguiente">→</button>
+  <span id="bloque"></span>
+  <button id="indice" type="button">Índice</button>
+  <button id="toggle-notas" type="button" aria-pressed="false">Notas · N</button>
+  <button id="timer" type="button" aria-label="Iniciar o pausar temporizador de quince minutos">15:00</button>
+  <button id="pantalla" type="button" aria-label="Pantalla completa">⛶</button>
+  <button id="imprimir" type="button">PDF</button>
+</nav>
+<aside id="notas" aria-live="polite"><h2>Notas del expositor</h2><div id="texto-notas"></div></aside>
+<dialog id="menu"><h2>Recorrido de 15 minutos</h2><p class="small muted">Cinco bloques de tres minutos · flechas para navegar · N para notas · F para pantalla completa · R reinicia el reloj.</p><div class="lista" id="lista"></div><p></p><button id="cerrar-menu" type="button">Cerrar</button></dialog>
+<script>
+  const slides=[...document.querySelectorAll('section.slide')];
+  const deck=document.getElementById('deck'), stage=document.getElementById('stage');
+  const prev=document.getElementById('prev'), next=document.getElementById('next');
+  const menu=document.getElementById('menu');
+  let index=0, seconds=900, ticking=false;
+  function resize(){document.documentElement.style.setProperty('--scale',Math.min(stage.clientWidth/1280,stage.clientHeight/720)*.98);}
+  function show(n){
+    index=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,i)=>{s.classList.toggle('activa',i===index);s.setAttribute('aria-hidden',String(i!==index));});
+    document.getElementById('contador').textContent=`${index+1} / ${slides.length}`;
+    document.getElementById('bloque').textContent=`${slides[index].dataset.bloque} · ${slides[index].dataset.segundos} s`;
+    document.getElementById('progreso').style.width=`${(index+1)/slides.length*100}%`;
+    document.getElementById('texto-notas').innerHTML=slides[index].querySelector('.notes').innerHTML;
+    prev.disabled=index===0;next.disabled=index===slides.length-1;
+    history.replaceState(null,'',`#${slides[index].id}`);
+  }
+  function notes(){const on=document.body.classList.toggle('con-notas');document.getElementById('toggle-notas').setAttribute('aria-pressed',String(on));resize();}
+  function clock(){document.getElementById('timer').textContent=`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;}
+  function fullscreen(){if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen?.();}
+  prev.onclick=()=>show(index-1);next.onclick=()=>show(index+1);
+  document.getElementById('toggle-notas').onclick=notes;
+  document.getElementById('indice').onclick=()=>menu.showModal();
+  document.getElementById('cerrar-menu').onclick=()=>menu.close();
+  document.getElementById('pantalla').onclick=fullscreen;
+  document.getElementById('imprimir').onclick=()=>window.print();
+  document.getElementById('timer').onclick=()=>{ticking=!ticking;};
+  setInterval(()=>{if(ticking&&seconds>0){seconds--;clock();}},1000);
+  slides.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.textContent=`${String(i+1).padStart(2,'0')} · ${s.dataset.titulo}`;b.onclick=()=>{show(i);menu.close();};document.getElementById('lista').appendChild(b);});
+  document.addEventListener('keydown',e=>{
+    if(menu.open)return;
+    if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(index+1);}
+    if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(index-1);}
+    if(e.key==='Home')show(0);if(e.key==='End')show(slides.length-1);
+    if(e.key.toLowerCase()==='n')notes();if(e.key.toLowerCase()==='f')fullscreen();
+    if(e.key.toLowerCase()==='r'){seconds=900;ticking=false;clock();}
+  });
+  window.addEventListener('resize',resize);
+  const initial=slides.findIndex(s=>`#${s.id}`===location.hash);show(Math.max(0,initial));resize();
+</script>
+</body>
+</html>

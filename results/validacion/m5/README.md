@@ -20,7 +20,7 @@ En este caso la mejorada simula tres unidades vendidas menos que la base (−0.8
 
 El costo supuesto presenta desviación estándar entre réplicas de Q365.57 en la base y Q453.82 en la mejorada; el servicio medio fue 95.32 % y 94.51 %, respectivamente, con desviaciones de 2.98 y 3.22 puntos porcentuales. Esta variabilidad describe el generador de demanda y los supuestos, no un intervalo de confianza sobre el desempeño real. Solo hay tres tiendas y tres artículos seleccionados; no se puede generalizar a Walmart o a Guatemala. La prueba tampoco representa las ubicaciones reales de las tiendas: utiliza coordenadas hipotéticas en Guatemala.
 
-`ventas_semanales.csv` contiene las observaciones y el promedio de réplicas para la futura gráfica; `ventas_semanales_replicas.csv` conserva cada réplica; `metricas_replicas.csv` contiene métricas del motor; `resumen.json` registra períodos, errores y hash del ZIP. `manifest.json` identifica versiones, semillas y SHA-256 de código, configuración, ganador, ZIP y resultados. Los cuatro archivos de resultados se reprodujeron exactamente con las mismas dependencias y entradas. Las versiones futuras pueden generar diferencias.
+`ventas_semanales.csv` contiene las observaciones y el promedio de réplicas para las gráficas; `ventas_semanales_replicas.csv` conserva cada réplica; `metricas_replicas.csv` contiene métricas del motor; `resumen.json` registra períodos, errores y hash del ZIP. `manifest.json` identifica versiones, semillas y SHA-256 de código, configuración, ganador, ZIP y resultados. Los cuatro archivos de resultados se reprodujeron exactamente con las mismas dependencias y entradas. Las versiones futuras pueden generar diferencias.
 
 Para reproducir, obtener `m5.zip` desde la fuente indicada y ejecutar desde la raíz, en una carpeta de salida vacía:
 
@@ -39,3 +39,8 @@ python -m src.viz.validacion --ventas results/validacion/m5/ventas_semanales.csv
 
 El manifiesto describe la ejecución de la simulación; el código de gráficas se
 agregó después y no modifica los resultados numéricos.
+
+El cierre posterior con diferencias absolutas/porcentuales, incertidumbre del
+modelo y nueva reproducción de la fuente está en
+[`../cierre_m5/`](../cierre_m5/README.md). La interpretación integrada se conserva
+en el único informe general del proyecto.

@@ -1,0 +1,44 @@
+{
+  "alcance": "Contraste externo parcial de ventas M5; no validación operativa de Walmart",
+  "observaciones_reales": 24,
+  "replicas_por_condicion": 30,
+  "ventas_reales_totales": 426,
+  "modelos": {
+    "base": {
+      "mae": 5.56388888888889,
+      "error_relativo_pct": 31.345852895148674,
+      "ventas_totales": 337.6666666666667,
+      "costo_total": 1156.3440000000003,
+      "servicio_pct": 95.32436778691569,
+      "unidades_perdidas": 17.0,
+      "num_traspasos": 0.0
+    },
+    "mejorada": {
+      "mae": 5.613888888888888,
+      "error_relativo_pct": 31.62754303599374,
+      "ventas_totales": 334.6666666666667,
+      "costo_total": 1067.4733333333331,
+      "servicio_pct": 94.50883581874302,
+      "unidades_perdidas": 20.0,
+      "num_traspasos": 0.0
+    }
+  },
+  "replicas_servicio_bajo_95": {
+    "base": 9,
+    "mejorada": 12
+  },
+  "sin_traspasos_en_m5": true,
+  "zip_fuente_verificado": true,
+  "reproduccion_exacta_cuatro_archivos": true,
+  "sha256_zip": "cc704ba15d6802f8262e6ec7d4c6041e4ad6366a94365e8c84f721e450eed774",
+  "resultado_fuente_sha256": {
+    "ventas_semanales.csv": "81ab4b092ed55134ecc30ed2863060bc435207146105fac241967b1e4bef74d3",
+    "ventas_semanales_replicas.csv": "01699233c3b639ca39824a39ca2f38278b62c9782e6a813c7e78f11ec9d0c6ed",
+    "metricas_replicas.csv": "34e876ef662572f6b7b90ed004e292514bd34f15be28abba4411f0933930eeaa",
+    "resumen.json": "44b32eef11db7cb92007e263b652e3c7ddc1912d3d92d85235d3df530a3ddc4d"
+  },
+  "codigo_comparacion_sha256": "e9f55b6c56afb6d7ee6bfd83e92190b8b7970fc3fa297b40cc91ce2bf8de09f5",
+  "estadistica_sha256": "34fc9c326f2457cd5945236b87a30aec9c5e43e3a42803b5b0a1d39ecc323a23",
+  "interpretacion_ic": "Incertidumbre Monte Carlo del modelo; no IC del desempeño real",
+  "interpretacion_pruebas": "Dos pruebas t del modelo, ajuste Holm dentro de M5; no mejora real"
+}

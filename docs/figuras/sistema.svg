@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="480" viewBox="0 0 1100 480" role="img" aria-labelledby="title desc">
+  <title id="title">Sistema de inventario y traspasos laterales</title>
+  <desc id="desc">Un proveedor abastece a una bodega, que repone a tres tiendas. Los traspasos laterales redistribuyen unidades y el genético ajusta la política.</desc>
+  <defs>
+    <marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto-start-reverse"><path d="M0 0 8 4 0 8z" fill="#187a7c"/></marker>
+    <style>text{font-family:Arial,sans-serif;fill:#16313b}.title{font-size:21px;font-weight:bold}.sub{font-size:16px;fill:#526b75}.box{fill:#eff7f7;stroke:#a2caca;stroke-width:2}.flow{stroke:#187a7c;stroke-width:3;fill:none;marker-end:url(#a)}</style>
+  </defs>
+  <rect width="1100" height="480" rx="24" fill="#ffffff"/>
+  <rect class="box" x="32" y="55" width="195" height="105" rx="16"/>
+  <text class="title" x="130" y="98" text-anchor="middle">Proveedor</text><text class="sub" x="130" y="129" text-anchor="middle">Regla (s, S)</text>
+  <path class="flow" d="M227 108H334"/><text class="sub" x="280" y="89" text-anchor="middle">7 días</text>
+  <rect class="box" x="345" y="55" width="220" height="105" rx="16"/>
+  <text class="title" x="455" y="98" text-anchor="middle">Bodega central</text><text class="sub" x="455" y="129" text-anchor="middle">Stock + pedidos</text>
+  <path class="flow" d="M455 160V217H195V270"/><path class="flow" d="M455 160V270"/><path class="flow" d="M455 160V217H745V270"/>
+  <text class="sub" x="464" y="200">Reposición: 2 días</text>
+  <rect class="box" x="85" y="281" width="220" height="105" rx="16"/><rect class="box" x="345" y="281" width="220" height="105" rx="16"/><rect class="box" x="635" y="281" width="220" height="105" rx="16"/>
+  <text class="title" x="195" y="323" text-anchor="middle">Tienda A</text><text class="sub" x="195" y="354" text-anchor="middle">Inventario + ventas</text>
+  <text class="title" x="455" y="323" text-anchor="middle">Tienda B</text><text class="sub" x="455" y="354" text-anchor="middle">Inventario + ventas</text>
+  <text class="title" x="745" y="323" text-anchor="middle">Tienda C</text><text class="sub" x="745" y="354" text-anchor="middle">Inventario + ventas</text>
+  <path class="flow" d="M195 386V432H745V398"/><path class="flow" d="M455 432V398"/>
+  <text class="sub" x="465" y="465" text-anchor="middle">Traspasos laterales: exceso, valor, capacidad y tránsito</text>
+  <rect x="670" y="35" width="390" height="150" rx="16" fill="#16313b"/>
+  <text x="865" y="75" text-anchor="middle" style="fill:#fff;font-size:23px;font-weight:bold">Genético → política</text>
+  <text x="865" y="111" text-anchor="middle" style="fill:#b8dcdc;font-size:17px">11 genes · simulación como evaluación</text>
+  <text x="865" y="146" text-anchor="middle" style="fill:#f2be78;font-size:17px">Costo mínimo por viaje + rutas voraces</text>
+</svg>

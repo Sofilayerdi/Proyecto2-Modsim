@@ -1,5 +1,19 @@
 # Proyecto 2: traspasos de inventario entre tiendas
 
+**Universidad del Valle de Guatemala · Facultad de Ingeniería**
+
+**Modelación y Simulación**
+
+**Guatemala, 10 de noviembre de 2026**
+
+| Integrante | Carné |
+| --- | --- |
+| Javier Alejandro Chávez León | 23132 |
+| Daniel Adolfo Sarmiento Peralta | 231105 |
+| Sofía López Ayerdi | 231929 |
+| Karen Ximena Toledo Juárez | 23692 |
+| Luis Francisco Padilla Juárez | 23663 |
+
 Simulación diaria de una cadena con bodega central y optimización de los
 parámetros de una política de traspasos mediante un algoritmo genético propio.
 
@@ -49,27 +63,56 @@ data/synthetic/          CSV y procedencia sintéticos
 src/simulation/          carga, demanda, pronóstico y motor
 src/model/               transporte, costos e indicador y políticas de traspasos
 src/optimization/        genético, restricciones, evaluación y convergencia
+src/validation/          calibración M5, contraste de ventas y cierre comparativo
 src/viz/                 inventario, comparación, desglose y sensibilidad
 experiments/optimizar.py ejecución reproducible de la optimización (persona 3)
 experiments/comparar.py  comparación pareada y estadística (persona 4)
 experiments/diseno.yaml  semillas, sensibilidades y comparaciones predefinidas
 results/optimizacion/    ganador, semillas, métricas por réplica e historial
 results/experimentos/    CSV comparativos, estadística, auditoría y gráficas
+results/validacion/      contraste M5 y diferencias real/base/mejorada
 tests/                  pruebas automáticas
 docs/informe/           informe técnico integrado del proyecto
+docs/presentacion/      presentación general de 15 minutos, HTML y PDF
 ```
 
-La comparación sintética, estadística y sensibilidad están ejecutadas. Existe
-un contraste parcial con ventas públicas M5 en `results/validacion/m5/`; no
-valida inventarios, costos ni la operación de la cadena de referencia del equipo.
+La comparación sintética, estadística y sensibilidad están ejecutadas. El cierre
+usa M5 como referencia pública externa en lugar de datos empresariales no
+disponibles: es un contraste parcial de ventas, no validación de inventarios,
+costos o de la operación de Walmart. Se verificó el ZIP y se reprodujeron las
+60 réplicas y cuatro archivos numéricos originales. La comparación completa
+de diferencias está en `results/validacion/cierre_m5/`.
 Los datos privados están excluidos de Git mediante `data/reference/`.
 
 ## Informe técnico
 
-El documento maestro es [docs/informe/informe.md](docs/informe/informe.md).
-Integra problema, investigación, modelo, costos, políticas, genético y resultados
-experimentales sintéticos. Identifica la validación real pendiente. Se edita en
-Markdown y puede exportarse a PDF al cerrar el informe.
+El documento maestro es [docs/informe/informe.md](docs/informe/informe.md), con
+los 14 apartados acordados, comparación externa, conclusiones y contribuciones
+del equipo. Los datos institucionales e integrantes están en `docs/proyecto.json`.
+
+- [Informe PDF](docs/informe/informe.pdf).
+- [Informe HTML](docs/informe/informe.html), con fórmulas MathML y enlaces locales.
+- [Presentación general](docs/presentacion/presentacion.html): 24 diapositivas
+  en colores claros, los 14 apartados del informe, siete gráficas, diagrama,
+  cinco bloques de tres minutos, notas, índice y temporizador.
+- [Presentación PDF](docs/presentacion/presentacion.pdf).
+
+La presentación funciona sin conexión al abrir el HTML junto con el repositorio.
+Flechas o espacio avanzan; **N** muestra notas, **F** pantalla completa y **R**
+reinicia el reloj. El PDF de diapositivas es autónomo y no incluye las notas.
+
+Para regenerar las exportaciones después de editar el Markdown o las diapositivas:
+
+```bash
+python -m pip install -r docs/requirements.txt
+python -m playwright install chromium-headless-shell
+python docs/generar_entregables.py
+```
+
+Estas dependencias son solo documentales y no alteran el entorno científico.
+`docs/entregables.json` registra las huellas de fuentes y exportaciones.
+Los datos de portada e integrantes ya están incorporados. Las revisiones
+y la defensa académica corresponden al equipo.
 
 ## Evidencia guardada
 

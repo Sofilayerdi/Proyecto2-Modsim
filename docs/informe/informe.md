@@ -1,19 +1,30 @@
 # Proyecto 2: traspasos de inventario entre tiendas
 
-## Informe técnico integrado
+**Informe técnico integrado — estudio sintético y contraste externo M5**
 
-**Universidad del Valle de Guatemala**  
-**Curso:** CC3074 — Modelización y Simulación  
-**Integrantes y carnés:** pendiente de completar por el equipo.  
-**Docente y fecha de entrega:** pendiente de completar por el equipo.
+**Universidad del Valle de Guatemala**
 
-**Estado del documento:** borrador integrado. Contiene el problema, la
-investigación, la formulación, la implementación, la optimización y el estudio
-experimental sintético con comparación, atribución y sensibilidad. Incluye un
-contraste parcial con ventas públicas M5; la validación integral de la cadena
-de referencia sigue pendiente. Este archivo es el documento maestro del informe.
+**Facultad de Ingeniería**
 
-## Resumen
+**Modelación y Simulación**
+
+**Guatemala, 10 de noviembre de 2026**
+
+| Integrante | Carné |
+| --- | --- |
+| Javier Alejandro Chávez León | 23132 |
+| Daniel Adolfo Sarmiento Peralta | 231105 |
+| Sofía López Ayerdi | 231929 |
+| Karen Ximena Toledo Juárez | 23692 |
+| Luis Francisco Padilla Juárez | 23663 |
+
+**Alcance de cierre:** prototipo reproducible, comparación sintética y contraste
+externo de ventas públicas M5. La referencia pública reemplaza la referencia
+empresarial no disponible para este estudio; no representa ni valida la
+operación de Walmart o de una cadena concreta. Este es el único documento
+maestro; sus versiones HTML y PDF se generan a partir de este archivo.
+
+**Resumen**
 
 Se desarrolló un modelo de simulación diaria de inventario para una cadena de
 tiendas abastecida desde una bodega central. El modelo representa demanda
@@ -38,25 +49,19 @@ del ajuste de bodega, sin evidencia estadística suficiente de ahorro incrementa
 por los traspasos. Con demanda +20% y existencias de referencia constantes,
 el costo aumentó 19.54% respecto a la mejorada nominal. Estos hallazgos
 corresponden al sistema sintético; el contraste parcial M5 y sus limitaciones
-se presentan en la sección 6. Validar una cadena concreta requiere más datos.
+se presentan en los apartados de validación y comparación real. La fuente M5
+se reprodujo y verificó, y la mejorada obtuvo MAE 5.61 frente a 5.56 de la base,
+sin traspasos y con servicio simulado de 94.51%. La conclusión externa es de
+correspondencia limitada, no de validación operativa favorable.
 
 **Palabras clave:** inventario, traspasos laterales, simulación, algoritmo
 genético, restricciones, flujo de costo mínimo.
 
-## Contenido
+**Contenido:** Problema · Objetivos · Fuentes · Técnica investigada · Modelo ·
+Implementación · Diseño experimental · Validación · Comparación real ·
+Resultados · Limitaciones · Conclusiones · Referencias · Contribuciones.
 
-1. Problema y objetivos.
-2. Investigación de la técnica adicional.
-3. Formulación del modelo.
-4. Implementación de la mejora.
-5. Diseño experimental y verificación.
-6. Comparación con la vida real.
-7. Resultados experimentales.
-8. Conclusiones y limitaciones.
-9. Referencias.
-10. Anexo de reproducibilidad y responsabilidades.
-
-## 1. Problema y objetivos
+## 1. Problema
 
 ### 1.1 Contexto y planteamiento
 
@@ -72,10 +77,11 @@ de dejar sin existencias al donante. Por ello, no basta con mover productos de
 una tienda con más inventario a otra con menos: debe evaluarse si llegarán a
 tiempo y si el beneficio esperado compensa el costo y el riesgo.
 
-El proyecto estudia esta decisión mediante simulación y optimización. La
-referencia empresarial prevista es una cadena cuyos datos aportaría el equipo;
-en la versión actual solo se dispone del contrato sintético de arranque. No
-se atribuyen a una empresa real los parámetros ni resultados de ese contrato.
+El proyecto estudia esta decisión mediante simulación y optimización. Usa dos
+fuentes de evidencia separadas: un contrato sintético para optimizar y comparar,
+y ventas públicas M5 para contrastar ventas fuera de la calibración. La cadena
+empresarial contemplada al inicio no aportó datos al repositorio; se cierra el
+estudio con la referencia pública, declarando el cambio de alcance.
 
 ### 1.2 Pregunta de investigación
 
@@ -83,32 +89,7 @@ se atribuyen a una empresa real los parámetros ni resultados de ese contrato.
 traspasos entre tiendas se deciden con una política optimizada, en lugar de
 depender solo de la reposición desde bodega?
 
-### 1.3 Objetivo general
-
-Evaluar, mediante simulación, el efecto de una política de traspasos entre
-tiendas cuyos parámetros se ajustan con un algoritmo genético sobre el costo
-total y el nivel de servicio de una cadena con bodega central.
-
-### 1.4 Objetivos específicos
-
-1. Representar la dinámica diaria de inventario, demanda, ventas, faltantes y
-   reposición de tiendas y bodega.
-2. Formular un indicador económico que relacione el beneficio de atender
-   demanda adicional con el costo del traslado y el riesgo para el donante.
-3. Implementar políticas de traspasos que respeten exhibición, exceso disponible,
-   capacidad de transporte, tránsito y conservación de unidades.
-4. Ajustar los parámetros de la política mediante un genético con restricciones
-   y evaluaciones replicadas bajo demanda común.
-5. Comparar el escenario base, una regla simple y la política ajustada, y evaluar
-   su sensibilidad con estadística sobre réplicas pareadas.
-6. Contrastar el modelo base con datos reales antes de interpretar la mejora
-   como una recomendación operativa.
-
-El objetivo 5 se evaluó en el contrato sintético. El objetivo 6 permanece
-parcialmente abordado con datos públicos M5; falta validar inventarios y la
-operación de la cadena concreta.
-
-### 1.5 Alcance
+### 1.3 Alcance
 
 Se incluyen una bodega, múltiples tiendas y productos, demanda semanalmente
 estacional, pronóstico simple, reposición (s, S), transporte e inventario en
@@ -121,9 +102,63 @@ vehículo puede hacer como máximo un viaje directo por día. La reposición sig
 una regla (s, S); sus parámetros de bodega forman parte del cromosoma, por lo
 que su ajuste debe distinguirse del efecto exclusivo de los traspasos.
 
-## 2. Investigación de la técnica adicional
+## 2. Objetivos
 
-### 2.1 Selección de un algoritmo genético
+### 2.1 Objetivo general
+
+Evaluar, mediante simulación, el efecto de una política de traspasos cuyos
+parámetros se ajustan con un algoritmo genético sobre costo, servicio y
+faltantes, distinguiendo el desempeño sintético de su correspondencia externa
+con ventas observadas.
+
+### 2.2 Objetivos específicos y evidencia de cumplimiento
+
+| Objetivo | Evidencia de cierre |
+| --- | --- |
+| Representar inventario, demanda, ventas y reposición | Motor diario, balances y pruebas |
+| Formular costos e indicador económico | Transporte, cobertura, reserva y V documentados |
+| Respetar restricciones de inventario y transporte | Políticas, validaciones y auditorías por réplica |
+| Optimizar una política con restricciones | 11 genes, reparación, réplicas y reevaluación |
+| Comparar políticas y sensibilidad | 240 réplicas, controles, IC y pruebas pareadas |
+| Contrastar ventas contra una referencia real pública | M5: calibración separada, 60 réplicas y errores fuera de muestra |
+
+El último objetivo se limita expresamente a ventas. La validación de inventarios,
+costos y operaciones reales queda como trabajo futuro, porque esas variables
+no están observadas en las entradas utilizadas.
+
+## 3. Fuentes
+
+### 3.1 Datos y procedencia
+
+| Fuente | Contenido y uso | Naturaleza |
+| --- | --- | --- |
+| `data/synthetic/` | 10 tiendas, 3 productos, medias semanales y clases para optimización | Sintética, semilla 20261109 |
+| Kaggle M5, copia pública de Nixtla | Ventas diarias y calendario para contraste externo | Observaciones reales de ventas |
+| `config.yaml` | Costos, capacidades, distancias aproximadas y reglas de reposición | Estimaciones y supuestos |
+| Resultados y manifiestos | Métricas, semillas, versiones, código y entradas verificadas | Evidencia generada por el modelo |
+
+M5 se obtiene de la competición original y de su copia pública, citadas en
+Referencias. Se seleccionaron CA_1–CA_3 y FOODS_1_001–003. No se incorporó
+el ZIP al repositorio; se conservan su URL, receta y SHA-256
+`cc704ba15d6802f8262e6ec7d4c6041e4ad6366a94365e8c84f721e450eed774`.
+El ZIP se descargó de nuevo y sus resultados se reprodujeron exactamente.
+
+### 3.2 Separación entre observación y supuesto
+
+Las ventas M5 no son demanda total, inventario, costos ni rutas observadas.
+Las coordenadas usadas por el simulador son hipotéticas en Guatemala y no
+describen las ubicaciones de las tiendas de California. Los márgenes en Q y
+las reglas (s, S) son supuestos compartidos del prototipo. No se convierten
+ventas de Walmart en un supuesto costo real en quetzales.
+
+No se dispone de una fuente empresarial propia ni de todos los parámetros
+operativos reales. Se documenta esta ausencia como límite del alcance, sin
+rellenar los campos desconocidos con ceros ni presentar el modelo como una
+réplica de la operación real.
+
+## 4. Técnica investigada
+
+### 4.1 Selección de un algoritmo genético
 
 Los parámetros de una política de inventario interactúan de forma no lineal:
 una mayor reserva protege al donante, pero reduce la cantidad transferible;
@@ -137,7 +172,7 @@ mutación como componentes configurables de los algoritmos evolutivos. En este
 proyecto el cromosoma describe una política reutilizable y no una lista de
 todos los movimientos diarios, lo que limita la dimensión de búsqueda.
 
-### 2.2 Manejo de restricciones
+### 4.2 Manejo de restricciones
 
 Deb (2000) estudia el manejo de restricciones en algoritmos genéticos y la
 distinción entre factibilidad y calidad. Nuestra implementación combina
@@ -156,7 +191,7 @@ El objetivo de 95% de servicio se trata como una restricción blanda sobre el
 promedio de réplicas: incumplirlo aumenta el fitness, pero no invalida
 automáticamente al candidato ni garantiza 95% por tienda o producto.
 
-### 2.3 Optimización mediante simulación y evaluación ruidosa
+### 4.3 Optimización mediante simulación y evaluación ruidosa
 
 Amaran et al. (2016) describen la optimización mediante simulación como la
 búsqueda de decisiones cuyo desempeño se obtiene evaluando un modelo. Aquí
@@ -179,12 +214,12 @@ el entrenamiento. Los cinco mejores genotipos distintos se reevalúan con
 semillas adicionales y el ganador se evalúa con un tercer conjunto independiente.
 Esto reduce el riesgo de seleccionar una política por una realización favorable.
 
-### 2.4 Extensión y fundamento bibliográfico
+### 4.4 Extensión y fundamento bibliográfico
 
 La extensión del genético visto en clase combina reparación, evaluación con
 réplicas y números aleatorios comunes, reevaluación de finalistas e integración
-con el simulador y el flujo de costo mínimo. Según el plan, el equipo debe
-confirmar con el docente su clasificación como técnica adicional válida.
+con el simulador y el flujo de costo mínimo. Se describe la extensión realmente
+implementada; la documentación no presupone una aprobación académica externa.
 
 | Fuente | Aporte al enfoque |
 | --- | --- |
@@ -195,9 +230,14 @@ confirmar con el docente su clasificación como técnica adicional válida.
 Estas referencias sustentan el enfoque general, no demuestran que la población,
 rangos o penalización elegidos sean óptimos para esta aplicación.
 
-## 3. Formulación del modelo
+## 5. Modelo
 
-### 3.1 Conjuntos, estados y decisiones
+![Sistema de inventario y traspasos](../figuras/sistema.svg)
+
+**Esquema del sistema.** La reposición de proveedor y bodega coexiste con los
+traspasos entre tiendas. El genético ajusta reglas; no programa cada envío.
+
+### 5.1 Conjuntos, estados y decisiones
 
 Se consideran tiendas $i,j\in\{1,\ldots,N\}$, productos
 $k\in\{1,\ldots,K\}$, una bodega $w$ y días
@@ -222,7 +262,7 @@ La política observa inventario, llegadas comprometidas, pérdidas acumuladas y
 pronóstico después de las ventas del día. No recibe las realizaciones futuras
 de demanda utilizadas por el motor.
 
-### 3.2 Datos, parámetros y procedencia
+### 5.2 Datos, parámetros y procedencia
 
 Los CSV sintéticos contienen 10 tiendas y 210 registros de demanda: una fila
 por tienda, producto y día semanal. La clase de tienda se declara antes de
@@ -259,7 +299,7 @@ la semilla de generación se conservan en
 [`procedencia.json`](../../data/synthetic/procedencia.json). Ninguna magnitud
 de esta tabla debe citarse como medición real de una empresa.
 
-### 3.3 Demanda aleatoria y pronóstico
+### 5.3 Demanda aleatoria y pronóstico
 
 La demanda usa una media por tienda, producto y día semanal. Si la dispersión
 varianza/media es uno, se utiliza Poisson; si es mayor que uno, se usa binomial
@@ -280,7 +320,7 @@ la media previa del archivo de entrada. Se producen 14 días de pronóstico.
 Se utilizan ventas observadas, no demanda futura; cuando hubo agotamientos,
 esta serie puede subestimar la demanda latente.
 
-### 3.4 Dinámica diaria y reposición
+### 5.4 Dinámica diaria y reposición
 
 El orden diario es el siguiente:
 
@@ -328,7 +368,7 @@ pueden multiplicarse por 1.2 sin escalar las existencias iniciales ni los
 niveles (s, S). Sin esta opción se conserva el comportamiento original de la
 optimización, donde esos niveles siguen la escala de demanda configurada.
 
-### 3.5 Distancias, tráfico y tránsito
+### 5.5 Distancias, tráfico y tránsito
 
 La distancia entre coordenadas se estima con Haversine, usando un radio
 terrestre de 6371.0088 km, y se multiplica por el factor vial 1.3. No es una
@@ -344,7 +384,7 @@ franja de salida; no se integra el cambio de tráfico durante el viaje.
 El motor no admite que un traspaso llegue en el día del despacho. La distancia
 y el costo corresponden a la ida, sin recorrido de retorno modelado.
 
-### 3.6 Cobertura, exceso e indicador económico
+### 5.6 Cobertura, exceso e indicador económico
 
 La cobertura compara inventario con demanda media prevista. Demanda cero
 implica cobertura infinita. Para un donante de clase g, el exceso transferible es:
@@ -386,7 +426,7 @@ añadido al costo total. La política económica acepta un viaje solo si
 $V_{ij}>u_V$; si una reposición cubre las ventas antes de que llegue el
 traspaso, el beneficio adicional disminuye o desaparece.
 
-### 3.7 Costos, métricas y restricciones
+### 5.7 Costos, métricas y restricciones
 
 El costo físico por réplica es:
 
@@ -421,9 +461,9 @@ Los envíos deben cumplir:
 - Un viaje por vehículo y día, con capacidad compartida entre productos.
 - Conservación de unidades, incluyendo inventario que sigue en tránsito al terminar.
 
-## 4. Implementación de la mejora
+## 6. Implementación
 
-### 4.1 Arquitectura y políticas
+### 6.1 Arquitectura y políticas
 
 ```text
 CSV + configuración
@@ -455,7 +495,7 @@ a microquetzales para el flujo; V se comprueba sin ese redondeo. Las líneas
 de productos comparten un identificador de viaje y solo una contiene el costo
 y los kilómetros, evitando duplicaciones en las métricas.
 
-### 4.2 Cromosoma de 11 genes
+### 6.2 Cromosoma de 11 genes
 
 $$
 \theta=(s_w,S_w,H_a,SS_a,H_m,SS_m,H_b,SS_b,u_V,p_T,h_d).
@@ -477,7 +517,7 @@ Los límites son supuestos de diseño y requieren análisis de sensibilidad.
 La reparación acota los genes, redondea enteros y garantiza S ≥ s y
 H + SS compatible con el horizonte de pronóstico configurado.
 
-### 4.3 Operadores y control del algoritmo
+### 6.3 Operadores y control del algoritmo
 
 | Componente | Configuración utilizada |
 | --- | --- |
@@ -496,7 +536,7 @@ del plan. No se presentan como valores calibrados u óptimos. Cada hijo se
 repara. Los genotipos repetidos reutilizan su evaluación dentro de la corrida,
 porque configuración y semillas permanecen fijas.
 
-### 4.4 Réplicas, integración y reproducibilidad
+### 6.4 Réplicas, integración y reproducibilidad
 
 | Generador o etapa | Semilla o conjunto | Uso |
 | --- | --- | --- |
@@ -517,35 +557,31 @@ gráfica y manifiesto con versiones, configuración y huellas SHA-256 de entrada
 y código. Una instantánea de progreso no equivale a una reanudación completa
 del algoritmo: no guarda el estado completo de su generador.
 
-## 5. Diseño experimental y verificación
+### 6.5 Ejecución reproducible y entregables
 
-### 5.1 Verificación ya realizada
+Desde la raíz, con Python 3.10+ y las dependencias de `requirements.txt`:
 
-La última verificación registrada del proyecto obtuvo **131 pruebas aprobadas**.
-La evidencia disponible cubre:
+```bash
+python -m pytest -q
+python -m experiments.optimizar --config config.yaml --salida results/optimizacion/nueva --trabajadores 6
+python -m experiments.comparar --config config.yaml --diseno experiments/diseno.yaml --salida results/experimentos/nueva --trabajadores 6
+python -m src.validation.m5 --m5 /ruta/m5.zip --salida results/validacion/nueva
+python -m src.validation.comparacion --origen results/validacion/nueva --salida results/validacion/nuevo_cierre --zip-fuente /ruta/m5.zip
+```
 
-- Conservación en tiendas, bodega y sistema, incluyendo tránsito final.
-- Demanda cero, inventario abundante y ausencia de inventario negativo.
-- Semilla común independiente de la política.
-- Distancias, tráfico, costo a distancia cero y consolidación de productos.
-- Capacidad por viaje, exceso agregado y mínimo de exhibición.
-- Selección de carga comparada con enumeración exhaustiva en un caso pequeño.
-- Efecto real de parámetros por tipo, reparación y operadores del genético.
-- Igualdad entre ejecución secuencial y paralela y aislamiento del RNG global.
-- Emparejamiento por semilla, intervalos con desviación muestral y ajuste de Holm.
-- Manejo de diferencias nulas y rechazo de semillas duplicadas o no emparejadas.
-- Construcción de escenarios sin modificar el ganador y ejecución integral de
-  un diseño pequeño con archivos estadísticos y gráficas.
+Las carpetas de salida deben estar vacías. Los CSV sintéticos están incluidos;
+el ZIP público se obtiene de la fuente citada. Los manifiestos conservan las
+versiones exactas, entradas, semillas y huellas de código. Las fechas, rutas y
+tiempos pueden cambiar al reproducir; versiones distintas pueden cambiar las
+realizaciones numéricas. Las pruebas no incluyen la descarga automática de M5.
 
-La corrida comparativa verificó conservación y existencias no negativas en
-sus 240 réplicas, igualdad de demanda nominal por semilla, constancia del
-inventario inicial y consistencia de costos y servicio. Su condición mejorada
-coincidió con las 30 réplicas finales guardadas de la optimización. Las
-huellas de entradas y código se registran en el manifiesto experimental.
-Esto es verificación interna y reproducibilidad; no demuestra correspondencia
-del modelo con una cadena real.
+El informe maestro es este Markdown; HTML y PDF son sus exportaciones. La
+presentación general agrupa cinco bloques de tres minutos e incluye notas,
+resultados y límites del contraste real.
 
-### 5.2 Diseño comparativo ejecutado
+## 7. Diseño experimental
+
+### 7.1 Diseño comparativo ejecutado
 
 El diseño se fijó en [`experiments/diseno.yaml`](../../experiments/diseno.yaml)
 antes de observar las comparaciones. Se mantuvieron 10 tiendas, 3 productos,
@@ -577,7 +613,7 @@ El servicio se guarda como fracción y se transforma a porcentaje al presentar.
 Los controles de bodega permiten distinguir el efecto conjunto de la política
 del efecto incremental de introducir los traspasos con reposición constante.
 
-### 5.3 Condiciones de sensibilidad
+### 7.2 Condiciones de sensibilidad
 
 En demanda +20% se configuraron `factor_demanda=1.2` y
 `factor_referencia_inventario=1.0`. Aumentaron demanda real y media previa del
@@ -594,7 +630,7 @@ de transporte artificialmente mayor. En la tercera sensibilidad se reduce de
 dos a un vehículo, dejando todo lo demás constante. No se reoptimiza ninguna
 condición de sensibilidad.
 
-### 5.4 Estadística e hipótesis
+### 7.3 Estadística e hipótesis
 
 Se calcularon media, desviación estándar muestral (denominador n − 1) e IC
 individual del 95% mediante t con 29 grados de libertad:
@@ -637,7 +673,59 @@ en la primera tienda de cada clase, elegidos antes de examinar resultados.
 Los porcentajes de cambio se calculan como cambio de medias dividido por la
 media de referencia; los cambios de servicio se presentan en puntos porcentuales.
 
-## 6. Comparación con la vida real
+## 8. Validación
+
+### 8.1 Verificación interna y reproducibilidad
+
+La suite completa obtuvo **141 pruebas aprobadas**. Cubre conservación,
+inventario no negativo, demanda cero, inventario abundante, exhibición, exceso,
+capacidad, tránsito, costos, consolidación y carga óptima en casos pequeños.
+También comprueba reparación, parámetros por tipo, semillas locales, igualdad
+secuencial/paralela, emparejamiento, intervalos y ajuste de Holm.
+
+Las 240 réplicas sintéticas pasaron balances y auditorías. El ajuste de Holm
+se contrastó con `statsmodels`; la t principal y su IC, con `scipy.stats.ttest_rel`.
+La mejorada coincide con la evaluación independiente previa del ganador.
+
+Para M5 se verificó el hash del ZIP público descargado y se volvieron a ejecutar
+las 60 simulaciones. Los cuatro archivos numéricos originales coinciden
+exactamente. El cierre recalcula tablas de diferencias y distingue valores
+reales no disponibles de ceros; la evidencia está en
+[`resumen.json`](../../results/validacion/cierre_m5/resumen.json).
+Estas comprobaciones verifican la ejecución del software, no una correspondencia
+operativa que las entradas no permiten medir.
+
+### 8.2 Validación externa de ventas: protocolo
+
+Se usan los 124 días de calibración para estimar media y varianza por día de
+semana; la dispersión se limita a un mínimo de uno. Los 56 días posteriores
+no se usan al estimar esos parámetros. Las pruebas comprueban que alterar las
+ventas del período reservado no cambia la calibración. El ganador permanece
+entrenado en datos sintéticos: M5 evalúa transferencia externa, no un ganador
+reajustado a las ventas de validación.
+
+El MAE y el error absoluto relativo se calculan sobre **24 observaciones
+tienda-semana reales**, comparadas con la media de las réplicas. Las 30
+simulaciones no multiplican la cantidad de observaciones reales. No se fijó
+un umbral ex ante de aceptación del MAE y no se declara validación favorable
+por haber ejecutado el procedimiento. La correspondencia se evalúa de forma
+descriptiva y resultó limitada.
+
+### 8.3 Resultado y frontera de validez
+
+La base subestima ventas totales en 20.74% y tiene error absoluto agregado de
+31.35%. La mejorada no corrige la discrepancia: error de 31.63%, servicio
+simulado promedio 94.51% y cero traspasos. La política no conserva su desempeño
+sintético al trasladarla a este contexto.
+
+No se conocen demanda real total, inventarios, rutas, reglas de reposición ni
+costos reales. El objetivo externo se cierra como **contraste parcial de ventas
+con resultado limitado**, no como certificación de una política de inventario.
+Para desplegarla serían necesarios datos operativos y nueva calibración.
+
+## 9. Comparación real
+
+### 9.1 Fuente, selección y separación temporal
 
 Se realizó un contraste parcial con ventas diarias públicas de Walmart de la
 [competición M5](https://www.kaggle.com/competitions/m5-forecasting-accuracy/data),
@@ -648,6 +736,8 @@ FOODS_1_001–003. Se calibraron las medias y dispersiones con los 124 días del
 quedaron reservados para el contraste. La unidad es tienda-semana, sumando los
 productos: 24 observaciones. La base y la mejorada tienen 30 réplicas cada una.
 El ganador procede del experimento sintético y no fue reentrenado en M5.
+
+### 9.2 Ventas reales, base y mejorada
 
 Se compara cada venta real semanal con la media de las réplicas mediante:
 
@@ -665,6 +755,16 @@ cero sin dividir por cero individual. Si el total real es cero no se informa.
 | MAE, unidades por tienda-semana | — | 5.56 | 5.61 |
 | Error absoluto agregado relativo | — | 31.35 % | 31.63 % |
 
+| Comparación de ventas totales | Diferencia (unidades) | Cambio respecto a la referencia |
+| --- | ---: | ---: |
+| Base − real | −88.33 | −20.74% |
+| Mejorada − real | −91.33 | −21.44% |
+| Mejorada − base | −3.00 | −0.89% |
+
+La tabla completa con diferencias absolutas y porcentuales está en
+[`comparacion_real.csv`](../../results/validacion/cierre_m5/comparacion_real.csv).
+Los costos reales y el servicio real se mantienen como no disponibles, no cero.
+
 La correspondencia de ventas es limitada: el total simulado base está 88.33
 unidades por debajo del observado (−20.74 % del total real). Este error neto
 difiere del 31.35 % de error absoluto agregado, que no permite cancelaciones.
@@ -679,27 +779,49 @@ desviaciones de 2.98 y 3.22 puntos porcentuales. Estas dispersiones describen
 el modelo, no incertidumbre sobre el desempeño real. La selección de tres
 tiendas y tres artículos no justifica extrapolar a la cadena completa.
 
+### 9.3 Incertidumbre del modelo y cumplimiento de servicio
+
+| Condición | Ventas medias | IC Monte Carlo del 95% de ventas | Costo supuesto medio (Q) | Servicio simulado medio (%) | Réplicas bajo 95% |
+| --- | ---: | --- | ---: | ---: | ---: |
+| Base | 337.67 | [327.43; 347.90] | 1,156.34 | 95.32 | 9 de 30 |
+| Mejorada | 334.67 | [324.90; 344.43] | 1,067.47 | 94.51 | 12 de 30 |
+
+Estos intervalos estiman incertidumbre de la media simulada bajo el generador
+calibrado, no intervalos del desempeño real. Que 426 ventas observadas superen
+el intervalo del modelo muestra una discrepancia descriptiva, no una prueba
+formal contra un proceso real cuyo error y estructura se desconocen.
+
+La comparación pareada del modelo da diferencia de costo −Q88.87, IC
+[−Q146.25; −Q31.49], p-Holm = 0.0036, y diferencia de servicio −0.8155 puntos,
+IC [−1.1726; −0.4584], p-Holm = 0.00013. Son dos pruebas exploratorias añadidas
+al cierre, de una familia M5 separada de las 18 sintéticas; no fueron
+prerregistradas. El costo baja por supuestos de reposición, no
+por traspasos; los viajes son cero. La disminución de servicio y las 12
+réplicas mejoradas bajo 95% impiden prometer cumplimiento operativo.
+
+### 9.4 Comparación visual
+
 ![Ventas reales y simuladas por tienda](../../results/validacion/m5/graficas/ventas_reales_simuladas.png)
 
-**Ventas semanales por tienda.** Las curvas simuladas muestran la media de 30
+**Figura 1. Ventas semanales por tienda.** Las curvas simuladas muestran la media de 30
 réplicas; la curva observada procede de M5. Las diferencias entre las curvas
 ilustran que la calibración no reproduce exactamente las ventas observadas.
 
 ![MAE de ventas por tienda](../../results/validacion/m5/graficas/mae_por_tienda.png)
 
-**Error de la base por tienda.** El MAE es 5.19 unidades/semana para CA_1,
+**Figura 2. Error de la base por tienda.** El MAE es 5.19 unidades/semana para CA_1,
 5.75 para CA_2 y 5.75 para CA_3. Son errores descriptivos sobre ocho semanas,
 no garantías de error futuro ni evidencia de validez del resto del sistema.
 
 La ubicación, inventarios, costos y reposición del modelo son supuestos, no la
 operación de Walmart. Las ventas pueden estar censuradas por agotamiento y no
 equivalen necesariamente a demanda. No se validaron inventarios, traspasos ni
-costos con datos reales; falta contrastar la cadena concreta del equipo. Los
+costos con datos reales; ese análisis pertenece a una fase operativa futura. Los
 archivos, receta y advertencias están en [results/validacion/m5](../../results/validacion/m5/README.md).
 
-## 7. Resultados experimentales
+## 10. Resultados
 
-### 7.1 Ejecución sintética de la optimización
+### 10.1 Ejecución sintética de la optimización
 
 La corrida utilizó 10 tiendas, una bodega, 3 productos y 120 días. Con población
 30, máximo 50 generaciones y paciencia 10, terminó en la generación 18. El
@@ -713,13 +835,13 @@ genotipo dentro del entrenamiento utilizaron la evaluación almacenada.
 
 ![Convergencia del algoritmo genético](../../results/optimizacion/semilla_20261109/convergencia.png)
 
-**Figura 1. Convergencia y servicio en entrenamiento.** El mejor fitness
+**Figura 3. Convergencia y servicio en entrenamiento.** El mejor fitness
 histórico descendió de Q23,536.98 a Q22,378.04. Las curvas de costo y fitness
 coinciden porque los mejores históricos no reciben penalización. El descenso
 describe progreso de la búsqueda, no una reducción contra la política base.
 El servicio puede variar aun cuando el mejor fitness histórico no empeore.
 
-### 7.2 Parámetros del ganador
+### 10.2 Parámetros del ganador
 
 | Parámetro | Valor seleccionado |
 | --- | ---: |
@@ -736,7 +858,7 @@ Los valores mostrados están redondeados; el
 conserva la precisión utilizada. La hora de salida es un resultado del modelo
 discreto y no debe interpretarse automáticamente como recomendación operativa.
 
-### 7.3 Desempeño en las etapas de evaluación
+### 10.3 Desempeño en las etapas de evaluación
 
 | Etapa del ganador | Fitness promedio (Q) | Réplicas |
 | --- | ---: | ---: |
@@ -770,7 +892,7 @@ Las métricas por semilla se conservan en
 La ejecución tomó aproximadamente 56.22 segundos con seis trabajadores en el
 entorno registrado; ese tiempo no es una garantía para otros equipos.
 
-### 7.4 Comparación de políticas
+### 10.4 Comparación de políticas
 
 Cada fila de las tablas siguientes resume 30 períodos simulados de 120 días,
 con las mismas semillas y demanda. No son costos diarios ni muestras de días.
@@ -789,7 +911,7 @@ con las mismas semillas y demanda. No son costos diarios ni muestras de días.
 
 ![Costo y servicio por política](../../results/experimentos/semillas_1001_1030/graficas/comparacion_escenarios.png)
 
-**Figura 2. Comparación de políticas.** Las barras representan medias y los
+**Figura 4. Comparación de políticas.** Las barras representan medias y los
 segmentos negros IC individuales del 95%. La mejorada reduce costo, pero su
 servicio es ligeramente menor. El eje de servicio comienza en 95%, por lo que
 la magnitud debe leerse en puntos porcentuales y con las tablas. El solapamiento
@@ -802,7 +924,7 @@ costo y ventas perdidas**. La regla simple sí reduce unidades perdidas en
 9.80% y aumenta servicio, pero sus 28.03 viajes por período elevan el costo
 total en 5.20%: atender más demanda no compensa económicamente todos sus viajes.
 
-### 7.5 Diferencias pareadas e inferencia
+### 10.5 Diferencias pareadas e inferencia
 
 La diferencia es alternativa menos referencia. IC en Q; p corresponde a la
 t bilateral y p-Holm a la familia de 18 pruebas. La comparación principal es
@@ -832,7 +954,7 @@ y [`diferencias_pareadas.csv`](../../results/experimentos/semillas_1001_1030/dif
 La falta de significancia de un control no prueba que su efecto sea exactamente
 cero; indica que esta muestra no aporta evidencia suficiente bajo el diseño.
 
-### 7.6 Atribución del ahorro y composición de costos
+### 10.6 Atribución del ahorro y composición de costos
 
 | Condición | Inventario (Q) | Traspasos (Q) | Ventas perdidas (Q) | Total (Q) |
 | --- | ---: | ---: | ---: | ---: |
@@ -844,7 +966,7 @@ cero; indica que esta muestra no aporta evidencia suficiente bajo el diseño.
 
 ![Composición de costos y controles](../../results/experimentos/semillas_1001_1030/graficas/desglose_costos.png)
 
-**Figura 3. Desglose de costos.** La caída del mantenimiento de inventario es
+**Figura 5. Desglose de costos.** La caída del mantenimiento de inventario es
 el componente dominante. El costo de ventas perdidas de la mejorada es mayor
 que el de la base, mientras que la regla simple intercambia menores pérdidas
 por más costo de traslado. Las sumas pueden diferir en un centavo al redondear.
@@ -869,11 +991,11 @@ de pruebas predefinida. **La evidencia respalda el ahorro conjunto y el ajuste
 de bodega; no establece un ahorro incremental significativo atribuible solo
 a los traspasos del ganador.**
 
-### 7.7 Comportamiento del inventario
+### 10.7 Comportamiento del inventario
 
 ![Inventario temporal de tres tiendas](../../results/experimentos/semillas_1001_1030/graficas/inventario_temporal.png)
 
-**Figura 4. Inventario al cierre de base y mejorada.** Se muestran P03 y las
+**Figura 6. Inventario al cierre de base y mejorada.** Se muestran P03 y las
 tiendas T01, T04 y T08, primeras de cada clase, en la semilla 1001 elegida a
 priori. Los descensos y saltos reflejan consumo y llegadas. Las trayectorias
 coinciden durante muchos días y se separan al cambiar abastecimiento y envíos;
@@ -887,7 +1009,7 @@ productos, se guardan en
 [`series_inventario.csv`](../../results/experimentos/semillas_1001_1030/series_inventario.csv);
 la bodega se conserva en una tabla separada.
 
-### 7.8 Sensibilidad del ganador congelado
+### 10.8 Sensibilidad del ganador congelado
 
 Cada fila tiene 30 réplicas. Los cambios se expresan respecto a la mejorada
 nominal, sin reentrenamiento.
@@ -901,7 +1023,7 @@ nominal, sin reentrenamiento.
 
 ![Sensibilidad de costo y servicio](../../results/experimentos/semillas_1001_1030/graficas/sensibilidad.png)
 
-**Figura 5. Sensibilidad.** Las barras e IC muestran mayor deterioro con el
+**Figura 7. Sensibilidad.** Las barras e IC muestran mayor deterioro con el
 aumento de demanda. Las modificaciones de tráfico y vehículos tienen cambios
 medios pequeños en este sistema; esto no implica equivalencia operacional.
 
@@ -931,7 +1053,7 @@ Todas las réplicas del estudio mantuvieron servicio agregado sobre 95%; la
 menor observación fue 97.36% en demanda +20%. Es evidencia de estas condiciones
 sintéticas, no una garantía para una empresa real o por tienda/producto.
 
-### 7.9 Alcance de la respuesta a la pregunta de investigación
+### 10.9 Alcance de la respuesta a la pregunta de investigación
 
 En el sistema sintético, la política ajustada reduce el costo total en 25.68%
 respecto a la base, a costa de un incremento de 6.03% de unidades perdidas.
@@ -941,33 +1063,7 @@ la hipótesis de reducir simultáneamente costo y ventas perdidas mediante
 traspasos optimizados **no queda respaldada por esta corrida**. Este resultado
 es informativo y no debe reemplazarse por una afirmación general de mejora.
 
-## 8. Conclusiones y limitaciones
-
-### 8.1 Conclusiones del estudio sintético
-
-1. Se implementó e integró una simulación de inventario con políticas de
-   traspasos y un genético propio de 11 genes diferenciados por clase de tienda.
-2. Se ejecutaron la optimización y un estudio comparativo de 240 réplicas,
-   conservando semillas, datos, ganador, métricas, auditorías y gráficas.
-3. La mejorada redujo el costo promedio de Q31,047.76 a Q23,074.24 (25.68%),
-   con evidencia significativa en la comparación pareada ajustada por Holm.
-4. El ahorro no vino acompañado de menos faltantes: las unidades perdidas
-   aumentaron 6.03% y el servicio bajó 0.0816 puntos porcentuales, aunque
-   permaneció sobre el objetivo agregado de 95% en todas las réplicas.
-5. El ajuste de bodega explica la mayor parte del ahorro medio observado.
-   Los controles no aportan evidencia suficiente de ahorro incremental por
-   los traspasos del ganador con s y S constantes.
-6. La regla simple mejora servicio y reduce pérdidas, pero aumenta el costo.
-   La selección de política implica un intercambio entre objetivos, no una
-   mejora simultánea garantizada de todos ellos.
-7. La sensibilidad identifica demanda +20% como el cambio de mayor impacto
-   entre los estudiados. No se detectan cambios después de Holm para tráfico
-   o un vehículo, sin que esto demuestre equivalencia ni robustez universal.
-8. La verificación interna y el emparejamiento respaldan consistencia del
-   experimento; las recomendaciones para una empresa siguen condicionadas
-   a la calibración y validación real de la persona 5.
-
-### 8.2 Limitaciones y trabajo pendiente
+## 11. Limitaciones
 
 - El genético y la selección voraz de rutas no garantizan el óptimo global.
   Una sola semilla del genético no permite estimar estabilidad de la búsqueda.
@@ -986,11 +1082,44 @@ es informativo y no debe reemplazarse por una afirmación general de mejora.
   exploratoria, sin una declaración independiente de significancia ajustada.
 - Se evalúan tres sensibilidades puntuales, no un barrido completo ni escenarios
   extremos. La operación sintética tiene pocos viajes y servicio de base alto.
-- Quedan pendientes la validación integral de la cadena, las fuentes empresariales, la revisión
-  final del equipo y el formato de entrega. Las conclusiones aquí son válidas
-  como resultados del sistema sintético, no como una recomendación empresarial.
+- En M5 solo hay ventas observadas de tres tiendas y tres artículos. El
+  servicio real no se observa y el modelo reutiliza costos y ubicaciones
+  hipotéticas, no una calibración operativa de Walmart.
+- El ganador sintético no se reentrena en M5. El contraste evalúa transferencia
+  de una política, no la mejor política posible para ese conjunto público.
+- No hubo traspasos en M5, por lo que ese caso no identifica su efecto. El
+  servicio de 94.51% muestra que el objetivo de 95% no se conserva externamente.
+- El diseño inicial de una referencia empresarial propia se sustituyó por M5.
+  Validar una cadena concreta requeriría datos que no forman parte de este
+  estudio. Los resultados no constituyen una recomendación de despliegue.
 
-## 9. Referencias
+## 12. Conclusiones
+
+1. Se completó un prototipo integrado de simulación diaria, valoración de
+   traspasos y optimización mediante un genético propio de 11 genes por tipo.
+   La conservación, reproducibilidad e integración están verificadas.
+2. El estudio sintético de 240 réplicas muestra una reducción del costo de
+   Q31,047.76 a Q23,074.24 (25.68%), significativa en el análisis pareado con
+   Holm, pero con aumento de unidades perdidas de 6.03% y caída de servicio de
+   0.0816 puntos porcentuales. No hay mejora simultánea de ambos objetivos.
+3. Los controles atribuyen la mayor parte del ahorro al ajuste de bodega. El
+   ahorro incremental medio por traspasos no es estadísticamente concluyente
+   con reposición constante; no debe confundirse con el ahorro conjunto.
+4. La regla simple reduce pérdidas, pero aumenta costo. La sensibilidad a
+   demanda +20% es la más importante entre las estudiadas; los cambios de
+   tráfico y flota no son significativos después del ajuste, sin demostrar
+   equivalencia operacional.
+5. El contraste M5 usa calibración temporal separada y 60 réplicas reproducidas.
+   La correspondencia es limitada: MAE base 5.56, error absoluto relativo
+   31.35% y subestimación de ventas de 20.74%. El ganador no mejora esos errores.
+6. En M5, la mejorada reduce solo costo hipotético, no un costo real observado;
+   no realiza viajes y presenta servicio simulado promedio de 94.51%. La
+   política no debe trasladarse a una operación real sin recalibración.
+7. La principal aportación es metodológica: una cadena de evidencia trazable
+   que diferencia optimización, verificación, comparación y validez externa.
+   Los resultados negativos y límites forman parte del cierre, no se ocultan.
+
+## 13. Referencias
 
 1. Eiben, A. E., & Smith, J. E. (2015). *Introduction to Evolutionary Computing*
    (2.ª ed.). Springer. https://doi.org/10.1007/978-3-662-44874-8
@@ -1010,56 +1139,62 @@ es informativo y no debe reemplazarse por una afirmación general de mejora.
    https://www.kaggle.com/competitions/m5-forecasting-accuracy/data
    Copia del conjunto consultada en https://github.com/Nixtla/m5-forecasts/tree/main/datasets
 
-**Pendiente bibliográfico:** incorporar la referencia empresarial concreta
-y las fuentes que sustenten costos, márgenes, distancias y parámetros
-cuando se reemplacen los supuestos. Las fichas editoriales anteriores se
-consultaron para la investigación; no se atribuyen a sus autores los datos,
-resultados ni valores calibrados de esta implementación.
+Las fuentes metodológicas y públicas están identificadas. Los parámetros
+etiquetados como supuestos no tienen una fuente empresarial observada y no
+se presentan como valores calibrados. No se atribuyen a las referencias los
+resultados propios ni una certificación de los parámetros elegidos.
 
-## 10. Anexo de reproducibilidad y responsabilidades
+## 14. Contribuciones
 
-### 10.1 Ejecutar la implementación
+### 14.1 Integrantes
 
-Desde la raíz del repositorio, con Python 3.10 o superior y dependencias instaladas:
+El proyecto fue desarrollado por el siguiente equipo de la Facultad de Ingeniería
+de la Universidad del Valle de Guatemala, en el curso de Modelación y Simulación:
 
-```bash
-python -m pytest -q
-python -m experiments.optimizar --config config.yaml --salida results/optimizacion/nueva_ejecucion --trabajadores 6
-python -m experiments.comparar --config config.yaml --diseno experiments/diseno.yaml --salida results/experimentos/nueva_ejecucion --trabajadores 6
-```
-
-La salida debe ser una carpeta vacía. Los CSV sintéticos ya están incluidos.
-Las dependencias exactas de la ejecución de referencia y las huellas del
-código constan en el
-[`manifest.json`](../../results/optimizacion/semilla_20261109/manifest.json).
-Las fechas, rutas y tiempos pueden cambiar al repetirla. Las semillas no
-garantizan igualdad entre versiones distintas de las dependencias.
-
-| Evidencia | Archivo o ubicación |
+| Integrante | Carné |
 | --- | --- |
-| Configuración de referencia | [`config.yaml`](../../config.yaml) |
-| Datos y procedencia | [`data/synthetic/README.md`](../../data/synthetic/README.md) |
-| Historial por generación | [`historial.csv`](../../results/optimizacion/semilla_20261109/historial.csv) |
-| Resultados completos | [`resultado.json`](../../results/optimizacion/semilla_20261109/resultado.json) |
-| Semillas y métricas de finalistas | [`reevaluacion.csv`](../../results/optimizacion/semilla_20261109/reevaluacion.csv) |
-| Diseño experimental | [`experiments/diseno.yaml`](../../experiments/diseno.yaml) |
-| Resultados comparativos | [`resultados.csv`](../../results/experimentos/semillas_1001_1030/resultados.csv) |
-| Medias, desviaciones e IC de las ocho métricas | [`resumen.csv`](../../results/experimentos/semillas_1001_1030/resumen.csv) |
-| Pruebas pareadas | [`pruebas_pareadas.csv`](../../results/experimentos/semillas_1001_1030/pruebas_pareadas.csv) |
-| Auditoría por réplica | [`auditoria.csv`](../../results/experimentos/semillas_1001_1030/auditoria.csv) |
-| Procedencia experimental | [`manifest.json`](../../results/experimentos/semillas_1001_1030/manifest.json) |
+| Javier Alejandro Chávez León | 23132 |
+| Daniel Adolfo Sarmiento Peralta | 231105 |
+| Sofía López Ayerdi | 231929 |
+| Karen Ximena Toledo Juárez | 23692 |
+| Luis Francisco Padilla Juárez | 23663 |
 
-### 10.2 Distribución para completar y revisar el documento
+Las contribuciones se organizan en cinco áreas integradas. La relación de
+integrantes fue proporcionada por el equipo y se conserva en `docs/proyecto.json`;
+no se deduce de nombres de usuario del repositorio.
 
-| Responsable previsto | Secciones y cierre |
+| Área de contribución | Trabajo incorporado |
 | --- | --- |
-| Persona 1 | Revisar problema, objetivos, dinámica, demanda, pronóstico y reposición |
-| Persona 2 | Revisar costos, transporte, indicador y traspasos; integrar formato y PDF final |
-| Persona 3 | Revisar técnica, genético, reproducibilidad y evidencia de optimización |
-| Persona 4 | Diseño, comparación, estadística y sensibilidad ejecutados e integrados; revisar el análisis final |
-| Persona 5 | Revisar contraste parcial M5, buscar datos de la cadena concreta y cerrar conclusiones |
+| Simulación y pronóstico | Motor diario, demanda, estados, reposición, carga y pruebas |
+| Costos y traspasos | Transporte, indicador económico, restricciones y políticas |
+| Optimización | Genético, 11 genes, operadores, reparación, reevaluación y ganador |
+| Experimentación | Diseño pareado, 240 réplicas, estadística, sensibilidad y gráficas |
+| Contraste externo | Calibración M5, comparación real/base/mejorada y análisis de límites |
 
-La distribución identifica responsabilidades del plan, no certifica autoría
-individual ni aprobación humana de este borrador. Los nombres, carnés y
-registro de contribuciones deben ser completados por el equipo. La revisión
-humana cruzada y la validación integral de la cadena concreta siguen pendientes.
+La implementación, integración y preparación de materiales contaron con
+asistencia de programación. La explicación, revisión y defensa académica de
+los resultados corresponden al equipo.
+
+### 14.2 Estado de cierre de los cinco roles
+
+Los módulos y resultados de los cinco roles están integrados para el alcance
+de estudio sintético y contraste público parcial. El informe, la comparación
+real y la presentación describen ese alcance, sin afirmar validación de una
+cadena empresarial. La revisión automatizada comprende 141 pruebas, controles
+de datos y reproducción desde la fuente M5. La revisión y defensa por el equipo
+son responsabilidad de sus integrantes y no se certifican automáticamente.
+
+Los datos institucionales y de integrantes están incorporados en la portada,
+el informe y la presentación general con la fecha de entrega indicada por el equipo.
+
+### 14.3 Productos entregados
+
+| Evidencia | Ubicación |
+| --- | --- |
+| Datos y configuración | [`data/synthetic/`](../../data/synthetic/README.md), [`config.yaml`](../../config.yaml) |
+| Ganador e historial | [`results/optimizacion/`](../../results/optimizacion/semilla_20261109/README.md) |
+| Comparación y sensibilidad | [`results/experimentos/`](../../results/experimentos/semillas_1001_1030/README.md) |
+| Ventas M5 y receta | [`results/validacion/m5/`](../../results/validacion/m5/README.md) |
+| Comparación real cerrada | [`comparacion_real.csv`](../../results/validacion/cierre_m5/comparacion_real.csv) |
+| Verificación de fuente y reproducción | [`resumen de cierre`](../../results/validacion/cierre_m5/resumen.json) |
+| Presentación general | [`presentacion.html`](../presentacion/presentacion.html) |
