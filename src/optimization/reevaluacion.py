@@ -1,10 +1,11 @@
-from src.optimization.fitness import evaluar_cromosoma
+from src.optimization.algoritmo_genetico import _evaluar_tarea
 
 def reevaluar_candidatos(
     candidatos,
     config,
     simulador,
     semillas=range(11, 41),
+    mapear=map,
 ):
     """
     Reevalúa candidatos con semillas adicionales.
@@ -23,17 +24,12 @@ def reevaluar_candidatos(
 
     resultados = []
 
-    for cromosoma in candidatos:
-        fitness = evaluar_cromosoma(
-            cromosoma=cromosoma,
-            config=config,
-            semillas=semillas,
-            simulador=simulador,
-        )
+    tareas = [(c, config, semillas, simulador) for c in candidatos]
+    for cromosoma, evaluacion in zip(candidatos, mapear(_evaluar_tarea, tareas)):
 
         resultados.append({
             "cromosoma": cromosoma.copy(),
-            "fitness": fitness,
+            **evaluacion,
         })
 
     resultados.sort(

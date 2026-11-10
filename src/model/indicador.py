@@ -10,6 +10,7 @@ import math
 import numpy as np
 
 from src.model.costos import costo_viaje
+from src.model.tipos import TIPOS_TIENDA
 
 PARAMETROS = {
     "horizonte_dias": 3,
@@ -28,7 +29,20 @@ def parametros_politica(config) -> dict:
             raise ValueError(f"{nombre} debe ser finito y no negativo")
     if params["horizonte_dias"] < 1 or not 0 < params["descuento_diario"] <= 1:
         raise ValueError("Se requiere horizonte >= 1 y descuento_diario en (0, 1]")
+    for tipo in TIPOS_TIENDA:
+        for parametro in ("horizonte_dias", "seguridad_dias"):
+            nombre = f"{parametro}_{tipo}"
+            valor = params.get(nombre, params[parametro])
+            if not math.isfinite(valor) or valor < (1 if parametro == "horizonte_dias" else 0):
+                raise ValueError(f"{nombre} fuera de rango")
     return params
+
+
+def parametros_por_tienda(params, tipos):
+    if any(tipo not in TIPOS_TIENDA for tipo in tipos):
+        raise ValueError(f"Tipos de tienda válidos: {TIPOS_TIENDA}")
+    return tuple(np.array([params.get(f"{nombre}_{tipo}", params[nombre]) for tipo in tipos])
+                 for nombre in ("horizonte_dias", "seguridad_dias"))
 
 
 def cobertura(inventario, media) -> np.ndarray:

@@ -4,6 +4,7 @@ from src.simulation.carga import cargar_datos
 from src.simulation.demanda import generar_demanda
 from src.simulation.estado import Estado, Traspaso
 from src.simulation.pronostico import pronosticar
+from src.model.transporte import matriz_distancias
 
 METRICAS = (
     "costo_total",
@@ -74,7 +75,12 @@ def simular_con_datos(
     ventana_semanas = int(pron["ventana_semanas"])
     horizonte_pronostico = int(pron.get("horizonte_dias", 14))
     config_politica = {**config, "politica": params_politica,
-                       "ubicaciones_tiendas": datos["ubicaciones"]}
+                       "ubicaciones_tiendas": datos["ubicaciones"],
+                       "tipos_tiendas": datos.get("tipos_tiendas", ["media"] * num_tiendas)}
+    if decidir is not None and "distancias_km" not in config_politica:
+        config_politica["distancias_km"] = matriz_distancias(
+            datos["ubicaciones"], transporte.get("factor_ruta", 1.3),
+        )
 
     demanda = generar_demanda(
         media, datos["dispersion"], horizonte, dia_semana_inicial, semilla, factor_demanda

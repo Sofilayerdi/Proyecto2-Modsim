@@ -4,8 +4,14 @@ from src.optimization.cromosoma import (
     crear_poblacion,
     reparar_cromosoma,
 )
-from src.optimization.operadores import seleccion_torneo
-from src.optimization.fitness import evaluar_cromosoma
+from src.optimization.operadores import seleccion_torneo, cruce_uniforme, mutacion_gaussiana
+from src.optimization.fitness import evaluar_replicas
+
+
+def _evaluar_tarea(tarea):
+    """Función importable para map secuencial o ProcessPoolExecutor.map."""
+    cromosoma, config, semillas, simulador = tarea
+    return evaluar_replicas(cromosoma, config, semillas, simulador)
 
 def algoritmo_genetico(
     config,
@@ -19,7 +25,10 @@ def algoritmo_genetico(
     prob_mutacion=0.10,
     elitismo=2,
     paciencia=10,
-    cantidad_candidatos=5
+    cantidad_candidatos=5,
+    semilla_genetico=2026,
+    mapear=map,
+    progreso=None,
 ):
     """
     Optimiza los parámetros de la política mediante
@@ -57,25 +66,26 @@ def algoritmo_genetico(
     if not semillas:
         raise ValueError("Debe existir al menos una semilla")
 
-    poblacion = crear_poblacion(tamano_poblacion)
+    rng = random.Random(semilla_genetico)
+    horizonte_pronostico = int(config.get("pronostico", {}).get("horizonte_dias", 14))
+    poblacion = crear_poblacion(tamano_poblacion, rng, horizonte_pronostico)
 
     mejor_cromosoma = None
     mejor_fitness = float("inf")
     sin_mejora = 0
     historial = []
     candidatos = {}
+    cache = {}
+    historial_detallado = []
 
     for generacion in range(generaciones):
 
-        fitness = [
-            evaluar_cromosoma(
-                cromosoma,
-                config,
-                semillas,
-                simulador,
-            )
-            for cromosoma in poblacion
-        ]
+        claves = [tuple(sorted(c.items())) for c in poblacion]
+        nuevos = {clave: c for clave, c in zip(claves, poblacion) if clave not in cache}
+        tareas = [(c, config, semillas, simulador) for c in nuevos.values()]
+        for clave, evaluacion in zip(nuevos, mapear(_evaluar_tarea, tareas)):
+            cache[clave] = evaluacion
+        fitness = [cache[clave]["fitness"] for clave in claves]
 
         for cromosoma, costo in zip(poblacion, fitness):
             clave = tuple(sorted(cromosoma.items()))
@@ -113,6 +123,21 @@ def algoritmo_genetico(
             sin_mejora += 1
 
         historial.append(mejor_fitness)
+        evaluacion_mejor = cache[tuple(sorted(mejor_cromosoma.items()))]
+        historial_detallado.append({
+            "generacion": generacion + 1,
+            "mejor_fitness": mejor_fitness,
+            "mejor_costo_promedio": evaluacion_mejor["costo_promedio"],
+            "mejor_servicio_promedio": evaluacion_mejor["servicio_promedio"],
+            "costo_penalizacion": evaluacion_mejor["costo_penalizacion"],
+            "fitness_promedio_poblacion": sum(fitness) / len(fitness),
+            "candidatos_unicos_evaluados": len(cache),
+        })
+        if progreso is not None:
+            progreso({"historial": historial_detallado.copy(),
+                      "mejor_cromosoma": mejor_cromosoma.copy(),
+                      "semilla_genetico": semilla_genetico,
+                      "semillas_demanda": semillas})
 
         if sin_mejora >= paciencia:
             break
@@ -125,11 +150,14 @@ def algoritmo_genetico(
 
         while len(nueva_poblacion) < tamano_poblacion:
 
-            padre1 = seleccion_torneo(poblacion, fitness)
-            padre2 = seleccion_torneo(poblacion, fitness)
+            padre1 = seleccion_torneo(poblacion, fitness, rng=rng)
+            padre2 = seleccion_torneo(poblacion, fitness, rng=rng)
 
-            if random.random() < prob_cruce:
-                hijo1, hijo2 = cruzar(padre1, padre2)
+            if rng.random() < prob_cruce:
+                if cruzar is cruce_uniforme:
+                    hijo1, hijo2 = cruzar(padre1, padre2, rng=rng, horizonte_pronostico=horizonte_pronostico)
+                else:
+                    hijo1, hijo2 = cruzar(padre1, padre2)
             else:
                 hijo1 = padre1.copy()
                 hijo2 = padre2.copy()
@@ -137,10 +165,13 @@ def algoritmo_genetico(
             hijos = [hijo1, hijo2]
 
             for hijo in hijos:
-                if random.random() < prob_mutacion:
-                    hijo = mutar(hijo)
+                if rng.random() < prob_mutacion:
+                    if mutar is mutacion_gaussiana:
+                        hijo = mutar(hijo, rng=rng, horizonte_pronostico=horizonte_pronostico)
+                    else:
+                        hijo = mutar(hijo)
 
-                hijo = reparar_cromosoma(hijo)
+                hijo = reparar_cromosoma(hijo, horizonte_pronostico)
 
                 if len(nueva_poblacion) < tamano_poblacion:
                     nueva_poblacion.append(hijo)
@@ -152,6 +183,11 @@ def algoritmo_genetico(
         "mejor_fitness": mejor_fitness,
         "historial": historial,
         "generaciones_ejecutadas": len(historial),
+        "historial_detallado": historial_detallado,
+        "semilla_genetico": semilla_genetico,
+        "semillas_demanda": list(semillas),
+        "candidatos_unicos_evaluados": len(cache),
+        "motivo_paro": "sin_mejora" if sin_mejora >= paciencia else "max_generaciones",
         "candidatos": [
             item["cromosoma"].copy()
             for item in candidatos.values()

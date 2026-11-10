@@ -5,6 +5,7 @@ from src.optimization.operadores import (
     mutacion_gaussiana,
 )
 from unittest.mock import patch
+from src.model.tipos import TIPOS_TIENDA
 from src.optimization.cromosoma import (
     crear_cromosoma,
     reparar_cromosoma,
@@ -72,7 +73,7 @@ from src.optimization.cromosoma import (
 )
 
 
-def test_mutacion_siete_genes():
+def test_mutacion_once_genes():
     cromosoma = crear_cromosoma()
 
     mutado = mutacion_gaussiana(cromosoma)
@@ -84,11 +85,8 @@ def test_mutacion_siete_genes():
 
     assert mutado["bodega_S_dias"] >= mutado["bodega_s_dias"]
 
-    assert (
-        mutado["horizonte_dias"]
-        + mutado["seguridad_dias"]
-        <= 14
-    )
+    for tipo in TIPOS_TIENDA:
+        assert mutado[f"horizonte_dias_{tipo}"] + mutado[f"seguridad_dias_{tipo}"] <= 14
 
 
 def test_mutacion_gen_decimal():
@@ -122,7 +120,7 @@ def test_mutacion_sigma_invalido():
         mutacion_gaussiana(cromosoma, sigma=-0.1)
 
 
-def test_cruce_siete_genes():
+def test_cruce_once_genes():
     padre1 = crear_cromosoma()
     padre2 = crear_cromosoma()
 
@@ -131,8 +129,5 @@ def test_cruce_siete_genes():
     for hijo in (hijo1, hijo2):
         assert set(hijo) == set(RANGOS)
         assert hijo["bodega_S_dias"] >= hijo["bodega_s_dias"]
-        assert (
-            hijo["horizonte_dias"]
-            + hijo["seguridad_dias"]
-            <= 14
-        )
+        for tipo in TIPOS_TIENDA:
+            assert hijo[f"horizonte_dias_{tipo}"] + hijo[f"seguridad_dias_{tipo}"] <= 14

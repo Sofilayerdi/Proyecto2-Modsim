@@ -17,7 +17,7 @@ import numpy as np
 from src.model.costos import costo_viaje
 from src.model.indicador import (
     cobertura, exceso_donante, llegadas_previstas, parametros_politica,
-    valor_traspaso, ventas_proyectadas,
+    parametros_por_tienda, valor_traspaso,
 )
 from src.model.transporte import dias_transito, factor_trafico, matriz_distancias
 from src.simulation.estado import Traspaso
@@ -31,8 +31,14 @@ def _preparar(estado, pronostico, config):
     if (pronostico.ndim != 3 or pronostico.shape[1:] != estado.inventario.shape
             or not np.isfinite(pronostico).all() or (pronostico < 0).any()):
         raise ValueError("El pronóstico debe ser finito, no negativo y de forma (H, N, K)")
-    horizonte = math.ceil(params["horizonte_dias"])
-    if len(pronostico) < math.ceil(params["horizonte_dias"] + params["seguridad_dias"]):
+    tipos = config.get("tipos_tiendas", ["media"] * len(estado.inventario))
+    if len(tipos) != len(estado.inventario):
+        raise ValueError("Se requiere un tipo por tienda")
+    horizontes, seguridades = parametros_por_tienda(params, tipos)
+    params["horizontes_tienda"] = horizontes
+    params["seguridades_tienda"] = seguridades
+    horizonte = np.ceil(horizontes).astype(int)
+    if len(pronostico) < math.ceil(float(np.max(horizontes + seguridades))):
         raise ValueError("El pronóstico no cubre horizonte_dias + seguridad_dias")
     transporte = config["transporte"]
     vehiculos, capacidad = transporte["num_vehiculos"], transporte["capacidad_unidades"]
@@ -54,21 +60,25 @@ def _preparar(estado, pronostico, config):
     return params, pronostico, horizonte, int(vehiculos), int(capacidad), hora, factor, distancias, margenes
 
 
-def _curva_beneficios(estado, pronostico, llegadas, i, j, k, limite, demora, horizonte, descuento, margen):
+def _curva_beneficios(estado, pronostico, llegadas, i, j, k, limite, demora, horizonte,
+                     descuento, margen, horizonte_donante=None):
     """Beneficio acumulado de enviar q=0..limite, proyectado en paralelo."""
     cantidades = np.arange(limite + 1)
     stock_i = estado.inventario[i, k] - cantidades.astype(float)
     stock_j = np.full(limite + 1, estado.inventario[j, k], dtype=float)
     beneficio = np.zeros(limite + 1)
-    for t in range(horizonte):
+    horizonte_donante = horizonte if horizonte_donante is None else horizonte_donante
+    for t in range(max(horizonte, horizonte_donante)):
         stock_i += llegadas[t, i, k]
         stock_j += llegadas[t, j, k]
         if t == demora - 1:
             stock_j += cantidades
         ventas_i = np.minimum(stock_i, pronostico[t, i, k])
         ventas_j = np.minimum(stock_j, pronostico[t, j, k])
-        beneficio += margen * ((ventas_j - ventas_j[0]) * descuento ** (t + 1)
-                               - (ventas_i[0] - ventas_i))
+        if t < horizonte:
+            beneficio += margen * (ventas_j - ventas_j[0]) * descuento ** (t + 1)
+        if t < horizonte_donante:
+            beneficio -= margen * (ventas_i[0] - ventas_i)
         stock_i -= ventas_i
         stock_j -= ventas_j
     return beneficio
@@ -99,36 +109,47 @@ def _decidir(estado, pronostico, config, simple):
         return []
     trabajo = deepcopy(estado)
     resultado = []
-    media = pronostico[:horizonte].mean(axis=0)
+    indices = np.arange(len(estado.inventario))
+    media = pronostico.cumsum(axis=0)[horizonte - 1, indices] / horizonte[:, None]
     minimo = config["inventario"]["minimo_exhibicion_unidades"]
     for viaje in range(vehiculos):
-        excesos = exceso_donante(trabajo.inventario, media, params["horizonte_dias"],
-                                 params["seguridad_dias"], minimo)
+        excesos = exceso_donante(trabajo.inventario, media, params["horizontes_tienda"][:, None],
+                                 params["seguridades_tienda"][:, None], minimo)
+        if not excesos.any():
+            break
         llegadas = llegadas_previstas(trabajo, pronostico, config)
-        faltantes = np.zeros_like(trabajo.inventario)
-        for j, k in np.ndindex(faltantes.shape):
-            ventas = ventas_proyectadas(trabajo.inventario[j, k], pronostico[:horizonte, j, k],
-                                       llegadas[:horizonte, j, k])
-            faltantes[j, k] = max(0, math.ceil((pronostico[:horizonte, j, k] - ventas).sum() - 1e-9))
+        stock = trabajo.inventario.astype(float).copy()
+        perdidas = np.zeros_like(stock)
+        for t in range(int(horizonte.max())):
+            stock += llegadas[t]
+            ventas = np.minimum(stock, pronostico[t])
+            perdidas += (pronostico[t] - ventas) * (t < horizonte[:, None])
+            stock -= ventas
+        faltantes = np.maximum(0, np.ceil(perdidas - 1e-9)).astype(int)
+        if not faltantes.any():
+            break
         coberturas = cobertura(trabajo.inventario, media)
         mejor = None
         for i in range(len(trabajo.inventario)):
             for j in range(len(trabajo.inventario)):
                 if i == j:
                     continue
+                if not np.any((excesos[i] > 0) & (faltantes[j] > 0)):
+                    continue
                 demora = dias_transito(distancias[i, j], config["transporte"]["velocidad_kmh"], hora, factor)
                 # Sin ventas dentro del horizonte o sin espacio en el calendario del motor.
-                if demora > horizonte or demora > len(trabajo.llegadas_tiendas):
+                if demora > horizonte[j] or demora > len(trabajo.llegadas_tiendas):
                     continue
                 curvas = {}
                 for k in range(trabajo.inventario.shape[1]):
                     limite = min(int(excesos[i, k]), int(faltantes[j, k]), capacidad)
-                    if simple and coberturas[j, k] >= params["horizonte_dias"]:
+                    if simple and coberturas[j, k] >= params["horizontes_tienda"][j]:
                         continue
                     if limite:
                         curvas[k] = _curva_beneficios(
-                            trabajo, pronostico, llegadas, i, j, k, limite, demora, horizonte,
+                            trabajo, pronostico, llegadas, i, j, k, limite, demora, int(horizonte[j]),
                             1.0 if simple else params["descuento_diario"], 1.0 if simple else margenes[k],
+                            math.ceil(params["horizontes_tienda"][i] + params["seguridades_tienda"][i]),
                         )
                 if not curvas:
                     continue

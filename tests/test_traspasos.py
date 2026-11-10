@@ -129,6 +129,25 @@ def test_umbral_y_genes_prevalecen_sobre_config(escenario):
     assert decidir_traspasos(estado, pronostico, config) == []
 
 
+def test_parametros_por_tipo_modifican_envios_reales(escenario):
+    estado, pronostico, config = escenario
+    estado.inventario[2] = 50
+    config["tipos_tiendas"] = ["alta", "media", "baja"]
+    config["transporte"].update(num_vehiculos=1, capacidad_unidades=100)
+    config["politica"] = {"horizonte_dias_media": 1, "seguridad_dias_media": 0}
+    corto = decidir_traspasos(estado, pronostico, config)
+    config["politica"]["horizonte_dias_media"] = 3
+    largo = decidir_traspasos(estado, pronostico, config)
+    assert sum(t.cantidad for t in corto) == 4
+    assert sum(t.cantidad for t in largo) == 12
+    config["politica"]["horizonte_dias_alta"] = 7
+    config["politica"]["seguridad_dias_alta"] = 7
+    config["politica"]["horizonte_dias_baja"] = 7
+    config["politica"]["seguridad_dias_baja"] = 7
+    estado.inventario[[0, 2]] = 20
+    assert decidir_traspasos(estado, pronostico, config) == []
+
+
 def test_pronostico_corto_falla_explicando_contrato(escenario):
     estado, pronostico, config = escenario
     with pytest.raises(ValueError, match="no cubre"):

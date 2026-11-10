@@ -6,18 +6,19 @@ from src.optimization.operadores import (
     mutacion_gaussiana,
 )
 from src.optimization.cromosoma import RANGOS
+from src.model.tipos import TIPOS_TIENDA
 
 def simulador_controlado(config, params_politica, semilla):
     """
     Simulador artificial con óptimo conocido.
-    Evalúa los siete genes del cromosoma.
+    Evalúa los once genes del cromosoma.
     """
 
     objetivos = {
         "bodega_s_dias": 10,
         "bodega_S_dias": 30,
-        "horizonte_dias": 4,
-        "seguridad_dias": 2,
+        **{f"horizonte_dias_{t}": 4 for t in TIPOS_TIENDA},
+        **{f"seguridad_dias_{t}": 2 for t in TIPOS_TIENDA},
         "umbral_valor_q": 50.0,
         "peso_trafico": 0.5,
         "hora_despacho": 10,
@@ -61,8 +62,9 @@ def test_genetico_encuentra_solucion_cercana():
 
     assert abs(mejor["bodega_s_dias"] - 10) <= 3
     assert abs(mejor["bodega_S_dias"] - 30) <= 5
-    assert abs(mejor["horizonte_dias"] - 4) <= 2
-    assert abs(mejor["seguridad_dias"] - 2) <= 2
+    for tipo in TIPOS_TIENDA:
+        assert abs(mejor[f"horizonte_dias_{tipo}"] - 4) <= 2
+        assert abs(mejor[f"seguridad_dias_{tipo}"] - 2) <= 2
     assert abs(mejor["umbral_valor_q"] - 50) <= 30
     assert abs(mejor["peso_trafico"] - 0.5) <= 0.3
     assert abs(mejor["hora_despacho"] - 10) <= 4
@@ -87,11 +89,8 @@ def test_genetico_respeta_restricciones():
 
     assert mejor["bodega_S_dias"] >= mejor["bodega_s_dias"]
 
-    assert (
-        mejor["horizonte_dias"]
-        + mejor["seguridad_dias"]
-        <= 14
-    )
+    for tipo in TIPOS_TIENDA:
+        assert mejor[f"horizonte_dias_{tipo}"] + mejor[f"seguridad_dias_{tipo}"] <= 14
 
 def test_historial_convergencia():
     random.seed(42)

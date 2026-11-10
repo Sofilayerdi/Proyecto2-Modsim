@@ -7,7 +7,7 @@ from src.optimization.cromosoma import (
 )
 
 
-def seleccion_torneo(poblacion, fitness, k=3):
+def seleccion_torneo(poblacion, fitness, k=3, rng=None):
     """
     Selecciona un cromosoma mediante torneo y retorna
     una copia del ganador.
@@ -27,7 +27,8 @@ def seleccion_torneo(poblacion, fitness, k=3):
         )
 
     # Seleccionar k individuos aleatoriamente
-    participantes = random.sample(
+    rng = rng if rng is not None else random
+    participantes = rng.sample(
         range(len(poblacion)),
         k
     )
@@ -41,7 +42,7 @@ def seleccion_torneo(poblacion, fitness, k=3):
     # Devolver una copia para proteger el original
     return poblacion[ganador].copy()
 
-def cruce_uniforme(padre1, padre2):
+def cruce_uniforme(padre1, padre2, rng=None, horizonte_pronostico=14):
     """
     Combina los genes de dos padres para generar
     dos hijos mediante cruce uniforme.
@@ -50,12 +51,15 @@ def cruce_uniforme(padre1, padre2):
     heredarse de cualquiera de los padres.
     """
 
+    rng = rng if rng is not None else random
+    padre1 = reparar_cromosoma(padre1, horizonte_pronostico)
+    padre2 = reparar_cromosoma(padre2, horizonte_pronostico)
     hijo1 = {}
     hijo2 = {}
 
     for gen in RANGOS:
 
-        if random.random() < 0.5:
+        if rng.random() < 0.5:
             hijo1[gen] = padre1[gen]
             hijo2[gen] = padre2[gen]
         else:
@@ -63,13 +67,13 @@ def cruce_uniforme(padre1, padre2):
             hijo2[gen] = padre1[gen]
 
     # Reparar posibles restricciones incumplidas
-    hijo1 = reparar_cromosoma(hijo1)
-    hijo2 = reparar_cromosoma(hijo2)
+    hijo1 = reparar_cromosoma(hijo1, horizonte_pronostico)
+    hijo2 = reparar_cromosoma(hijo2, horizonte_pronostico)
 
     return hijo1, hijo2
 
 
-def mutacion_gaussiana(cromosoma, sigma=0.10):
+def mutacion_gaussiana(cromosoma, sigma=0.10, rng=None, horizonte_pronostico=14):
     """
     Muta un gen aleatorio mediante una perturbación
     gaussiana proporcional al rango del gen.
@@ -80,10 +84,11 @@ def mutacion_gaussiana(cromosoma, sigma=0.10):
     if not 0 <= sigma:
         raise ValueError("Sigma no puede ser negativo")
 
-    mutado = cromosoma.copy()
+    rng = rng if rng is not None else random
+    mutado = reparar_cromosoma(cromosoma, horizonte_pronostico)
 
     # Seleccionar un gen aleatoriamente
-    gen = random.choice(list(RANGOS.keys()))
+    gen = rng.choice(list(RANGOS.keys()))
 
     minimo, maximo = RANGOS[gen]
 
@@ -91,10 +96,10 @@ def mutacion_gaussiana(cromosoma, sigma=0.10):
     amplitud = maximo - minimo
     desviacion = sigma * amplitud
 
-    perturbacion = random.gauss(0, desviacion)
+    perturbacion = rng.gauss(0, desviacion)
 
     # Modificar el gen seleccionado
     mutado[gen] += perturbacion
 
     # Reparar restricciones
-    return reparar_cromosoma(mutado)
+    return reparar_cromosoma(mutado, horizonte_pronostico)
