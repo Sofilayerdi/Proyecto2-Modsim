@@ -1,0 +1,19 @@
+# Diseño fijado antes de observar las comparaciones. No vuelve a entrenar.
+semillas: [1001, 1030]                 # extremos inclusivos: 30 réplicas
+semilla_series: 1001                  # elegida a priori para las trayectorias
+alpha: 0.05
+sensibilidad:
+  factor_demanda: 1.2
+  factor_referencia_inventario: 1.0    # stock inicial y niveles (s, S) constantes
+  factor_trafico: 2.0                 # todas las franjas; sin cambiar el costo/km
+  num_vehiculos: 1
+comparaciones:
+  - [base, mejorada]
+  - [base, regla_simple]
+  - [regla_simple, mejorada]
+  - [base, bodega_ajustada]
+  - [bodega_ajustada, mejorada]
+  - [base, traspasos_bodega_base]
+  - [mejorada, demanda_mas_20]
+  - [mejorada, trafico_pesado]
+  - [mejorada, un_vehiculo]
