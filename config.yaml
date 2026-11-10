@@ -18,7 +18,7 @@ simulacion:
   factor_demanda: 1.0          # multiplica la demanda media; 1.2 = escenario de sensibilidad +20%
 
 datos:
-  tiendas: data/synthetic/tiendas.csv   # id_tienda, latitud, longitud
+  tiendas: data/synthetic/tiendas.csv   # id_tienda, tipo_tienda (alta/media/baja), latitud, longitud
   demanda: data/synthetic/demanda.csv   # id_tienda, id_producto, dia_semana, media, dispersion
 
 bodega:
@@ -85,3 +85,12 @@ traspasos:                            # valores fijos; params_politica puede ree
   descuento_diario: 0.98              # delta, valor de ventas futuras        [supuesto]
   umbral_valor_q: 0.0                 # V mínimo por viaje consolidado, Q     [supuesto]
   peso_trafico: 0.0                   # penalización extra: peso × (factor−1) × costo [supuesto]
+
+optimizacion:
+  semilla_genetico: 20261109
+  semillas_entrenamiento: [1, 10]      # extremos inclusivos
+  semillas_reevaluacion: [11, 40]
+  semillas_evaluacion_final: [1001, 1030]
+  tamano_poblacion: 30                # extremo inferior del presupuesto del plan
+  generaciones: 50                    # máximo; permite paro por estancamiento
+  paciencia: 10

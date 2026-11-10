@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import yaml
 
+from src.model.tipos import TIPOS_TIENDA
+
 COLUMNAS_TIENDAS = ("id_tienda", "latitud", "longitud")
 COLUMNAS_DEMANDA = ("id_tienda", "id_producto", "dia_semana", "media", "dispersion")
 
@@ -119,6 +121,10 @@ def cargar_demanda(ruta, ids_tiendas, ids_productos) -> tuple[np.ndarray, np.nda
 def cargar_datos(config: dict) -> dict:
     ids_productos = [str(producto["id"]) for producto in config["productos"]]
     ids_tiendas, ubicaciones = cargar_tiendas(config["datos"]["tiendas"])
+    tabla_tiendas = pd.read_csv(config["datos"]["tiendas"], dtype={"id_tienda": str})
+    tipos = tabla_tiendas.get("tipo_tienda", pd.Series(["media"] * len(ids_tiendas))).tolist()
+    if any(tipo not in TIPOS_TIENDA for tipo in tipos):
+        raise ValueError(f"tipo_tienda debe pertenecer a {TIPOS_TIENDA}")
     media, dispersion = cargar_demanda(config["datos"]["demanda"], ids_tiendas, ids_productos)
 
     for arreglo in (ubicaciones, media, dispersion):
@@ -128,6 +134,7 @@ def cargar_datos(config: dict) -> dict:
         "ids_tiendas": ids_tiendas,
         "ids_productos": ids_productos,
         "ubicaciones": ubicaciones,
+        "tipos_tiendas": tipos,
         "media": media,
         "dispersion": dispersion,
     }

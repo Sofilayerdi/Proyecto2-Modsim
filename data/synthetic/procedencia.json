@@ -1,0 +1,48 @@
+{
+  "origen": "sintetico",
+  "semilla": 20261109,
+  "num_tiendas": 10,
+  "productos": [
+    "P01",
+    "P02",
+    "P03"
+  ],
+  "tipos": [
+    "alta",
+    "alta",
+    "alta",
+    "media",
+    "media",
+    "media",
+    "media",
+    "baja",
+    "baja",
+    "baja"
+  ],
+  "descripcion": "Coordenadas ficticias alrededor de (14.60, -90.52); no son tiendas reales",
+  "medias_base": [
+    6.0,
+    3.0,
+    1.5
+  ],
+  "factores_tipo": {
+    "alta": 1.5,
+    "media": 1.0,
+    "baja": 0.6
+  },
+  "dispersion_varianza_media": {
+    "alta": 2.0,
+    "media": 4.0,
+    "baja": 6.0
+  },
+  "factores_semanales": [
+    0.8571428571428571,
+    0.8095238095238094,
+    0.9047619047619047,
+    0.9523809523809523,
+    1.0952380952380951,
+    1.3333333333333333,
+    1.0476190476190477
+  ],
+  "heterogeneidad": "lognormal con sigma=0.25 y media multiplicativa 1"
+}
