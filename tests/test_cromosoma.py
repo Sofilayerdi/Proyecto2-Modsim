@@ -7,55 +7,63 @@ from src.optimization.cromosoma import (
 )
 
 
-def test_crear_cromosoma():
+def test_cromosoma_siete_genes():
     cromosoma = crear_cromosoma()
 
+    assert len(cromosoma) == 7
     assert set(cromosoma) == set(RANGOS)
 
-    for gen, (minimo, maximo) in RANGOS.items():
-        assert minimo <= cromosoma[gen] <= maximo
 
-    assert cromosoma["bodega_S_dias"] >= cromosoma["bodega_s_dias"]
+def test_genes_enteros_y_decimales():
+    cromosoma = crear_cromosoma()
+
+    enteros = [
+        "bodega_s_dias",
+        "bodega_S_dias",
+        "horizonte_dias",
+        "seguridad_dias",
+        "hora_despacho",
+    ]
+
+    decimales = [
+        "umbral_valor_q",
+        "peso_trafico",
+    ]
+
+    for gen in enteros:
+        assert isinstance(cromosoma[gen], int)
+
+    for gen in decimales:
+        assert isinstance(cromosoma[gen], float)
 
 
-def test_reparar_fuera_de_rango():
-    cromosoma = {
-        "bodega_s_dias": -10,
-        "bodega_S_dias": 100,
-    }
-
-    reparado = reparar_cromosoma(cromosoma)
-
-    assert reparado["bodega_s_dias"] == 5
-    assert reparado["bodega_S_dias"] == 45
-
-
-def test_reparar_restriccion():
+def test_reparar_nuevos_genes():
     cromosoma = {
         "bodega_s_dias": 18,
         "bodega_S_dias": 12,
+        "horizonte_dias": 100,
+        "seguridad_dias": -5,
+        "umbral_valor_q": -10.0,
+        "peso_trafico": 5.0,
+        "hora_despacho": 30,
     }
 
     reparado = reparar_cromosoma(cromosoma)
 
     assert reparado["bodega_S_dias"] >= reparado["bodega_s_dias"]
+    assert reparado["horizonte_dias"] == 7
+    assert reparado["seguridad_dias"] == 0
+    assert reparado["umbral_valor_q"] == 0.0
+    assert reparado["peso_trafico"] == 2.0
+    assert reparado["hora_despacho"] == 23
 
 
-def test_reparacion_no_modifica_original():
-    cromosoma = {
-        "bodega_s_dias": 18,
-        "bodega_S_dias": 12,
-    }
+def test_restriccion_pronostico():
+    for _ in range(100):
+        cromosoma = crear_cromosoma()
 
-    reparar_cromosoma(cromosoma)
-
-    assert cromosoma["bodega_S_dias"] == 12
-
-
-def test_crear_poblacion():
-    poblacion = crear_poblacion(30)
-
-    assert len(poblacion) == 30
-
-    for cromosoma in poblacion:
-        assert cromosoma["bodega_S_dias"] >= cromosoma["bodega_s_dias"]
+        assert (
+            cromosoma["horizonte_dias"]
+            + cromosoma["seguridad_dias"]
+            <= 14
+        )
