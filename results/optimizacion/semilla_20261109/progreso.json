@@ -1,0 +1,192 @@
+{
+  "historial": [
+    {
+      "generacion": 1,
+      "mejor_fitness": 23536.9777273191,
+      "mejor_costo_promedio": 23536.9777273191,
+      "mejor_servicio_promedio": 0.9855032564640486,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 32824.83104312723,
+      "candidatos_unicos_evaluados": 30
+    },
+    {
+      "generacion": 2,
+      "mejor_fitness": 23536.9777273191,
+      "mejor_costo_promedio": 23536.9777273191,
+      "mejor_servicio_promedio": 0.9855032564640486,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 26806.74752556671,
+      "candidatos_unicos_evaluados": 54
+    },
+    {
+      "generacion": 3,
+      "mejor_fitness": 23337.67266563479,
+      "mejor_costo_promedio": 23337.67266563479,
+      "mejor_servicio_promedio": 0.9854177941323272,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 24184.784889585593,
+      "candidatos_unicos_evaluados": 74
+    },
+    {
+      "generacion": 4,
+      "mejor_fitness": 23207.208618667173,
+      "mejor_costo_promedio": 23207.208618667173,
+      "mejor_servicio_promedio": 0.9856998373771858,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 23657.133903049868,
+      "candidatos_unicos_evaluados": 92
+    },
+    {
+      "generacion": 5,
+      "mejor_fitness": 23176.452496280268,
+      "mejor_costo_promedio": 23176.452496280268,
+      "mejor_servicio_promedio": 0.9857593553307703,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 23441.038456286933,
+      "candidatos_unicos_evaluados": 106
+    },
+    {
+      "generacion": 6,
+      "mejor_fitness": 22459.461367287953,
+      "mejor_costo_promedio": 22459.461367287953,
+      "mejor_servicio_promedio": 0.9859337481159951,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 23257.254676443823,
+      "candidatos_unicos_evaluados": 121
+    },
+    {
+      "generacion": 7,
+      "mejor_fitness": 22459.461367287953,
+      "mejor_costo_promedio": 22459.461367287953,
+      "mejor_servicio_promedio": 0.9859337481159951,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 23112.270929536553,
+      "candidatos_unicos_evaluados": 137
+    },
+    {
+      "generacion": 8,
+      "mejor_fitness": 22378.03807836638,
+      "mejor_costo_promedio": 22378.03807836638,
+      "mejor_servicio_promedio": 0.9859653915330167,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 22871.079826157813,
+      "candidatos_unicos_evaluados": 147
+    },
+    {
+      "generacion": 9,
+      "mejor_fitness": 22378.03807836638,
+      "mejor_costo_promedio": 22378.03807836638,
+      "mejor_servicio_promedio": 0.9859653915330167,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 22638.849840882798,
+      "candidatos_unicos_evaluados": 155
+    },
+    {
+      "generacion": 10,
+      "mejor_fitness": 22378.03807836638,
+      "mejor_costo_promedio": 22378.03807836638,
+      "mejor_servicio_promedio": 0.9859653915330167,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 22414.069561286862,
+      "candidatos_unicos_evaluados": 167
+    },
+    {
+      "generacion": 11,
+      "mejor_fitness": 22378.03807836638,
+      "mejor_costo_promedio": 22378.03807836638,
+      "mejor_servicio_promedio": 0.9859653915330167,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 22440.676983822446,
+      "candidatos_unicos_evaluados": 169
+    },
+    {
+      "generacion": 12,
+      "mejor_fitness": 22378.03807836638,
+      "mejor_costo_promedio": 22378.03807836638,
+      "mejor_servicio_promedio": 0.9859653915330167,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 22378.03807836638,
+      "candidatos_unicos_evaluados": 169
+    },
+    {
+      "generacion": 13,
+      "mejor_fitness": 22378.03807836638,
+      "mejor_costo_promedio": 22378.03807836638,
+      "mejor_servicio_promedio": 0.9859653915330167,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 22387.0149917295,
+      "candidatos_unicos_evaluados": 171
+    },
+    {
+      "generacion": 14,
+      "mejor_fitness": 22378.03807836638,
+      "mejor_costo_promedio": 22378.03807836638,
+      "mejor_servicio_promedio": 0.9859653915330167,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 22380.419745258205,
+      "candidatos_unicos_evaluados": 172
+    },
+    {
+      "generacion": 15,
+      "mejor_fitness": 22378.03807836638,
+      "mejor_costo_promedio": 22378.03807836638,
+      "mejor_servicio_promedio": 0.9859653915330167,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 22378.03807836638,
+      "candidatos_unicos_evaluados": 172
+    },
+    {
+      "generacion": 16,
+      "mejor_fitness": 22378.03807836638,
+      "mejor_costo_promedio": 22378.03807836638,
+      "mejor_servicio_promedio": 0.9859653915330167,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 22443.640095972885,
+      "candidatos_unicos_evaluados": 174
+    },
+    {
+      "generacion": 17,
+      "mejor_fitness": 22378.03807836638,
+      "mejor_costo_promedio": 22378.03807836638,
+      "mejor_servicio_promedio": 0.9859653915330167,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 22382.969253640313,
+      "candidatos_unicos_evaluados": 176
+    },
+    {
+      "generacion": 18,
+      "mejor_fitness": 22378.03807836638,
+      "mejor_costo_promedio": 22378.03807836638,
+      "mejor_servicio_promedio": 0.9859653915330167,
+      "costo_penalizacion": 0.0,
+      "fitness_promedio_poblacion": 22378.03807836638,
+      "candidatos_unicos_evaluados": 176
+    }
+  ],
+  "mejor_cromosoma": {
+    "bodega_s_dias": 6,
+    "bodega_S_dias": 15,
+    "horizonte_dias_alta": 4,
+    "seguridad_dias_alta": 6,
+    "horizonte_dias_media": 3,
+    "seguridad_dias_media": 4,
+    "horizonte_dias_baja": 1,
+    "seguridad_dias_baja": 3,
+    "umbral_valor_q": 129.66196811367496,
+    "peso_trafico": 0.7464134761298,
+    "hora_despacho": 23
+  },
+  "semilla_genetico": 20261109,
+  "semillas_demanda": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ]
+}

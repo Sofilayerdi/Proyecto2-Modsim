@@ -9,6 +9,7 @@ Requiere Python **3.10 o superior** y las dependencias de `requirements.txt`.
 | `transporte.py` | Matriz de distancias, factor de tráfico, horas y días de tránsito. |
 | `costos.py` | Costo fijo y por kilómetro de un viaje. |
 | `indicador.py` | Cobertura, exceso, llegadas previstas, ventas proyectadas y valor V. |
+| `tipos.py` | Clases de demanda alta, media y baja compartidas por política y genético. |
 | `traspasos.py` | Regla simple y política económica con NetworkX. |
 
 ## Conectar con la simulación
@@ -48,10 +49,17 @@ la estimación geográfica. El motor inyecta las ubicaciones automáticamente.
 ## Contrato y unidades
 
 - `estado` es el `Estado` del motor después de las ventas de hoy.
-- El pronóstico `(H, N, K)` empieza **mañana**. Debe cubrir como mínimo
-  `ceil(horizonte_dias + seguridad_dias)` días.
-- H y SS son escalares comunes a las tiendas en esta versión. El candidato
-  reemplaza los valores de `config["traspasos"]` a través de `params_politica`.
+- El pronóstico `(H, N, K)` empieza **mañana**. Debe cubrir como mínimo el
+  máximo `ceil(H_tipo + SS_tipo)` de las tiendas presentes.
+- El candidato puede definir `horizonte_dias_alta`, `seguridad_dias_alta`,
+  y los pares correspondientes a `media` y `baja`. Los tipos llegan mediante
+  `config["tipos_tiendas"]`, en el mismo orden que el inventario. El motor los
+  lee de `tipo_tienda` en `tiendas.csv`; archivos antiguos sin esa columna usan
+  `media`. H y SS globales siguen siendo valores de respaldo para la regla simple
+  y llamadas antiguas. El candidato reemplaza los valores de configuración.
+- La reserva del donante usa su propio H + SS; los faltantes y las ventas
+  adicionales se proyectan hasta el H de la receptora. El riesgo del donante
+  se considera hasta su propio H + SS.
 - `umbral_valor_q` es el V mínimo **por viaje**, en quetzales. El envío se acepta
   únicamente si V es estrictamente mayor que el umbral.
 - Las distancias se estiman con Haversine multiplicada por `factor_ruta`.

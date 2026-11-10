@@ -1,0 +1,13 @@
+{
+  "bodega_s_dias": 6,
+  "bodega_S_dias": 15,
+  "horizonte_dias_alta": 4,
+  "seguridad_dias_alta": 6,
+  "horizonte_dias_media": 3,
+  "seguridad_dias_media": 4,
+  "horizonte_dias_baja": 1,
+  "seguridad_dias_baja": 3,
+  "umbral_valor_q": 129.66196811367496,
+  "peso_trafico": 0.7464134761298,
+  "hora_despacho": 23
+}
