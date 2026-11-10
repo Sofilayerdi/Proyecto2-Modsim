@@ -1,0 +1,11 @@
+{
+  "replicas_por_condicion": 30,
+  "condiciones": 8,
+  "replicas_totales": 240,
+  "conservacion": true,
+  "inventarios_no_negativos": true,
+  "demanda_nominal_comun": true,
+  "inventario_inicial_constante": true,
+  "costos_y_servicio_consistentes": true,
+  "ganador_coincide_con_evaluacion_previa": true
+}

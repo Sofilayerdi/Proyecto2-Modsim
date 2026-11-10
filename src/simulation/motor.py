@@ -55,10 +55,15 @@ def simular_con_datos(
     horizonte = int(sim["horizonte_dias"])
     dia_semana_inicial = int(sim.get("dia_semana_inicial", 0))
     factor_demanda = float(sim.get("factor_demanda", 1.0))
+    # Permite estresar demanda sin aumentar existencias ni niveles (s, S).
+    # Por defecto conserva exactamente el comportamiento de la optimización.
+    factor_referencia = float(sim.get("factor_referencia_inventario", factor_demanda))
+    if not np.isfinite(factor_referencia) or factor_referencia < 0:
+        raise ValueError("factor_referencia_inventario debe ser finito y no negativo")
 
     media = datos["media"]
     num_tiendas, num_productos, _ = media.shape
-    mu_tienda = factor_demanda * media.mean(axis=2)
+    mu_tienda = factor_referencia * media.mean(axis=2)
     mu_cadena = mu_tienda.sum(axis=0)
 
     margen = np.array([producto["margen_q"] for producto in config["productos"]], dtype=float)
@@ -200,6 +205,8 @@ def simular_con_datos(
             "perdidas": perdidas,
             "inventario_tiendas": inventario_cierre,
             "inventario_bodega": bodega_cierre,
+            "inventario_inicial_tiendas": inventario_inicial,
+            "inventario_inicial_bodega": bodega_inicial,
             "traspasos": traspasos_hechos,
             "balance": balance,
         }

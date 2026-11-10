@@ -1,0 +1,1437 @@
+{
+  "estado": "completado",
+  "inicio_utc": "2026-11-10T03:18:31.925115+00:00",
+  "origen_datos": "sintetico",
+  "diseno": {
+    "semillas": [
+      1001,
+      1030
+    ],
+    "semilla_series": 1001,
+    "alpha": 0.05,
+    "sensibilidad": {
+      "factor_demanda": 1.2,
+      "factor_referencia_inventario": 1.0,
+      "factor_trafico": 2.0,
+      "num_vehiculos": 1
+    },
+    "comparaciones": [
+      [
+        "base",
+        "mejorada"
+      ],
+      [
+        "base",
+        "regla_simple"
+      ],
+      [
+        "regla_simple",
+        "mejorada"
+      ],
+      [
+        "base",
+        "bodega_ajustada"
+      ],
+      [
+        "bodega_ajustada",
+        "mejorada"
+      ],
+      [
+        "base",
+        "traspasos_bodega_base"
+      ],
+      [
+        "mejorada",
+        "demanda_mas_20"
+      ],
+      [
+        "mejorada",
+        "trafico_pesado"
+      ],
+      [
+        "mejorada",
+        "un_vehiculo"
+      ]
+    ]
+  },
+  "semillas": [
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009,
+    1010,
+    1011,
+    1012,
+    1013,
+    1014,
+    1015,
+    1016,
+    1017,
+    1018,
+    1019,
+    1020,
+    1021,
+    1022,
+    1023,
+    1024,
+    1025,
+    1026,
+    1027,
+    1028,
+    1029,
+    1030
+  ],
+  "escenarios": [
+    {
+      "condicion": "base",
+      "etiqueta": "Base",
+      "politica": "ninguna",
+      "parametros": null,
+      "descripcion": "Reposición original (10, 30 días), sin traspasos",
+      "config": {
+        "simulacion": {
+          "horizonte_dias": 120,
+          "dia_semana_inicial": 0,
+          "factor_demanda": 1.0
+        },
+        "datos": {
+          "tiendas": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/tiendas.csv",
+          "demanda": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/demanda.csv"
+        },
+        "bodega": {
+          "latitud": 14.59,
+          "longitud": -90.54
+        },
+        "productos": [
+          {
+            "id": "P01",
+            "margen_q": 12.0
+          },
+          {
+            "id": "P02",
+            "margen_q": 35.0
+          },
+          {
+            "id": "P03",
+            "margen_q": 90.0
+          }
+        ],
+        "costos": {
+          "mantener_q_unidad_dia": 0.08,
+          "viaje_fijo_q": 60.0,
+          "viaje_por_km_q": 4.0
+        },
+        "transporte": {
+          "num_vehiculos": 2,
+          "capacidad_unidades": 150,
+          "velocidad_kmh": 30.0,
+          "factor_ruta": 1.3,
+          "hora_despacho": 10,
+          "trafico": [
+            {
+              "desde": 0,
+              "hasta": 6,
+              "factor": 1.0
+            },
+            {
+              "desde": 6,
+              "hasta": 9,
+              "factor": 1.8
+            },
+            {
+              "desde": 9,
+              "hasta": 12,
+              "factor": 1.2
+            },
+            {
+              "desde": 12,
+              "hasta": 14,
+              "factor": 1.5
+            },
+            {
+              "desde": 14,
+              "hasta": 17,
+              "factor": 1.2
+            },
+            {
+              "desde": 17,
+              "hasta": 20,
+              "factor": 1.9
+            },
+            {
+              "desde": 20,
+              "hasta": 24,
+              "factor": 1.0
+            }
+          ]
+        },
+        "inventario": {
+          "minimo_exhibicion_unidades": 2,
+          "inicial": {
+            "dias_cobertura_tienda": 7,
+            "dias_cobertura_bodega": 21
+          }
+        },
+        "reposicion": {
+          "tiendas": {
+            "tiempo_entrega_dias": 2,
+            "dias_seguridad": 3,
+            "dias_objetivo": 12
+          },
+          "bodega": {
+            "tiempo_entrega_dias": 7,
+            "s_dias": 10,
+            "S_dias": 30
+          }
+        },
+        "pronostico": {
+          "metodo": "promedio_movil_dia_semana",
+          "ventana_semanas": 4,
+          "horizonte_dias": 14
+        },
+        "traspasos": {
+          "horizonte_dias": 3,
+          "seguridad_dias": 2,
+          "descuento_diario": 0.98,
+          "umbral_valor_q": 0.0,
+          "peso_trafico": 0.0
+        },
+        "optimizacion": {
+          "semilla_genetico": 20261109,
+          "semillas_entrenamiento": [
+            1,
+            10
+          ],
+          "semillas_reevaluacion": [
+            11,
+            40
+          ],
+          "semillas_evaluacion_final": [
+            1001,
+            1030
+          ],
+          "tamano_poblacion": 30,
+          "generaciones": 50,
+          "paciencia": 10
+        }
+      }
+    },
+    {
+      "condicion": "regla_simple",
+      "etiqueta": "Regla simple",
+      "politica": "simple",
+      "parametros": {},
+      "descripcion": "H y SS globales fijos (3, 2), bodega original",
+      "config": {
+        "simulacion": {
+          "horizonte_dias": 120,
+          "dia_semana_inicial": 0,
+          "factor_demanda": 1.0
+        },
+        "datos": {
+          "tiendas": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/tiendas.csv",
+          "demanda": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/demanda.csv"
+        },
+        "bodega": {
+          "latitud": 14.59,
+          "longitud": -90.54
+        },
+        "productos": [
+          {
+            "id": "P01",
+            "margen_q": 12.0
+          },
+          {
+            "id": "P02",
+            "margen_q": 35.0
+          },
+          {
+            "id": "P03",
+            "margen_q": 90.0
+          }
+        ],
+        "costos": {
+          "mantener_q_unidad_dia": 0.08,
+          "viaje_fijo_q": 60.0,
+          "viaje_por_km_q": 4.0
+        },
+        "transporte": {
+          "num_vehiculos": 2,
+          "capacidad_unidades": 150,
+          "velocidad_kmh": 30.0,
+          "factor_ruta": 1.3,
+          "hora_despacho": 10,
+          "trafico": [
+            {
+              "desde": 0,
+              "hasta": 6,
+              "factor": 1.0
+            },
+            {
+              "desde": 6,
+              "hasta": 9,
+              "factor": 1.8
+            },
+            {
+              "desde": 9,
+              "hasta": 12,
+              "factor": 1.2
+            },
+            {
+              "desde": 12,
+              "hasta": 14,
+              "factor": 1.5
+            },
+            {
+              "desde": 14,
+              "hasta": 17,
+              "factor": 1.2
+            },
+            {
+              "desde": 17,
+              "hasta": 20,
+              "factor": 1.9
+            },
+            {
+              "desde": 20,
+              "hasta": 24,
+              "factor": 1.0
+            }
+          ]
+        },
+        "inventario": {
+          "minimo_exhibicion_unidades": 2,
+          "inicial": {
+            "dias_cobertura_tienda": 7,
+            "dias_cobertura_bodega": 21
+          }
+        },
+        "reposicion": {
+          "tiendas": {
+            "tiempo_entrega_dias": 2,
+            "dias_seguridad": 3,
+            "dias_objetivo": 12
+          },
+          "bodega": {
+            "tiempo_entrega_dias": 7,
+            "s_dias": 10,
+            "S_dias": 30
+          }
+        },
+        "pronostico": {
+          "metodo": "promedio_movil_dia_semana",
+          "ventana_semanas": 4,
+          "horizonte_dias": 14
+        },
+        "traspasos": {
+          "horizonte_dias": 3,
+          "seguridad_dias": 2,
+          "descuento_diario": 0.98,
+          "umbral_valor_q": 0.0,
+          "peso_trafico": 0.0
+        },
+        "optimizacion": {
+          "semilla_genetico": 20261109,
+          "semillas_entrenamiento": [
+            1,
+            10
+          ],
+          "semillas_reevaluacion": [
+            11,
+            40
+          ],
+          "semillas_evaluacion_final": [
+            1001,
+            1030
+          ],
+          "tamano_poblacion": 30,
+          "generaciones": 50,
+          "paciencia": 10
+        }
+      }
+    },
+    {
+      "condicion": "mejorada",
+      "etiqueta": "Mejorada",
+      "politica": "economica",
+      "parametros": {
+        "bodega_s_dias": 6,
+        "bodega_S_dias": 15,
+        "horizonte_dias_alta": 4,
+        "seguridad_dias_alta": 6,
+        "horizonte_dias_media": 3,
+        "seguridad_dias_media": 4,
+        "horizonte_dias_baja": 1,
+        "seguridad_dias_baja": 3,
+        "umbral_valor_q": 129.66196811367496,
+        "peso_trafico": 0.7464134761298,
+        "hora_despacho": 23
+      },
+      "descripcion": "Ganador congelado, bodega ajustada y traspasos",
+      "config": {
+        "simulacion": {
+          "horizonte_dias": 120,
+          "dia_semana_inicial": 0,
+          "factor_demanda": 1.0
+        },
+        "datos": {
+          "tiendas": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/tiendas.csv",
+          "demanda": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/demanda.csv"
+        },
+        "bodega": {
+          "latitud": 14.59,
+          "longitud": -90.54
+        },
+        "productos": [
+          {
+            "id": "P01",
+            "margen_q": 12.0
+          },
+          {
+            "id": "P02",
+            "margen_q": 35.0
+          },
+          {
+            "id": "P03",
+            "margen_q": 90.0
+          }
+        ],
+        "costos": {
+          "mantener_q_unidad_dia": 0.08,
+          "viaje_fijo_q": 60.0,
+          "viaje_por_km_q": 4.0
+        },
+        "transporte": {
+          "num_vehiculos": 2,
+          "capacidad_unidades": 150,
+          "velocidad_kmh": 30.0,
+          "factor_ruta": 1.3,
+          "hora_despacho": 10,
+          "trafico": [
+            {
+              "desde": 0,
+              "hasta": 6,
+              "factor": 1.0
+            },
+            {
+              "desde": 6,
+              "hasta": 9,
+              "factor": 1.8
+            },
+            {
+              "desde": 9,
+              "hasta": 12,
+              "factor": 1.2
+            },
+            {
+              "desde": 12,
+              "hasta": 14,
+              "factor": 1.5
+            },
+            {
+              "desde": 14,
+              "hasta": 17,
+              "factor": 1.2
+            },
+            {
+              "desde": 17,
+              "hasta": 20,
+              "factor": 1.9
+            },
+            {
+              "desde": 20,
+              "hasta": 24,
+              "factor": 1.0
+            }
+          ]
+        },
+        "inventario": {
+          "minimo_exhibicion_unidades": 2,
+          "inicial": {
+            "dias_cobertura_tienda": 7,
+            "dias_cobertura_bodega": 21
+          }
+        },
+        "reposicion": {
+          "tiendas": {
+            "tiempo_entrega_dias": 2,
+            "dias_seguridad": 3,
+            "dias_objetivo": 12
+          },
+          "bodega": {
+            "tiempo_entrega_dias": 7,
+            "s_dias": 10,
+            "S_dias": 30
+          }
+        },
+        "pronostico": {
+          "metodo": "promedio_movil_dia_semana",
+          "ventana_semanas": 4,
+          "horizonte_dias": 14
+        },
+        "traspasos": {
+          "horizonte_dias": 3,
+          "seguridad_dias": 2,
+          "descuento_diario": 0.98,
+          "umbral_valor_q": 0.0,
+          "peso_trafico": 0.0
+        },
+        "optimizacion": {
+          "semilla_genetico": 20261109,
+          "semillas_entrenamiento": [
+            1,
+            10
+          ],
+          "semillas_reevaluacion": [
+            11,
+            40
+          ],
+          "semillas_evaluacion_final": [
+            1001,
+            1030
+          ],
+          "tamano_poblacion": 30,
+          "generaciones": 50,
+          "paciencia": 10
+        }
+      }
+    },
+    {
+      "condicion": "bodega_ajustada",
+      "etiqueta": "Bodega ajustada, sin traspasos",
+      "politica": "ninguna",
+      "parametros": null,
+      "descripcion": "Control: solo cambia s y S de bodega, sin traspasos",
+      "config": {
+        "simulacion": {
+          "horizonte_dias": 120,
+          "dia_semana_inicial": 0,
+          "factor_demanda": 1.0
+        },
+        "datos": {
+          "tiendas": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/tiendas.csv",
+          "demanda": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/demanda.csv"
+        },
+        "bodega": {
+          "latitud": 14.59,
+          "longitud": -90.54
+        },
+        "productos": [
+          {
+            "id": "P01",
+            "margen_q": 12.0
+          },
+          {
+            "id": "P02",
+            "margen_q": 35.0
+          },
+          {
+            "id": "P03",
+            "margen_q": 90.0
+          }
+        ],
+        "costos": {
+          "mantener_q_unidad_dia": 0.08,
+          "viaje_fijo_q": 60.0,
+          "viaje_por_km_q": 4.0
+        },
+        "transporte": {
+          "num_vehiculos": 2,
+          "capacidad_unidades": 150,
+          "velocidad_kmh": 30.0,
+          "factor_ruta": 1.3,
+          "hora_despacho": 10,
+          "trafico": [
+            {
+              "desde": 0,
+              "hasta": 6,
+              "factor": 1.0
+            },
+            {
+              "desde": 6,
+              "hasta": 9,
+              "factor": 1.8
+            },
+            {
+              "desde": 9,
+              "hasta": 12,
+              "factor": 1.2
+            },
+            {
+              "desde": 12,
+              "hasta": 14,
+              "factor": 1.5
+            },
+            {
+              "desde": 14,
+              "hasta": 17,
+              "factor": 1.2
+            },
+            {
+              "desde": 17,
+              "hasta": 20,
+              "factor": 1.9
+            },
+            {
+              "desde": 20,
+              "hasta": 24,
+              "factor": 1.0
+            }
+          ]
+        },
+        "inventario": {
+          "minimo_exhibicion_unidades": 2,
+          "inicial": {
+            "dias_cobertura_tienda": 7,
+            "dias_cobertura_bodega": 21
+          }
+        },
+        "reposicion": {
+          "tiendas": {
+            "tiempo_entrega_dias": 2,
+            "dias_seguridad": 3,
+            "dias_objetivo": 12
+          },
+          "bodega": {
+            "tiempo_entrega_dias": 7,
+            "s_dias": 6,
+            "S_dias": 15
+          }
+        },
+        "pronostico": {
+          "metodo": "promedio_movil_dia_semana",
+          "ventana_semanas": 4,
+          "horizonte_dias": 14
+        },
+        "traspasos": {
+          "horizonte_dias": 3,
+          "seguridad_dias": 2,
+          "descuento_diario": 0.98,
+          "umbral_valor_q": 0.0,
+          "peso_trafico": 0.0
+        },
+        "optimizacion": {
+          "semilla_genetico": 20261109,
+          "semillas_entrenamiento": [
+            1,
+            10
+          ],
+          "semillas_reevaluacion": [
+            11,
+            40
+          ],
+          "semillas_evaluacion_final": [
+            1001,
+            1030
+          ],
+          "tamano_poblacion": 30,
+          "generaciones": 50,
+          "paciencia": 10
+        }
+      }
+    },
+    {
+      "condicion": "traspasos_bodega_base",
+      "etiqueta": "Traspasos, bodega original",
+      "politica": "economica",
+      "parametros": {
+        "bodega_s_dias": 10,
+        "bodega_S_dias": 30,
+        "horizonte_dias_alta": 4,
+        "seguridad_dias_alta": 6,
+        "horizonte_dias_media": 3,
+        "seguridad_dias_media": 4,
+        "horizonte_dias_baja": 1,
+        "seguridad_dias_baja": 3,
+        "umbral_valor_q": 129.66196811367496,
+        "peso_trafico": 0.7464134761298,
+        "hora_despacho": 23
+      },
+      "descripcion": "Control: parámetros de traspasos ganadores, s y S originales",
+      "config": {
+        "simulacion": {
+          "horizonte_dias": 120,
+          "dia_semana_inicial": 0,
+          "factor_demanda": 1.0
+        },
+        "datos": {
+          "tiendas": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/tiendas.csv",
+          "demanda": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/demanda.csv"
+        },
+        "bodega": {
+          "latitud": 14.59,
+          "longitud": -90.54
+        },
+        "productos": [
+          {
+            "id": "P01",
+            "margen_q": 12.0
+          },
+          {
+            "id": "P02",
+            "margen_q": 35.0
+          },
+          {
+            "id": "P03",
+            "margen_q": 90.0
+          }
+        ],
+        "costos": {
+          "mantener_q_unidad_dia": 0.08,
+          "viaje_fijo_q": 60.0,
+          "viaje_por_km_q": 4.0
+        },
+        "transporte": {
+          "num_vehiculos": 2,
+          "capacidad_unidades": 150,
+          "velocidad_kmh": 30.0,
+          "factor_ruta": 1.3,
+          "hora_despacho": 10,
+          "trafico": [
+            {
+              "desde": 0,
+              "hasta": 6,
+              "factor": 1.0
+            },
+            {
+              "desde": 6,
+              "hasta": 9,
+              "factor": 1.8
+            },
+            {
+              "desde": 9,
+              "hasta": 12,
+              "factor": 1.2
+            },
+            {
+              "desde": 12,
+              "hasta": 14,
+              "factor": 1.5
+            },
+            {
+              "desde": 14,
+              "hasta": 17,
+              "factor": 1.2
+            },
+            {
+              "desde": 17,
+              "hasta": 20,
+              "factor": 1.9
+            },
+            {
+              "desde": 20,
+              "hasta": 24,
+              "factor": 1.0
+            }
+          ]
+        },
+        "inventario": {
+          "minimo_exhibicion_unidades": 2,
+          "inicial": {
+            "dias_cobertura_tienda": 7,
+            "dias_cobertura_bodega": 21
+          }
+        },
+        "reposicion": {
+          "tiendas": {
+            "tiempo_entrega_dias": 2,
+            "dias_seguridad": 3,
+            "dias_objetivo": 12
+          },
+          "bodega": {
+            "tiempo_entrega_dias": 7,
+            "s_dias": 10,
+            "S_dias": 30
+          }
+        },
+        "pronostico": {
+          "metodo": "promedio_movil_dia_semana",
+          "ventana_semanas": 4,
+          "horizonte_dias": 14
+        },
+        "traspasos": {
+          "horizonte_dias": 3,
+          "seguridad_dias": 2,
+          "descuento_diario": 0.98,
+          "umbral_valor_q": 0.0,
+          "peso_trafico": 0.0
+        },
+        "optimizacion": {
+          "semilla_genetico": 20261109,
+          "semillas_entrenamiento": [
+            1,
+            10
+          ],
+          "semillas_reevaluacion": [
+            11,
+            40
+          ],
+          "semillas_evaluacion_final": [
+            1001,
+            1030
+          ],
+          "tamano_poblacion": 30,
+          "generaciones": 50,
+          "paciencia": 10
+        }
+      }
+    },
+    {
+      "condicion": "demanda_mas_20",
+      "etiqueta": "Demanda +20%",
+      "politica": "economica",
+      "parametros": {
+        "bodega_s_dias": 6,
+        "bodega_S_dias": 15,
+        "horizonte_dias_alta": 4,
+        "seguridad_dias_alta": 6,
+        "horizonte_dias_media": 3,
+        "seguridad_dias_media": 4,
+        "horizonte_dias_baja": 1,
+        "seguridad_dias_baja": 3,
+        "umbral_valor_q": 129.66196811367496,
+        "peso_trafico": 0.7464134761298,
+        "hora_despacho": 23
+      },
+      "descripcion": "Demanda y media previa +20%, inventario inicial y niveles de reposición constantes",
+      "config": {
+        "simulacion": {
+          "horizonte_dias": 120,
+          "dia_semana_inicial": 0,
+          "factor_demanda": 1.2,
+          "factor_referencia_inventario": 1.0
+        },
+        "datos": {
+          "tiendas": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/tiendas.csv",
+          "demanda": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/demanda.csv"
+        },
+        "bodega": {
+          "latitud": 14.59,
+          "longitud": -90.54
+        },
+        "productos": [
+          {
+            "id": "P01",
+            "margen_q": 12.0
+          },
+          {
+            "id": "P02",
+            "margen_q": 35.0
+          },
+          {
+            "id": "P03",
+            "margen_q": 90.0
+          }
+        ],
+        "costos": {
+          "mantener_q_unidad_dia": 0.08,
+          "viaje_fijo_q": 60.0,
+          "viaje_por_km_q": 4.0
+        },
+        "transporte": {
+          "num_vehiculos": 2,
+          "capacidad_unidades": 150,
+          "velocidad_kmh": 30.0,
+          "factor_ruta": 1.3,
+          "hora_despacho": 10,
+          "trafico": [
+            {
+              "desde": 0,
+              "hasta": 6,
+              "factor": 1.0
+            },
+            {
+              "desde": 6,
+              "hasta": 9,
+              "factor": 1.8
+            },
+            {
+              "desde": 9,
+              "hasta": 12,
+              "factor": 1.2
+            },
+            {
+              "desde": 12,
+              "hasta": 14,
+              "factor": 1.5
+            },
+            {
+              "desde": 14,
+              "hasta": 17,
+              "factor": 1.2
+            },
+            {
+              "desde": 17,
+              "hasta": 20,
+              "factor": 1.9
+            },
+            {
+              "desde": 20,
+              "hasta": 24,
+              "factor": 1.0
+            }
+          ]
+        },
+        "inventario": {
+          "minimo_exhibicion_unidades": 2,
+          "inicial": {
+            "dias_cobertura_tienda": 7,
+            "dias_cobertura_bodega": 21
+          }
+        },
+        "reposicion": {
+          "tiendas": {
+            "tiempo_entrega_dias": 2,
+            "dias_seguridad": 3,
+            "dias_objetivo": 12
+          },
+          "bodega": {
+            "tiempo_entrega_dias": 7,
+            "s_dias": 10,
+            "S_dias": 30
+          }
+        },
+        "pronostico": {
+          "metodo": "promedio_movil_dia_semana",
+          "ventana_semanas": 4,
+          "horizonte_dias": 14
+        },
+        "traspasos": {
+          "horizonte_dias": 3,
+          "seguridad_dias": 2,
+          "descuento_diario": 0.98,
+          "umbral_valor_q": 0.0,
+          "peso_trafico": 0.0
+        },
+        "optimizacion": {
+          "semilla_genetico": 20261109,
+          "semillas_entrenamiento": [
+            1,
+            10
+          ],
+          "semillas_reevaluacion": [
+            11,
+            40
+          ],
+          "semillas_evaluacion_final": [
+            1001,
+            1030
+          ],
+          "tamano_poblacion": 30,
+          "generaciones": 50,
+          "paciencia": 10
+        }
+      }
+    },
+    {
+      "condicion": "trafico_pesado",
+      "etiqueta": "Tráfico pesado",
+      "politica": "economica",
+      "parametros": {
+        "bodega_s_dias": 6,
+        "bodega_S_dias": 15,
+        "horizonte_dias_alta": 4,
+        "seguridad_dias_alta": 6,
+        "horizonte_dias_media": 3,
+        "seguridad_dias_media": 4,
+        "horizonte_dias_baja": 1,
+        "seguridad_dias_baja": 3,
+        "umbral_valor_q": 129.66196811367496,
+        "peso_trafico": 0.7464134761298,
+        "hora_despacho": 23
+      },
+      "descripcion": "Factor 2 en todas las franjas; mismo costo fijo y por km",
+      "config": {
+        "simulacion": {
+          "horizonte_dias": 120,
+          "dia_semana_inicial": 0,
+          "factor_demanda": 1.0
+        },
+        "datos": {
+          "tiendas": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/tiendas.csv",
+          "demanda": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/demanda.csv"
+        },
+        "bodega": {
+          "latitud": 14.59,
+          "longitud": -90.54
+        },
+        "productos": [
+          {
+            "id": "P01",
+            "margen_q": 12.0
+          },
+          {
+            "id": "P02",
+            "margen_q": 35.0
+          },
+          {
+            "id": "P03",
+            "margen_q": 90.0
+          }
+        ],
+        "costos": {
+          "mantener_q_unidad_dia": 0.08,
+          "viaje_fijo_q": 60.0,
+          "viaje_por_km_q": 4.0
+        },
+        "transporte": {
+          "num_vehiculos": 2,
+          "capacidad_unidades": 150,
+          "velocidad_kmh": 30.0,
+          "factor_ruta": 1.3,
+          "hora_despacho": 10,
+          "trafico": [
+            {
+              "desde": 0,
+              "hasta": 6,
+              "factor": 2.0
+            },
+            {
+              "desde": 6,
+              "hasta": 9,
+              "factor": 2.0
+            },
+            {
+              "desde": 9,
+              "hasta": 12,
+              "factor": 2.0
+            },
+            {
+              "desde": 12,
+              "hasta": 14,
+              "factor": 2.0
+            },
+            {
+              "desde": 14,
+              "hasta": 17,
+              "factor": 2.0
+            },
+            {
+              "desde": 17,
+              "hasta": 20,
+              "factor": 2.0
+            },
+            {
+              "desde": 20,
+              "hasta": 24,
+              "factor": 2.0
+            }
+          ]
+        },
+        "inventario": {
+          "minimo_exhibicion_unidades": 2,
+          "inicial": {
+            "dias_cobertura_tienda": 7,
+            "dias_cobertura_bodega": 21
+          }
+        },
+        "reposicion": {
+          "tiendas": {
+            "tiempo_entrega_dias": 2,
+            "dias_seguridad": 3,
+            "dias_objetivo": 12
+          },
+          "bodega": {
+            "tiempo_entrega_dias": 7,
+            "s_dias": 10,
+            "S_dias": 30
+          }
+        },
+        "pronostico": {
+          "metodo": "promedio_movil_dia_semana",
+          "ventana_semanas": 4,
+          "horizonte_dias": 14
+        },
+        "traspasos": {
+          "horizonte_dias": 3,
+          "seguridad_dias": 2,
+          "descuento_diario": 0.98,
+          "umbral_valor_q": 0.0,
+          "peso_trafico": 0.0
+        },
+        "optimizacion": {
+          "semilla_genetico": 20261109,
+          "semillas_entrenamiento": [
+            1,
+            10
+          ],
+          "semillas_reevaluacion": [
+            11,
+            40
+          ],
+          "semillas_evaluacion_final": [
+            1001,
+            1030
+          ],
+          "tamano_poblacion": 30,
+          "generaciones": 50,
+          "paciencia": 10
+        }
+      }
+    },
+    {
+      "condicion": "un_vehiculo",
+      "etiqueta": "Un vehículo",
+      "politica": "economica",
+      "parametros": {
+        "bodega_s_dias": 6,
+        "bodega_S_dias": 15,
+        "horizonte_dias_alta": 4,
+        "seguridad_dias_alta": 6,
+        "horizonte_dias_media": 3,
+        "seguridad_dias_media": 4,
+        "horizonte_dias_baja": 1,
+        "seguridad_dias_baja": 3,
+        "umbral_valor_q": 129.66196811367496,
+        "peso_trafico": 0.7464134761298,
+        "hora_despacho": 23
+      },
+      "descripcion": "Un viaje disponible al día en lugar de dos",
+      "config": {
+        "simulacion": {
+          "horizonte_dias": 120,
+          "dia_semana_inicial": 0,
+          "factor_demanda": 1.0
+        },
+        "datos": {
+          "tiendas": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/tiendas.csv",
+          "demanda": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/demanda.csv"
+        },
+        "bodega": {
+          "latitud": 14.59,
+          "longitud": -90.54
+        },
+        "productos": [
+          {
+            "id": "P01",
+            "margen_q": 12.0
+          },
+          {
+            "id": "P02",
+            "margen_q": 35.0
+          },
+          {
+            "id": "P03",
+            "margen_q": 90.0
+          }
+        ],
+        "costos": {
+          "mantener_q_unidad_dia": 0.08,
+          "viaje_fijo_q": 60.0,
+          "viaje_por_km_q": 4.0
+        },
+        "transporte": {
+          "num_vehiculos": 1,
+          "capacidad_unidades": 150,
+          "velocidad_kmh": 30.0,
+          "factor_ruta": 1.3,
+          "hora_despacho": 10,
+          "trafico": [
+            {
+              "desde": 0,
+              "hasta": 6,
+              "factor": 1.0
+            },
+            {
+              "desde": 6,
+              "hasta": 9,
+              "factor": 1.8
+            },
+            {
+              "desde": 9,
+              "hasta": 12,
+              "factor": 1.2
+            },
+            {
+              "desde": 12,
+              "hasta": 14,
+              "factor": 1.5
+            },
+            {
+              "desde": 14,
+              "hasta": 17,
+              "factor": 1.2
+            },
+            {
+              "desde": 17,
+              "hasta": 20,
+              "factor": 1.9
+            },
+            {
+              "desde": 20,
+              "hasta": 24,
+              "factor": 1.0
+            }
+          ]
+        },
+        "inventario": {
+          "minimo_exhibicion_unidades": 2,
+          "inicial": {
+            "dias_cobertura_tienda": 7,
+            "dias_cobertura_bodega": 21
+          }
+        },
+        "reposicion": {
+          "tiendas": {
+            "tiempo_entrega_dias": 2,
+            "dias_seguridad": 3,
+            "dias_objetivo": 12
+          },
+          "bodega": {
+            "tiempo_entrega_dias": 7,
+            "s_dias": 10,
+            "S_dias": 30
+          }
+        },
+        "pronostico": {
+          "metodo": "promedio_movil_dia_semana",
+          "ventana_semanas": 4,
+          "horizonte_dias": 14
+        },
+        "traspasos": {
+          "horizonte_dias": 3,
+          "seguridad_dias": 2,
+          "descuento_diario": 0.98,
+          "umbral_valor_q": 0.0,
+          "peso_trafico": 0.0
+        },
+        "optimizacion": {
+          "semilla_genetico": 20261109,
+          "semillas_entrenamiento": [
+            1,
+            10
+          ],
+          "semillas_reevaluacion": [
+            11,
+            40
+          ],
+          "semillas_evaluacion_final": [
+            1001,
+            1030
+          ],
+          "tamano_poblacion": 30,
+          "generaciones": 50,
+          "paciencia": 10
+        }
+      }
+    }
+  ],
+  "configuracion_referencia": {
+    "simulacion": {
+      "horizonte_dias": 120,
+      "dia_semana_inicial": 0,
+      "factor_demanda": 1.0
+    },
+    "datos": {
+      "tiendas": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/tiendas.csv",
+      "demanda": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/demanda.csv"
+    },
+    "bodega": {
+      "latitud": 14.59,
+      "longitud": -90.54
+    },
+    "productos": [
+      {
+        "id": "P01",
+        "margen_q": 12.0
+      },
+      {
+        "id": "P02",
+        "margen_q": 35.0
+      },
+      {
+        "id": "P03",
+        "margen_q": 90.0
+      }
+    ],
+    "costos": {
+      "mantener_q_unidad_dia": 0.08,
+      "viaje_fijo_q": 60.0,
+      "viaje_por_km_q": 4.0
+    },
+    "transporte": {
+      "num_vehiculos": 2,
+      "capacidad_unidades": 150,
+      "velocidad_kmh": 30.0,
+      "factor_ruta": 1.3,
+      "hora_despacho": 10,
+      "trafico": [
+        {
+          "desde": 0,
+          "hasta": 6,
+          "factor": 1.0
+        },
+        {
+          "desde": 6,
+          "hasta": 9,
+          "factor": 1.8
+        },
+        {
+          "desde": 9,
+          "hasta": 12,
+          "factor": 1.2
+        },
+        {
+          "desde": 12,
+          "hasta": 14,
+          "factor": 1.5
+        },
+        {
+          "desde": 14,
+          "hasta": 17,
+          "factor": 1.2
+        },
+        {
+          "desde": 17,
+          "hasta": 20,
+          "factor": 1.9
+        },
+        {
+          "desde": 20,
+          "hasta": 24,
+          "factor": 1.0
+        }
+      ]
+    },
+    "inventario": {
+      "minimo_exhibicion_unidades": 2,
+      "inicial": {
+        "dias_cobertura_tienda": 7,
+        "dias_cobertura_bodega": 21
+      }
+    },
+    "reposicion": {
+      "tiendas": {
+        "tiempo_entrega_dias": 2,
+        "dias_seguridad": 3,
+        "dias_objetivo": 12
+      },
+      "bodega": {
+        "tiempo_entrega_dias": 7,
+        "s_dias": 10,
+        "S_dias": 30
+      }
+    },
+    "pronostico": {
+      "metodo": "promedio_movil_dia_semana",
+      "ventana_semanas": 4,
+      "horizonte_dias": 14
+    },
+    "traspasos": {
+      "horizonte_dias": 3,
+      "seguridad_dias": 2,
+      "descuento_diario": 0.98,
+      "umbral_valor_q": 0.0,
+      "peso_trafico": 0.0
+    },
+    "optimizacion": {
+      "semilla_genetico": 20261109,
+      "semillas_entrenamiento": [
+        1,
+        10
+      ],
+      "semillas_reevaluacion": [
+        11,
+        40
+      ],
+      "semillas_evaluacion_final": [
+        1001,
+        1030
+      ],
+      "tamano_poblacion": 30,
+      "generaciones": 50,
+      "paciencia": 10
+    }
+  },
+  "ganador_sha256": "8f0edd0896594c4135a8bab8aea05913f96f6ce0b771593796db9f582a725378",
+  "ganador": {
+    "bodega_s_dias": 6,
+    "bodega_S_dias": 15,
+    "horizonte_dias_alta": 4,
+    "seguridad_dias_alta": 6,
+    "horizonte_dias_media": 3,
+    "seguridad_dias_media": 4,
+    "horizonte_dias_baja": 1,
+    "seguridad_dias_baja": 3,
+    "umbral_valor_q": 129.66196811367496,
+    "peso_trafico": 0.7464134761298,
+    "hora_despacho": 23
+  },
+  "diseno_sha256": "e30b1712953c9b788376490ce5ada3c790299e4c75ed26fda887525d1538df4d",
+  "config_sha256": "bfa7c61928d493b9d091eaae9728b645a2b4cd04245bffdca442490908ab1fb3",
+  "entradas": {
+    "tiendas": {
+      "ruta": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/tiendas.csv",
+      "sha256": "6d5a4a2e11095f6b0b06737cf800f3a747a4554cedf473ab7517d7de040330ac"
+    },
+    "demanda": {
+      "ruta": "/Users/karentoledo/Documents/GitHub/Proyecto2-Modsim/data/synthetic/demanda.csv",
+      "sha256": "a88e0c0691603926f4f817f7b849180b003bea53b94c7d6dd74925b3cd2dd519"
+    }
+  },
+  "codigo_sha256": {
+    "experiments/__init__.py": "b61087f72147cc70a6447a381e61d3e7e2be4548bc6572c8933ab2b24d0ff3ff",
+    "experiments/comparar.py": "66b757dfbb1e67f2e314bf4e95ded84615e81c220aa438ed260ea74597829e65",
+    "experiments/escenarios.py": "5e2c336ce2522f6a12aeab3caeb1ed10326e47019a75e86d6ecfff067ac92eeb",
+    "experiments/estadistica.py": "34fc9c326f2457cd5945236b87a30aec9c5e43e3a42803b5b0a1d39ecc323a23",
+    "experiments/optimizar.py": "a3f92209bbbb65360d776a5116890e94b1f4d2482da6a5dcbc3b41fed653227b",
+    "src/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/model/__init__.py": "f474f615dcc99fc182db1e8e25b76601597a1e3a87d47f3eeafa9c3298ea3b7e",
+    "src/model/costos.py": "56a169308d896656af254ae6c61c81eab5e213f90c22a32ee84abd9f66d8f05a",
+    "src/model/indicador.py": "2941c4f79b7cfb4dc56b54c12286709bb29ae8f11613d41fd080f443cfcb4dbb",
+    "src/model/tipos.py": "990a465b7a493833e2dafeccbe13a2a829eb0675a2c38a6e3eddb6fa2dfdf8a2",
+    "src/model/transporte.py": "e0b0d4fe2196a13bd814b734c2823ec1342b4466702ac7201ac9439e67005bfd",
+    "src/model/traspasos.py": "6936683d39c5daf1d62400bc6ef8c19af8b3f17ee260951d85c0e6f74ab7660b",
+    "src/optimization/adaptador.py": "867afd918b0e70b3890e21d4e3a63911eab924f4fa52b43373e8b7699a65efe1",
+    "src/optimization/algoritmo_genetico.py": "915ad630353cfef620b61d6a6f84b9ee9d1ddc54250b924f2a8dff0e674aabb1",
+    "src/optimization/cromosoma.py": "d46147df65816e409d4cf70a6db3fe83c4d98776d13c45a3d870617f31c942fc",
+    "src/optimization/fitness.py": "58e71b39335c4d2b319f48d0fe8f5758653a7c47fbfe63e336be7a505828f625",
+    "src/optimization/graficas.py": "d8b1d00bc09a0269eeb999c6776fe3dd778b6b7f6c9463d48f94deebe3797cb9",
+    "src/optimization/operadores.py": "e9cdaa4fb34e188bae92a3b19831b68f4a0789eaecde4b051267b3d7a0401bd4",
+    "src/optimization/optimizador.py": "c6c18e9a5fd703b703be216b9bd96e57ea6f951f1a2d5aca741243342bec06e9",
+    "src/optimization/reevaluacion.py": "9d226d3fa0be112e3b75645743bc71917fcc9eeeece453b82acc989bd8da5d4d",
+    "src/simulation/__init__.py": "af544760e6ef64602d89fa4faf9246291c9f7afa6e97c0849a5331c0ccf759d3",
+    "src/simulation/carga.py": "f44e4e3d455137202eb0d3db58eb94fa688a6d73f42c0738f24456559cbfe274",
+    "src/simulation/demanda.py": "d45b630452ade4182187c6e2a0dfe756b0177ff312aa8d17455025ad5c9efecd",
+    "src/simulation/estado.py": "493b7c64a3f87db28a8ac08c8a46158a8b4ca93dddda936e103f3f73b8634c03",
+    "src/simulation/motor.py": "48770e9911ef3b5300a4625c5142f1991923030ff30ad46137dddfc09a8437ef",
+    "src/simulation/pronostico.py": "33743a294fd1da4b39bcac6e0e98fc5bc6a945a61367b0e81abb8a154eeda321",
+    "src/simulation/sinteticos.py": "c64bb5c83757aff7f427a36c2106760f8b448952d443fb541d8629fc36378420",
+    "src/viz/__init__.py": "eb2c9459e5f1831c5055f6a8174fd14bfc90dad53518f913778d5a9ca36f1027",
+    "src/viz/escenarios.py": "f1d54ffaefe83b47b5e7cf0d9a12ac0c573fdb974864f01e91c7d1c173063799"
+  },
+  "num_tiendas": 10,
+  "num_productos": 3,
+  "horizonte_dias": 120,
+  "git_commit_base": "f144af0d0766db23e517c89c95ee16e2d22e0c72",
+  "git_con_cambios": true,
+  "python": "3.12.16",
+  "plataforma": "macOS-15.5-arm64-arm-64bit",
+  "dependencias": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "networkx": "3.7",
+    "scipy": "1.18.1",
+    "matplotlib": "3.11.2",
+    "pyyaml": "6.0.3"
+  },
+  "trabajadores": 6,
+  "verificaciones": {
+    "replicas_por_condicion": 30,
+    "condiciones": 8,
+    "replicas_totales": 240,
+    "conservacion": true,
+    "inventarios_no_negativos": true,
+    "demanda_nominal_comun": true,
+    "inventario_inicial_constante": true,
+    "costos_y_servicio_consistentes": true,
+    "ganador_coincide_con_evaluacion_previa": true
+  },
+  "duracion_segundos": 4.442810249980539,
+  "fin_utc": "2026-11-10T03:18:36.421925+00:00"
+}

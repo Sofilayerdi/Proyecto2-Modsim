@@ -38,10 +38,10 @@ Los valores son por período de 120 días, no por día. Los conteos pueden tener
 decimales porque se promedian réplicas. El costo es físico; fitness agrega una
 penalización si el servicio promedio no alcanza 95%. Aquí ambos coinciden.
 
-No se ejecutó aquí la comparación base/regla simple/mejorada/sensibilidad:
-estos números no demuestran por sí solos una mejora frente a la base.
-Además se optimizaron s y S de bodega junto con los traspasos; para aislar el
-aporte de estos últimos se requiere una comparación controlada.
+Esta carpeta registra solo la optimización. La comparación posterior de
+base/regla simple/mejorada/sensibilidad y los controles que separan bodega y
+traspasos están en [el estudio experimental](../../experimentos/semillas_1001_1030/README.md).
+Los números de esta carpeta por sí solos no demuestran mejora frente a la base.
 
 ## Archivos
 
