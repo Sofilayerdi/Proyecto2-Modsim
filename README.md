@@ -51,14 +51,20 @@ src/optimization/        genético, restricciones, evaluación y convergencia
 experiments/optimizar.py ejecución reproducible de la optimización (persona 3)
 results/optimizacion/    ganador, semillas, métricas por réplica e historial
 tests/                  pruebas automáticas
-docs/informe/           secciones de la persona 3 para integrar al informe
-docs/presentacion/      presentación de la persona 3 con notas
+docs/informe/           informe técnico integrado del proyecto
 docs/revisiones/        revisión cruzada y guía de commits
 ```
 
 El ejecutor comparativo de escenarios, las demás gráficas y la validación real
 corresponden a las personas 4 y 5 y siguen pendientes. Los datos reales están
 excluidos de Git mediante `data/reference/`.
+
+## Informe técnico
+
+El documento maestro es [docs/informe/informe.md](docs/informe/informe.md).
+Integra problema, investigación, modelo, costos, políticas, genético y evidencia
+disponible. Identifica las secciones experimentales y de validación todavía
+pendientes. Se edita en Markdown y puede exportarse a PDF al cerrar el informe.
 
 ## Evidencia guardada
 
